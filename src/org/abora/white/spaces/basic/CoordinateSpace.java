@@ -16,19 +16,22 @@ import org.abora.white.xpp.basic.Heaper;
 /**
  * A coordinate space represents (among other things) the domain space of a table.
  * Corresponding to each coordinate space will be a set of objects of the following kinds:
- * Position -- The elements of the coordinate space.
- * Mapping -- (Add a description.)
- * OrderSpec -- The ways of specifying partial orders of this coordinate space''s Positions.
+ * <p>
+ * Position -- The elements of the coordinate space.<br>
+ * Mapping -- (Add a description.)<br>
+ * OrderSpec -- The ways of specifying partial orders of this coordinate space's Positions.<br>
  * XuRegion -- An XuRegion represents a set of Positions.  The domain of a table is an
  * XuRegion.
+ * <p>
  * When defining a new coordinate space class, one generally defines new corresponing
  * subclasses of each of the above classes.  A kind of any of the above classes knows what
  * coordinate space it is a part of (the "coordinateSpace()" message will yield an
  * appropriate kind of CoordinateSpace).  CoordinateSpace objects exist mostly just to
  * represent this commonality.  Coordinate spaces are disjoint--it is an error to use any of
  * the generic protocol of any of the above classes if the objects in question are of two
- * different coordinate spaces.  For example, "dsp->of (pos)" is not an error iff
- * "dsp->coordinateSpace()->isEqual (pos->coordinateSpace())".
+ * different coordinate spaces.  For example, "<code>dsp->of (pos)</code>" is not an error iff
+ * "<code>dsp->coordinateSpace()->isEqual (pos->coordinateSpace())</code>".
+ * <p>
  * Note that this class is not COPY or even PSEUDO_COPY.  All of the instance variables for
  * CoordinateSpace are basically cached
  * quantities that require vary little actual state from the derived classes in order to be
@@ -472,25 +475,25 @@ public abstract class CoordinateSpace extends Heaper {
 	//		*/
 	//	}
 
-	/**
-	 * {OrderSpec CLIENT} ascending
-	 * {Mapping CLIENT} completeMapping: range {XuRegion}
-	 * {OrderSpec CLIENT} descending
-	 * {XuRegion CLIENT} emptyRegion
-	 * {XuRegion CLIENT} fullRegion
-	 * {Mapping CLIENT} identityMapping
-	 */
-	public static void info() {
-		/*
-		udanax-top.st:14494:CoordinateSpace class methodsFor: 'smalltalk: system'!
-		info.stProtocol
-		"{OrderSpec CLIENT} ascending
-		{Mapping CLIENT} completeMapping: range {XuRegion}
-		{OrderSpec CLIENT} descending
-		{XuRegion CLIENT} emptyRegion
-		{XuRegion CLIENT} fullRegion
-		{Mapping CLIENT} identityMapping
-		"!
-		*/
-	}
+//	/**
+//	 * {OrderSpec CLIENT} ascending
+//	 * {Mapping CLIENT} completeMapping: range {XuRegion}
+//	 * {OrderSpec CLIENT} descending
+//	 * {XuRegion CLIENT} emptyRegion
+//	 * {XuRegion CLIENT} fullRegion
+//	 * {Mapping CLIENT} identityMapping
+//	 */
+//	public static void info() {
+//		/*
+//		udanax-top.st:14494:CoordinateSpace class methodsFor: 'smalltalk: system'!
+//		info.stProtocol
+//		"{OrderSpec CLIENT} ascending
+//		{Mapping CLIENT} completeMapping: range {XuRegion}
+//		{OrderSpec CLIENT} descending
+//		{XuRegion CLIENT} emptyRegion
+//		{XuRegion CLIENT} fullRegion
+//		{Mapping CLIENT} identityMapping
+//		"!
+//		*/
+//	}
 }

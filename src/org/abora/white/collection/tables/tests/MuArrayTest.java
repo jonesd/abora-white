@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 import org.abora.white.collection.steppers.TableAccumulator;
 import org.abora.white.collection.tables.MuArray;
 import org.abora.white.collection.tables.ScruTable;
+import org.abora.white.spaces.basic.Dsp;
 import org.abora.white.spaces.integers.IntegerMapping;
 import org.abora.white.value.IntegerValue;
 
@@ -101,5 +102,19 @@ public class MuArrayTest extends TestCase {
 //		assertEquals(IntegerValue.make(2), subtable.count());
 //		assertEquals(IntegerValue.make(98), subtable.intGet(IntegerValue.zero()));
 //		assertEquals(IntegerValue.make(97), subtable.intGet(IntegerValue.one()));		
+//	}
+
+//	public void testTransformedBy() {
+//		// Identity
+//		MuArray array = MuArray.array(IntegerValue.make(99), IntegerValue.make(98), IntegerValue.make(97), IntegerValue.make(96));
+//		Dsp dsp = IntegerMapping.make();
+//		ScruTable table = array.transformedBy(dsp);
+//		assertSame(array, table);
+//		
+//		// Simple
+//		dsp = IntegerMapping.make(IntegerValue.one());
+//		table = array.transformedBy(dsp);
+//		assertEquals(IntegerValue.make(98), table.intGet(IntegerValue.zero()));
+//		
 //	}
 }

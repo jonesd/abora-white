@@ -21,6 +21,7 @@ import org.abora.white.xpp.basic.Heaper;
  * It would be possible to define them with reference to a Dsp in the baseSpace, as
  * filterDsp->of(filter)->match(R) iff filter->match(filterDsp->baseDsp()->inverseOf(R))
  * for all R in the base space.
+ * <p>
  * However, we have not yet found a use for them.
  */
 public class FilterDsp extends IdentityDsp {

@@ -25,10 +25,12 @@ import org.abora.white.xpp.basic.Heaper;
  * mapping functionality for their coordinate spaces.  This provides everything except the
  * coordinate space itself (which must be provided by the subclass).  Will eventually be
  * declared NOT_A_TYPE, so don''t use it in type declarations.
+ * <p>
  * Assumes that if a given space uses it as its identity Dsp, then the one cached instance
  * will be the only identity Dsp for that space.  I.e., I do equality comparison as an EQ
  * object.  If this assumpsion isn''t true, please override isEqual and hashForEqual.  See
  * PathDsp.
+ * <p>
  * IdentityDsp is in module "unorder" because typically unordered spaces will only have an
  * identity Dsp and so want to subclass this class.  Non-unordered spaces should also feel
  * free to use this as appropriate.

@@ -95,8 +95,7 @@ public class IntegerSpace extends CoordinateSpace {
 	 * true) to start.
 	 */
 	public IntegerRegion above(IntegerPos start, boolean inclusive) {
-		IntegerValue after;
-		after = start.asIntegerVar();
+		IntegerValue after = start.asIntegerVar();
 		if (!inclusive) {
 			after = after.plus(IntegerValue.one());
 		}
@@ -117,8 +116,7 @@ public class IntegerSpace extends CoordinateSpace {
 	 * stop.
 	 */
 	public IntegerRegion below(IntegerPos stop, boolean inclusive) {
-		IntegerValue after;
-		after = stop.asIntegerVar();
+		IntegerValue after = stop.asIntegerVar();
 		if (inclusive) {
 			after = after.plus(IntegerValue.one());
 		}
@@ -285,23 +283,23 @@ public class IntegerSpace extends CoordinateSpace {
 	//		*/
 	//	}
 
-	/**
-	 * {IntegerRegion CLIENT} above: start {IntegerVar} with: inclusive {BooleanVar}
-	 * {IntegerRegion CLIENT} below: start {IntegerVar} with: inclusive {BooleanVar}
-	 * {IntegerRegion CLIENT} interval: start {IntegerVar} with: stop {IntegerVar}
-	 * {XuInteger CLIENT} position: value {IntegerVar}
-	 * {IntegerMapping CLIENT} translation: value {IntegerVar}
-	 */
-	public static void info() {
-		/*
-		udanax-top.st:15492:IntegerSpace class methodsFor: 'smalltalk: system'!
-		info.stProtocol
-		"{IntegerRegion CLIENT} above: start {IntegerVar} with: inclusive {BooleanVar}
-		{IntegerRegion CLIENT} below: start {IntegerVar} with: inclusive {BooleanVar}
-		{IntegerRegion CLIENT} interval: start {IntegerVar} with: stop {IntegerVar}
-		{XuInteger CLIENT} position: value {IntegerVar}
-		{IntegerMapping CLIENT} translation: value {IntegerVar}
-		"!
-		*/
-	}
+//	/**
+//	 * {IntegerRegion CLIENT} above: start {IntegerVar} with: inclusive {BooleanVar}
+//	 * {IntegerRegion CLIENT} below: start {IntegerVar} with: inclusive {BooleanVar}
+//	 * {IntegerRegion CLIENT} interval: start {IntegerVar} with: stop {IntegerVar}
+//	 * {XuInteger CLIENT} position: value {IntegerVar}
+//	 * {IntegerMapping CLIENT} translation: value {IntegerVar}
+//	 */
+//	public static void info() {
+//		/*
+//		udanax-top.st:15492:IntegerSpace class methodsFor: 'smalltalk: system'!
+//		info.stProtocol
+//		"{IntegerRegion CLIENT} above: start {IntegerVar} with: inclusive {BooleanVar}
+//		{IntegerRegion CLIENT} below: start {IntegerVar} with: inclusive {BooleanVar}
+//		{IntegerRegion CLIENT} interval: start {IntegerVar} with: stop {IntegerVar}
+//		{XuInteger CLIENT} position: value {IntegerVar}
+//		{IntegerMapping CLIENT} translation: value {IntegerVar}
+//		"!
+//		*/
+//	}
 }

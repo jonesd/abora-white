@@ -10,7 +10,6 @@
  */
 package org.abora.white.spaces.basic;
 
-import org.abora.white.collection.arrays.PrimArray;
 import org.abora.white.collection.sets.ImmuSet;
 import org.abora.white.collection.sets.MuSet;
 import org.abora.white.collection.sets.ScruSet;
@@ -27,7 +26,8 @@ import org.abora.white.xpp.basic.Heaper;
  * It will generally not be the case (for a given coordinate space) that all mathematically
  * describable sets of positions will be representable by an XuRegion in that space.  This
  * should not be seen as a temporary deficiency of the current implementation of a space, but
- * rather part of the design of what a given space *means*.
+ * rather part of the design of what a given space <b>means</b>.
+ * <p>
  * For example, in IntegerSpace, one cannot form the XuRegion whose members are exactly the
  * even numbers.  If this were possible, other desirable properties which are part of the
  * intent of IntegerSpaces would no longer be possible.  For example, any XuRegion should be
@@ -36,50 +36,64 @@ import org.abora.white.xpp.basic.Heaper;
  * the definition of "simple" in this space.  If you want (for example) to be able to have a
  * XuRegion which can represent all the even numbers, it probably makes more sense to define
  * a whole new space in which these new XuRegions apply.
+ * <p>
  * XuRegions should be closed under a large set of operations, such as intersection,
  * unionWith, complement and minus.  ("closed" means that the result of performing this
  * operation on XuRegions of a given space is another valid XuRegion in the same space.)
  * Additional guarantees are documented with each operation.
+ * <p>
  * A XuRegion may be classified at one of three levels of "simplicity":
- * 1) The simplest are the *distinctions*.  Distinctions are those that answer with (at most)
- * a single set containing themselves in response to the message "distinctions".  (The reason
+ * <ul>
+ * <li>
+ * 1) The simplest are the <b>distinctions</b>.  Distinctions are those that answer with (at most)
+ * a single set containing themselves in response to the message "<code>distinctions</code>".  (The reason
  * I say "at most" is that a full region (one that covers the entire coordinate space) may
  * answer with the empty set.)  Distinctions are the simplest XuRegions of a given space out
  * of which all other XuRegions of that space can be finitely composed.  There should
- * probably be a message "isDistinction" for which exactly the distinctions answer "true".
+ * probably be a message "<code>isDistinction</code>" for which exactly the distinctions answer "true".
  * The complement of a distinction is a distinction.  Three examples of distinctions in
  * spaces are:
- * a) in IntegerSpace, any simple inequality.  For example, all integers < 37.
- * b) in one kind of 3-space, any half space (all the space on one side of some plane)
- * c) in another kind of 3-space, any sphere or spherical hole.
+ * <ul>
+ * <li>a) in IntegerSpace, any simple inequality.  For example, all integers &lt; 37.</li>
+ * <li>b) in one kind of 3-space, any half space (all the space on one side of some plane)</li>
+ * <li>c) in another kind of 3-space, any sphere or spherical hole.</li>
+ * </ul>
  * Note that "c" could not just have spheres as the distinction because distinctions must be
  * closed under complement.  (We are here ignoring the quite substantial problems that arise
  * in dealing with approximate (e.g., floating point) which would almost necessarily have to
  * arise in doing any decent 3-space.  3-space is nevertheless a good intuition pump.)
- * 2) Next are the *simple regions*.  Simple regions are exactly those that say "true" to
- * "isSimple".  All distinctions are also simple regions.  In response to the message
- * "distinctions", and simple region must return a finite set of distinctions which, when
+ * </li>
+ * <li>
+ * 2) Next are the <b>simple regions</b>.  Simple regions are exactly those that say "<code>true</code>" to
+ * "<code>isSimple</code>".  All distinctions are also simple regions.  In response to the message
+ * "<code>distinctions</code>", and simple region must return a finite set of distinctions which, when
  * intersected together, yield the original simple region.  Generally, one tries to define
  * the simple regions for a space to correspond to some notion of locality in the space.  For
  * example, it may be good for a simple region not to be able to have a hole in it.  Or
  * perhaps a simple region is which must be connected (whatever that means in a given space).
  * Example non-distinction simple regions for the above example spaces would be:
- * a) The interval from 3 inclusive to 17 exclusive (intersection of all integers >= 3 and
- * all < 17)
- * b) A convex hull (intersection of half spaces)
- * c) Whatever you get by intersecting a bunch of spheres and sherical holes.
+ * <ul>
+ * <li>a) The interval from 3 inclusive to 17 exclusive (intersection of all integers &gt;= 3 and
+ * all &lt; 17)</li>
+ * <li>b) A convex hull (intersection of half spaces)</li>
+ * <li>c) Whatever you get by intersecting a bunch of spheres and sherical holes.</li>
+ * </ul>
  * The simple regions for both "a" and "b" would be connected, without holes, and even
  * convex.  This follows directly from the definition of our distinctions.  None of these
  * nice properties holds for "c", and this also follows directly from our decision to start
  * with spheres.  "c" is still perfectly valid, just less preferable by some criteria.
+ * </li>
+ * <li>
  * 3) Finally, there are the regions of a space in general.  Any region must respond to the
- * message "simpleRegions" with a stepper which will produce a finite number of simple
+ * message "<code>simpleRegions</code>" with a stepper which will produce a finite number of simple
  * regions that, when unioned together, yields the original region.  A simple region will
  * return a stepper that will return at most itself ("at most" because an empty region (which
  * covers no positions) may return an empty stepper).  Example non-simple regions are:
- * a) all integers < 3 and all integers >= 17
- * b) two convex hulls
- * c) two disjoint spheres
+ * <ul>
+ * <li>a) all integers < 3 and all integers >= 17</li>
+ * <li>b) two convex hulls</li>
+ * <li>c) two disjoint spheres</li>
+ * </ul>
  * Note that "a" is the complement of the earlier "a" example, thereby showing why the
  * complement of a simple region isn`t necessarily simple.  Even though the "c" space is so
  * unconstrained in the properties of its simple regions, there is no way to interect a
@@ -90,6 +104,8 @@ import org.abora.white.xpp.basic.Heaper;
  * regions) there is no conversion at all between their respective regions.  The kinds of
  * sets of positions representable in one space is completely different than those
  * representable in the other space.
+ * </li>
+ * </ul>
  * We will use these three example spaces repeatedly in documenting the protocol.
  */
 public abstract class XnRegion extends Heaper {
@@ -170,6 +186,28 @@ public abstract class XnRegion extends Heaper {
 	}
 
 	/////////////////////////////////////////////
+	// Static Factory Methods
+
+	/**
+	 * Make a set containing all the positions in the region
+	 */
+	public static ImmuSet immuSet(XnRegion region) {
+		if (!region.isFinite()) {
+			throw new AboraRuntimeException(AboraRuntimeException.MUST_BE_FINITE);
+		}
+		return (MuSet.fromStepper(region.stepper())).asImmuSet();
+		/*
+		udanax-top.st:65482:XnRegion class methodsFor: 'pseudo constructors'!
+		{ImmuSet} immuSet.make: region {XnRegion}
+			"Make a set containing all the positions in the region"
+			
+			region isFinite ifFalse:
+				[Heaper BLAST: #MustBeFinite].
+			^(MuSet fromStepper: region stepper) asImmuSet!
+		*/
+	}
+
+	/////////////////////////////////////////////
 	// Accessing
 
 	/**
@@ -213,6 +251,9 @@ public abstract class XnRegion extends Heaper {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Operations
+
 	/**
 	 * Essential.  Return a region of containing exactly those positions not in this region. The
 	 * complement of a distinction must be a distinction.
@@ -227,7 +268,7 @@ public abstract class XnRegion extends Heaper {
 
 	/**
 	 * The region where they differ.
-	 * a->delta(b) ->isEqual (a->minus(b)->unionWith(b->minus(a)))
+	 * <code>a->delta(b) ->isEqual (a->minus(b)->unionWith(b->minus(a)))</code>
 	 */
 	public XnRegion delta(XnRegion region) {
 		return (minus(region)).unionWith((region.minus(this)));
@@ -278,8 +319,8 @@ public abstract class XnRegion extends Heaper {
 	 * The result must contain all positions contained by either of the two
 	 * original regions, and the result must be simple. However, the result
 	 * may contain additional positions. See the comment on
-	 * 'XuRegion::asSimpleRegion'.  a->simpleUnion(b) satisfies the same specification
-	 * as (a->unionWith(b))->asSimpleRegion(). However, the two results do
+	 * 'XuRegion::asSimpleRegion'.  <code>a->simpleUnion(b)</code> satisfies the same specification
+	 * as <code>(a->unionWith(b))->asSimpleRegion()</code>. However, the two results do
 	 * not have to be the same region.
 	 */
 	public abstract XnRegion simpleUnion(XnRegion other);
@@ -339,6 +380,9 @@ public abstract class XnRegion extends Heaper {
 			^self minus: pos asRegion!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		//TODOreturn Heaper.takeOop();
@@ -488,6 +532,9 @@ public abstract class XnRegion extends Heaper {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Defaults
+
 	public XnRegion chooseMany(IntegerValue n) {
 		return chooseMany(n, null);
 		/*
@@ -566,6 +613,9 @@ public abstract class XnRegion extends Heaper {
 			^self stepper: NULL!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Enumerating
 
 	/**
 	 * If an OrderSpec is given, return the first n elements according to that OrderSpec. If no
@@ -853,66 +903,47 @@ public abstract class XnRegion extends Heaper {
 		self subclassResponsibility!
 	*/
 
-	/**
-	 * Make a set containing all the positions in the region
-	 */
-	public static ImmuSet immuSet(XnRegion region) {
-		if (!region.isFinite()) {
-			throw new AboraRuntimeException(AboraRuntimeException.MUST_BE_FINITE);
-		}
-		return (MuSet.fromStepper(region.stepper())).asImmuSet();
-		/*
-		udanax-top.st:65482:XnRegion class methodsFor: 'pseudo constructors'!
-		{ImmuSet} immuSet.make: region {XnRegion}
-			"Make a set containing all the positions in the region"
-			
-			region isFinite ifFalse:
-				[Heaper BLAST: #MustBeFinite].
-			^(MuSet fromStepper: region stepper) asImmuSet!
-		*/
-	}
-
-	/**
-	 * {Position CLIENT} chooseOne: order {OrderSpec default: NULL}
-	 * {XuRegion CLIENT} complement
-	 * {CoordinateSpace CLIENT} coordinateSpace
-	 * {IntegerVar CLIENT} count
-	 * {BooleanVar CLIENT} hasMember: atPos {Position unused}
-	 * {XuRegion CLIENT} intersect: other {XuRegion unused}
-	 * {BooleanVar CLIENT} intersects: other {XuRegion}
-	 * {BooleanVar CLIENT} isEmpty
-	 * {BooleanVar CLIENT} isFinite
-	 * {BooleanVar CLIENT} isFull
-	 * {BooleanVar CLIENT} isSubsetOf: other {XuRegion}
-	 * {XuRegion CLIENT} minus: other {XuRegion}
-	 * {Stepper CLIENT of: Position} stepper: order {OrderSpec default: NULL}
-	 * {Position CLIENT} theOne
-	 * {XuRegion CLIENT} unionWith: other {XuRegion unused}
-	 * {XuRegion CLIENT} with: pos {Position}
-	 * {XuRegion CLIENT} without: pos {Position}
-	 */
-	public static void info() {
-		/*
-		udanax-top.st:65491:XnRegion class methodsFor: 'smalltalk: system'!
-		info.stProtocol
-		"{Position CLIENT} chooseOne: order {OrderSpec default: NULL}
-		{XuRegion CLIENT} complement
-		{CoordinateSpace CLIENT} coordinateSpace
-		{IntegerVar CLIENT} count
-		{BooleanVar CLIENT} hasMember: atPos {Position unused}
-		{XuRegion CLIENT} intersect: other {XuRegion unused}
-		{BooleanVar CLIENT} intersects: other {XuRegion}
-		{BooleanVar CLIENT} isEmpty
-		{BooleanVar CLIENT} isFinite
-		{BooleanVar CLIENT} isFull
-		{BooleanVar CLIENT} isSubsetOf: other {XuRegion}
-		{XuRegion CLIENT} minus: other {XuRegion}
-		{Stepper CLIENT of: Position} stepper: order {OrderSpec default: NULL}
-		{Position CLIENT} theOne
-		{XuRegion CLIENT} unionWith: other {XuRegion unused}
-		{XuRegion CLIENT} with: pos {Position}
-		{XuRegion CLIENT} without: pos {Position}
-		"!
-		*/
-	}
+//	/**
+//	 * {Position CLIENT} chooseOne: order {OrderSpec default: NULL}
+//	 * {XuRegion CLIENT} complement
+//	 * {CoordinateSpace CLIENT} coordinateSpace
+//	 * {IntegerVar CLIENT} count
+//	 * {BooleanVar CLIENT} hasMember: atPos {Position unused}
+//	 * {XuRegion CLIENT} intersect: other {XuRegion unused}
+//	 * {BooleanVar CLIENT} intersects: other {XuRegion}
+//	 * {BooleanVar CLIENT} isEmpty
+//	 * {BooleanVar CLIENT} isFinite
+//	 * {BooleanVar CLIENT} isFull
+//	 * {BooleanVar CLIENT} isSubsetOf: other {XuRegion}
+//	 * {XuRegion CLIENT} minus: other {XuRegion}
+//	 * {Stepper CLIENT of: Position} stepper: order {OrderSpec default: NULL}
+//	 * {Position CLIENT} theOne
+//	 * {XuRegion CLIENT} unionWith: other {XuRegion unused}
+//	 * {XuRegion CLIENT} with: pos {Position}
+//	 * {XuRegion CLIENT} without: pos {Position}
+//	 */
+//	public static void info() {
+//		/*
+//		udanax-top.st:65491:XnRegion class methodsFor: 'smalltalk: system'!
+//		info.stProtocol
+//		"{Position CLIENT} chooseOne: order {OrderSpec default: NULL}
+//		{XuRegion CLIENT} complement
+//		{CoordinateSpace CLIENT} coordinateSpace
+//		{IntegerVar CLIENT} count
+//		{BooleanVar CLIENT} hasMember: atPos {Position unused}
+//		{XuRegion CLIENT} intersect: other {XuRegion unused}
+//		{BooleanVar CLIENT} intersects: other {XuRegion}
+//		{BooleanVar CLIENT} isEmpty
+//		{BooleanVar CLIENT} isFinite
+//		{BooleanVar CLIENT} isFull
+//		{BooleanVar CLIENT} isSubsetOf: other {XuRegion}
+//		{XuRegion CLIENT} minus: other {XuRegion}
+//		{Stepper CLIENT of: Position} stepper: order {OrderSpec default: NULL}
+//		{Position CLIENT} theOne
+//		{XuRegion CLIENT} unionWith: other {XuRegion unused}
+//		{XuRegion CLIENT} with: pos {Position}
+//		{XuRegion CLIENT} without: pos {Position}
+//		"!
+//		*/
+//	}
 }

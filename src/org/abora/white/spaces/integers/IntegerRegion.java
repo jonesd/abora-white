@@ -29,35 +29,45 @@ import org.abora.white.xpp.basic.Heaper;
 
 /**
  * An IntegerRegion can be thought of as the disjoint union of intervals and inequalities.
- * The interesting cases to look at are:
+ * The interesting cases to look at are:<br>
  * The distinctions:
- * 1) The empty region
- * 2) The full region
- * 3) A "left" inequality -- e.g., everything less that 3.
- * 4) A "right" inequality -- e.g., everything greater than or equal to 7
+ * <ul>
+ * <li>1) The empty region</li>
+ * <li>2) The full region</li>
+ * <li>3) A "left" inequality -- e.g., everything less that 3.</li>
+ * <li>4) A "right" inequality -- e.g., everything greater than or equal to 7</li>
+ * </ul>
  * The non-distinction simple regions:
- * 5) An interval -- e.g., from 3 inclusive to 7 exclusive
+ * <ul>
+ * <li>5) An interval -- e.g., from 3 inclusive to 7 exclusive</li>
+ * </ul>
  * The non-simple regions:
- * 6) A disjoint union of (in order) an optional left inequality, a set of
- * intervals, and an optional right inequality.
+ * <ul>
+ * <li>6) A disjoint union of (in order) an optional left inequality, a set of
+ * intervals, and an optional right inequality.</li>
+ * </ul>
  * If a non-empty region has a least element, then it "isBoundedLeft".  Otherwise it extends
  * leftwards indefinitely.  Similarly, if a non-empty region has a greatest element, then it
  * "isBoundedRight".  Otherwise it extends rightwards indefinitely.  (We may figuratively
  * speak of the region extending towards + or - infinity, but we have purposely avoided
  * introducing any value which represents an infinity.)
+ * <p>
  * Looking at cases again:
- * 1) "isBoundedLeft" and "isBoundedRight" since it doesn''t extent
+ * <ul>
+ * <li>1) "isBoundedLeft" and "isBoundedRight" since it doesn''t extent
  * indenfinitely in either direction.  (A danger to watch out for is that
- * this still has niether a greatest nor a least element).
- * 2) niether.
- * 3) "isBoundedRight"
- * 4) "isBoundedLeft"
- * 5) "isBoundedLeft" and "isBoundedRight"
- * 6) "isBoundedLeft" iff doesn''t include a left inequality,
- * "isBoundedRight" iff doesn''t include a right inequality.
+ * this still has niether a greatest nor a least element).</li>
+ * <li>2) niether.</li>
+ * <li>3) "isBoundedRight"</li>
+ * <li>4) "isBoundedLeft"</li>
+ * <li>5) "isBoundedLeft" and "isBoundedRight"</li>
+ * <li>6) "isBoundedLeft" iff doesn''t include a left inequality,<br>
+ * "isBoundedRight" iff doesn''t include a right inequality.</li>
+ * </ul>
  * An efficiency note:  Currently many of the method which could be doing an O(log) binary
  * search (such as hasMember) are instead doing a linear search.  This will be fixed if it
  * turns out to be a problem in practice.
+ * <p>
  * See OrderedRegion.
  */
 public class IntegerRegion extends XnRegion {
@@ -211,7 +221,7 @@ public class IntegerRegion extends XnRegion {
 	/////////////////////////////////////////////
 	// Static Factory Methods
 	
-	public static IntegerRegion usingx(boolean startsInside, int transitionCount, IntegerVarArray transitions) {
+	protected static IntegerRegion usingx(boolean startsInside, int transitionCount, IntegerVarArray transitions) {
 		return new IntegerRegion(startsInside, transitionCount, transitions);
 		/*
 		udanax-top.st:69249:IntegerRegion class methodsFor: 'private: pseudo constructors'!
@@ -247,17 +257,13 @@ public class IntegerRegion extends XnRegion {
 	 * The region containing all position greater than or equal to start
 	 */
 	public static IntegerRegion after(IntegerValue start) {
-		IntegerVarArray table;
-		IntegerRegion tir;
 		if (LastAfterStart == start) {
 			return LastAfterRegion;
 		}
 		LastAfterStart = start;
-		table = IntegerVarArray.make(1);
+		IntegerVarArray table = IntegerVarArray.make(1);
 		table.storeIntegerVar(0, start);
-		/* temp used to get around static member problem in INIT macro - heh 10 January 1992 */
-		tir = new IntegerRegion(false, 1, table);
-		LastAfterRegion = tir;
+		LastAfterRegion = new IntegerRegion(false, 1, table);
 		return LastAfterRegion;
 		/*
 		udanax-top.st:69124:IntegerRegion class methodsFor: 'pseudo constructors'!
@@ -294,17 +300,13 @@ public class IntegerRegion extends XnRegion {
 	 * The region of all integers less than end.  Does not include end.
 	 */
 	public static IntegerRegion before(IntegerValue end) {
-		IntegerVarArray table;
-		IntegerRegion tir;
 		if (LastBeforeEnd == end) {
 			return LastBeforeRegion;
 		}
 		LastBeforeEnd = end;
-		table = IntegerVarArray.make(1);
+		IntegerVarArray table = IntegerVarArray.make(1);
 		table.storeIntegerVar(0, end);
-		/* temp used to get around problem with static members & INIT macro - heh 10 January 1992 */
-		tir = new IntegerRegion(true, 1, table);
-		LastBeforeRegion = tir;
+		LastBeforeRegion = new IntegerRegion(true, 1, table);
 		return LastBeforeRegion;
 		/*
 		udanax-top.st:69143:IntegerRegion class methodsFor: 'pseudo constructors'!
@@ -329,11 +331,11 @@ public class IntegerRegion extends XnRegion {
 	 * stop.
 	 */
 	public static IntegerRegion below(IntegerValue stop, boolean inclusive) {
-		IntegerValue after = stop;
+		IntegerValue before = stop;
 		if (inclusive) {
-			after = after.plus(IntegerValue.one());
+			before = before.plus(IntegerValue.one());
 		}
-		return IntegerRegion.after(after);
+		return IntegerRegion.before(before);
 		/*
 		udanax-top.st:69157:IntegerRegion class methodsFor: 'pseudo constructors'!
 		{IntegerRegion} below: stop {IntegerVar} with: inclusive {BooleanVar}
@@ -403,18 +405,14 @@ public class IntegerRegion extends XnRegion {
 	 * to convert this position to a region.
 	 */
 	public static IntegerRegion make(IntegerValue singleton) {
-		IntegerVarArray table;
-		IntegerRegion tir;
-		if (singleton == LastSingleton) {
+		if (singleton.isEqual(LastSingleton)) {
 			return LastSingletonRegion;
 		}
 		LastSingleton = singleton;
-		table = IntegerVarArray.make(2);
+		IntegerVarArray table = IntegerVarArray.make(2);
 		table.storeIntegerVar(0, singleton);
 		table.storeIntegerVar(1, singleton.plus(IntegerValue.one()));
-		/* temp used to get around problem with static members and INIT macro - heh 10 January 1992 */
-		tir = new IntegerRegion(false, 2, table);
-		LastSingletonRegion = tir;
+		LastSingletonRegion = new IntegerRegion(false, 2, table);
 		return LastSingletonRegion;
 		/*
 		udanax-top.st:69184:IntegerRegion class methodsFor: 'pseudo constructors'!
@@ -437,7 +435,7 @@ public class IntegerRegion extends XnRegion {
 	}
 
 	/**
-	 * The region of all integers which are >= left and < right
+	 * The region of all integers which are &gt;= left and &lt; right
 	 */
 	public static IntegerRegion make(IntegerValue left, IntegerValue right) {
 		if (left.isGE(right)) {
@@ -501,6 +499,7 @@ public class IntegerRegion extends XnRegion {
 
 	/**
 	 * the region before the last element of the set.
+	 * <p>
 	 * What on earth is this for? (Yes, I've looked at senders)
 	 */
 	public XnRegion beforeLast() {
@@ -528,6 +527,7 @@ public class IntegerRegion extends XnRegion {
 	/**
 	 * transform the region into a simple region with left bound 0
 	 * (or -inf if unbounded).
+	 * <p>
 	 * What on earth is this for? (Yes, I've looked at senders)
 	 */
 	public XnRegion compacted() {
@@ -567,6 +567,7 @@ public class IntegerRegion extends XnRegion {
 	/**
 	 * A mapping to transform the region into a simple region with left bound 0 (or -inf if
 	 * unbounded). The domain of the mapping is precisely this region.
+	 * <p>
 	 * This is primarily used in XuText Waldos, which only deal with contiguous zero-based
 	 * regions of data.
 	 */
@@ -648,7 +649,7 @@ public class IntegerRegion extends XnRegion {
 	/**
 	 * True if this is either empty or a simple region with lower bound of either 0 or -infinity.
 	 * Equivalent to
-	 * this->compacted()->isEqual (this)
+	 * <code>this->compacted()->isEqual (this)</code>
 	 */
 	public boolean isCompacted() {
 		if (myStartsInside) {
@@ -875,9 +876,8 @@ public class IntegerRegion extends XnRegion {
 	 * Unboxed version.  See class comment for XuInteger
 	 */
 	public boolean hasIntMember(IntegerValue key) {
-		IntegerEdgeStepper edges;
 		boolean result;
-		edges = edgeStepper();
+		IntegerEdgeStepper edges = edgeStepper();
 		while (edges.hasValue()) {
 			if (key.isLT(edges.edge())) {
 				result = !edges.isEntering();
@@ -1192,7 +1192,7 @@ public class IntegerRegion extends XnRegion {
 	}
 
 	public boolean isFinite() {
-		return isBoundedBelow() && (isBoundedAbove());
+		return isBoundedBelow() && isBoundedAbove();
 		/*
 		udanax-top.st:68782:IntegerRegion methodsFor: 'testing'!
 		{BooleanVar} isFinite
@@ -1234,11 +1234,9 @@ public class IntegerRegion extends XnRegion {
 		if (other.isEmpty()) {
 			return isEmpty();
 		} else {
-			IntegerEdgeStepper mine;
-			IntegerEdgeStepper others;
 			boolean result;
-			mine = edgeStepper();
-			others = ((IntegerRegion) other).edgeStepper();
+			IntegerEdgeStepper mine = edgeStepper();
+			IntegerEdgeStepper others = ((IntegerRegion) other).edgeStepper();
 			if (!(mine.hasValue() || (others.hasValue()))) {
 				result = mine.isEntering() || (!others.isEntering());
 				mine.destroy();

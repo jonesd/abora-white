@@ -17,6 +17,7 @@ public class AllTests {
 		//$JUnit-BEGIN$
 		suite.addTest(new TestSuite(AscendingIntegerStepperTest.class));
 		suite.addTest(new TestSuite(IntegerRegionTest.class));
+		suite.addTest(new TestSuite(IntegerMappingTest.class));
 		//$JUnit-END$
 		return suite;
 	}

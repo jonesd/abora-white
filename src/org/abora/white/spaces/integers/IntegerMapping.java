@@ -26,6 +26,7 @@ import org.abora.white.xpp.basic.Heaper;
 /**
  * Transforms integers by adding a (possibly negative) offset.  In addition to the Dsp
  * protocol, an IntegerDsp will respond to "translation" with the offset that it is adding.
+ * <p>
  * Old documentation indicated a possibility of a future upgrade of IntegerDsp which would
  * also optionally reflect (or negate) its input in addition to offsetting.  This would
  * however be a non-upwards compatable change in that current clients already assume that the
@@ -34,8 +35,8 @@ import org.abora.white.xpp.basic.Heaper;
  * contract.  Then compatability problems can be caught by the type checker.
  */
 public class IntegerMapping extends Dsp {
-	protected IntegerValue myTranslation;
-	protected static IntegerMapping TheIdentityIntegerMapping = new IntegerMapping(IntegerValue.zero());
+	protected final IntegerValue myTranslation;
+	protected final static IntegerMapping TheIdentityIntegerMapping = new IntegerMapping(IntegerValue.zero());
 	/*
 	udanax-top.st:29764:
 	Dsp subclass: #IntegerMapping
@@ -75,10 +76,13 @@ public class IntegerMapping extends Dsp {
 		attributes: ((Set new) add: #PSEUDO.COPY; add: #CONCRETE; add: #ON.CLIENT; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+
 	/**
 	 * Initialize instance variables
 	 */
-	public IntegerMapping(IntegerValue translation) {
+	protected IntegerMapping(IntegerValue translation) {
 		super();
 		myTranslation = translation;
 		/*
@@ -89,6 +93,71 @@ public class IntegerMapping extends Dsp {
 			myTranslation _ translation.!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+
+	public static IntegerMapping make() {
+		return (IntegerMapping) IntegerSpace.make().identityDsp();
+		/*
+		udanax-top.st:29951:IntegerMapping class methodsFor: 'pseudo constructors'!
+		make
+			^IntegerSpace make identityDsp cast: IntegerMapping!
+		*/
+	}
+
+	public static Heaper make(Rcvr rcvr) {
+		Heaper result;
+		IntegerValue translate = rcvr.receiveIntegerVar();
+		if (translate == IntegerValue.zero()) {
+			result = TheIdentityIntegerMapping;
+		} else {
+			result = new IntegerMapping(translate);
+		}
+		((SpecialistRcvr) rcvr).registerIbid(result);
+		return result;
+		/*
+		udanax-top.st:29955:IntegerMapping class methodsFor: 'pseudo constructors'!
+		{Heaper} make.Rcvr: rcvr {Rcvr}
+			| translate {IntegerVar} result {Heaper} |
+			translate _ rcvr receiveIntegerVar.
+			translate == IntegerVarZero
+				ifTrue: [result _ TheIdentityIntegerMapping]
+				ifFalse: [result _ self create: translate].
+			(rcvr cast: SpecialistRcvr) registerIbid: result.
+			^result!
+		*/
+	}
+
+	public static IntegerMapping make(IntegerValue translate) {
+		if (translate.isEqual(IntegerValue.zero())) {
+			return make();
+		} else {
+			return new IntegerMapping(translate);
+		}
+		/*
+		udanax-top.st:29964:IntegerMapping class methodsFor: 'pseudo constructors'!
+		make: translate {IntegerVar}
+			translate == IntegerVar0
+				ifTrue: [^self make]
+				ifFalse: [^self create: translate]!
+		*/
+	}
+
+	public static Dsp identity() {
+		//TODO why doesn't this return TheIdentityIntegerMapping?
+		//return new IntegerMapping(IntegerValue.zero());
+		return TheIdentityIntegerMapping;
+		/*
+		udanax-top.st:29972:IntegerMapping class methodsFor: 'private: for create'!
+		{Dsp} identity
+			^self create: IntegerVarZero!
+		*/
+	}
+
+
+	/////////////////////////////////////////////
+	// Printing
 
 	public void printOn(PrintWriter oo) {
 		oo.print(getClass().getName());
@@ -102,9 +171,12 @@ public class IntegerMapping extends Dsp {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Transforming
+
 	public Position inverseOf(Position pos) {
-		if (pos != null) {
-			throw new IllegalStateException();
+		if (pos == null) {
+			throw new IllegalArgumentException();
 		}
 		/* shouldn't be necessary, but the old code used to check for NULL 
 			so I want to make sure I haven't broken anything */
@@ -126,23 +198,19 @@ public class IntegerMapping extends Dsp {
 	}
 
 	public XnRegion inverseOfAll(XnRegion reg) {
-		IntegerRegion region;
-		IntegerEdgeAccumulator result;
-		IntegerEdgeStepper edges;
-		XnRegion resultReg;
 		if (this == TheIdentityIntegerMapping) {
 			return reg;
 		} else {
-			region = (IntegerRegion) reg;
+			IntegerRegion region = (IntegerRegion) reg;
 			/* Transform an interval by transforming the endpoints */
-			result = IntegerEdgeAccumulator.make(!region.isBoundedBelow(), region.transitionCount());
-			edges = region.edgeStepper();
+			IntegerEdgeAccumulator result = IntegerEdgeAccumulator.make(!region.isBoundedBelow(), region.transitionCount());
+			IntegerEdgeStepper edges = region.edgeStepper();
 			while (edges.hasValue()) {
 				result.edge((inverseOfInt(edges.edge())));
 				edges.step();
 			}
 			edges.destroy();
-			resultReg = result.region();
+			XnRegion resultReg = result.region();
 			result.destroy();
 			return resultReg;
 		}
@@ -181,8 +249,8 @@ public class IntegerMapping extends Dsp {
 	}
 
 	public Position of(Position pos) {
-		if (pos != null) {
-			throw new IllegalStateException();
+		if (pos == null) {
+			throw new IllegalArgumentException();
 		}
 		/* shouldn't be necessary, but the old code used to check for NULL 
 			so I want to make sure I haven't broken anything */
@@ -205,23 +273,19 @@ public class IntegerMapping extends Dsp {
 	}
 
 	public XnRegion ofAll(XnRegion reg) {
-		IntegerRegion region;
-		IntegerEdgeAccumulator result;
-		IntegerEdgeStepper edges;
-		XnRegion resultReg;
 		if (this == TheIdentityIntegerMapping) {
 			return reg;
 		} else {
-			region = (IntegerRegion) reg;
+			IntegerRegion region = (IntegerRegion) reg;
 			/* Transform an interval by transforming the endpoints */
-			result = IntegerEdgeAccumulator.make(!region.isBoundedBelow(), region.transitionCount());
-			edges = region.edgeStepper();
+			IntegerEdgeAccumulator result = IntegerEdgeAccumulator.make(!region.isBoundedBelow(), region.transitionCount());
+			IntegerEdgeStepper edges = region.edgeStepper();
 			while (edges.hasValue()) {
 				result.edge((ofInt(edges.edge())));
 				edges.step();
 			}
 			edges.destroy();
-			resultReg = result.region();
+			XnRegion resultReg = result.region();
 			result.destroy();
 			return resultReg;
 		}
@@ -265,6 +329,9 @@ public class IntegerMapping extends Dsp {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Accessing
+
 	public CoordinateSpace coordinateSpace() {
 		return IntegerSpace.make();
 		/*
@@ -299,6 +366,9 @@ public class IntegerMapping extends Dsp {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Testing
+
 	public int actualHashForEqual() {
 		return myTranslation.asInt32() + getClass().hashCode();
 		/*
@@ -314,7 +384,7 @@ public class IntegerMapping extends Dsp {
 	public boolean isEqual(Heaper other) {
 		if (other instanceof IntegerMapping) {
 			IntegerMapping iDsp = (IntegerMapping) other;
-			return iDsp.translation() == myTranslation;
+			return iDsp.translation().isEqual(myTranslation);
 		} else {
 			return false;
 		}
@@ -329,6 +399,9 @@ public class IntegerMapping extends Dsp {
 			^ false "compiler fodder"!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Combining
 
 	public Dsp compose(Dsp other) {
 		if (this == TheIdentityIntegerMapping) {
@@ -392,6 +465,8 @@ public class IntegerMapping extends Dsp {
 		*/
 	}
 
+	/////////////////////////////////////////////
+
 	public void sendIntegerMapping(Xmtr xmtr) {
 		xmtr.sendIntegerVar(myTranslation);
 		/*
@@ -429,72 +504,15 @@ public class IntegerMapping extends Dsp {
 	//		*/
 	//	}
 
-	public static IntegerMapping make() {
-		return (IntegerMapping) IntegerSpace.make().identityDsp();
-		/*
-		udanax-top.st:29951:IntegerMapping class methodsFor: 'pseudo constructors'!
-		make
-			^IntegerSpace make identityDsp cast: IntegerMapping!
-		*/
-	}
-
-	public static Heaper make(Rcvr rcvr) {
-		IntegerValue translate;
-		Heaper result;
-		translate = rcvr.receiveIntegerVar();
-		if (translate == IntegerValue.zero()) {
-			result = TheIdentityIntegerMapping;
-		} else {
-			result = new IntegerMapping(translate);
-		}
-		((SpecialistRcvr) rcvr).registerIbid(result);
-		return result;
-		/*
-		udanax-top.st:29955:IntegerMapping class methodsFor: 'pseudo constructors'!
-		{Heaper} make.Rcvr: rcvr {Rcvr}
-			| translate {IntegerVar} result {Heaper} |
-			translate _ rcvr receiveIntegerVar.
-			translate == IntegerVarZero
-				ifTrue: [result _ TheIdentityIntegerMapping]
-				ifFalse: [result _ self create: translate].
-			(rcvr cast: SpecialistRcvr) registerIbid: result.
-			^result!
-		*/
-	}
-
-	public static IntegerMapping make(IntegerValue translate) {
-		if (translate == IntegerValue.zero()) {
-			return make();
-		} else {
-			return new IntegerMapping(translate);
-		}
-		/*
-		udanax-top.st:29964:IntegerMapping class methodsFor: 'pseudo constructors'!
-		make: translate {IntegerVar}
-			translate == IntegerVar0
-				ifTrue: [^self make]
-				ifFalse: [^self create: translate]!
-		*/
-	}
-
-	public static Dsp identity() {
-		return new IntegerMapping(IntegerValue.zero());
-		/*
-		udanax-top.st:29972:IntegerMapping class methodsFor: 'private: for create'!
-		{Dsp} identity
-			^self create: IntegerVarZero!
-		*/
-	}
-
-	/**
-	 * {IntegerVar CLIENT} translation
-	 */
-	public static void info() {
-		/*
-		udanax-top.st:29978:IntegerMapping class methodsFor: 'smalltalk: system'!
-		info.stProtocol
-		"{IntegerVar CLIENT} translation
-		"!
-		*/
-	}
+//	/**
+//	 * {IntegerVar CLIENT} translation
+//	 */
+//	public static void info() {
+//		/*
+//		udanax-top.st:29978:IntegerMapping class methodsFor: 'smalltalk: system'!
+//		info.stProtocol
+//		"{IntegerVar CLIENT} translation
+//		"!
+//		*/
+//	}
 }

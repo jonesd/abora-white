@@ -59,6 +59,50 @@ public class OffsetScruArray extends ScruTable {
 		attributes: ((Set new) add: #CONCRETE; add: #NOT.A.TYPE; add: #COPY; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+
+	protected OffsetScruArray(MuArray array, Dsp dsp) {
+		super();
+		myArray = array;
+		myDsp = dsp;
+		/*
+		udanax-top.st:50455:OffsetScruArray methodsFor: 'protected: create'!
+		create: array {MuArray} with: dsp {Dsp}
+			super create.
+			myArray _ array.
+			myDsp _ dsp!
+		*/
+	}
+
+	protected OffsetScruArray(Rcvr receiver) {
+		super(receiver);
+		myArray = (MuArray) receiver.receiveHeaper();
+		myDsp = (Dsp) receiver.receiveHeaper();
+		/*
+		udanax-top.st:50506:OffsetScruArray methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			myArray _ receiver receiveHeaper.
+			myDsp _ receiver receiveHeaper.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static OffsetScruArray make(MuArray array, Dsp dsp) {
+		return new OffsetScruArray(array, dsp);
+		/*
+		udanax-top.st:50527:OffsetScruArray class methodsFor: 'create'!
+		{ScruTable} make: array {MuArray} with: dsp {Dsp}
+			^ self create: array with: dsp!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Accessing
+
 	public CoordinateSpace coordinateSpace() {
 		return myArray.coordinateSpace();
 		/*
@@ -145,6 +189,9 @@ public class OffsetScruArray extends ScruTable {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Runs
+
 	public XnRegion runAt(Position key) {
 		return runAtInt(((IntegerPos) key).asIntegerVar());
 		/*
@@ -162,6 +209,9 @@ public class OffsetScruArray extends ScruTable {
 			^myDsp ofAll: (myArray runAtInt: (myDsp inverseOfInt: anIdx))!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		return getClass().hashCode() + myArray.hashForEqual() + myDsp.hashForEqual();
@@ -219,6 +269,9 @@ public class OffsetScruArray extends ScruTable {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Printing
+
 	public void printOn(PrintWriter oo) {
 		oo.print(getClass().getName());
 		oo.print("(");
@@ -233,18 +286,8 @@ public class OffsetScruArray extends ScruTable {
 		*/
 	}
 
-	public OffsetScruArray(MuArray array, Dsp dsp) {
-		super();
-		myArray = array;
-		myDsp = dsp;
-		/*
-		udanax-top.st:50455:OffsetScruArray methodsFor: 'protected: create'!
-		create: array {MuArray} with: dsp {Dsp}
-			super create.
-			myArray _ array.
-			myDsp _ dsp!
-		*/
-	}
+	/////////////////////////////////////////////
+	// Creation
 
 	public ScruTable copy() {
 		return OffsetScruArray.make(((MuArray) myArray.copy()), myDsp);
@@ -272,6 +315,9 @@ public class OffsetScruArray extends ScruTable {
 			^ myArray emptySize: size!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Conversion
 
 	public ImmuTable asImmuTable() {
 		return ImmuTable.offsetImmuTable(myArray.asImmuTable(), myDsp);
@@ -315,6 +361,9 @@ public class OffsetScruArray extends ScruTable {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Enumerating
+
 	public TableStepper stepper(OrderSpec order) {
 		return OffsetArrayStepper.make((myArray.stepper(order)), myDsp);
 		/*
@@ -342,19 +391,6 @@ public class OffsetScruArray extends ScruTable {
 		*/
 	}
 
-	public OffsetScruArray(Rcvr receiver) {
-		super(receiver);
-		myArray = (MuArray) receiver.receiveHeaper();
-		myDsp = (Dsp) receiver.receiveHeaper();
-		/*
-		udanax-top.st:50506:OffsetScruArray methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			myArray _ receiver receiveHeaper.
-			myDsp _ receiver receiveHeaper.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		xmtr.sendHeaper(myArray);
@@ -365,15 +401,6 @@ public class OffsetScruArray extends ScruTable {
 			super sendSelfTo: xmtr.
 			xmtr sendHeaper: myArray.
 			xmtr sendHeaper: myDsp.!
-		*/
-	}
-
-	public static OffsetScruArray make(MuArray array, Dsp dsp) {
-		return new OffsetScruArray(array, dsp);
-		/*
-		udanax-top.st:50527:OffsetScruArray class methodsFor: 'create'!
-		{ScruTable} make: array {MuArray} with: dsp {Dsp}
-			^ self create: array with: dsp!
 		*/
 	}
 }
