@@ -139,4 +139,7 @@
    <classpath refid="clover.classpath"/>
   </java>
 </target>
+
+	<target name="just.clover" depends="with.clover, clean, compile, test, clover.report"/>
+
 </project>
