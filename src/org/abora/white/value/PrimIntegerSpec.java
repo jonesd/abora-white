@@ -10,6 +10,8 @@
  */
 package org.abora.white.value;
 
+import java.math.BigInteger;
+
 import org.abora.white.collection.arrays.Int32Array;
 import org.abora.white.collection.arrays.IntegerVarArray;
 import org.abora.white.collection.arrays.PrimArray;
@@ -21,8 +23,10 @@ import org.abora.white.xpp.basic.Heaper;
 public class PrimIntegerSpec extends PrimSpec {
 	protected int myBitCount;
 	protected boolean amSigned;
-	protected int myMin;
-	protected int myMax;
+	protected IntegerValue myMin;
+	protected IntegerValue myMax;
+	
+	public static final int UNLIMITED_BITS = 0; 
 	/*
 	udanax-top.st:34450:
 	PrimSpec subclass: #PrimIntegerSpec
@@ -54,29 +58,28 @@ public class PrimIntegerSpec extends PrimSpec {
 	//////////////////////////////////////////////
 	// Constructors
 
+	/**
+	 * Construct a new specification for integer values. 
+	 * 
+	 * @param arrayClass the type of <code>PrimArray</code> used to hold values that
+	 * 	meet this specification
+	 * @param bitCount 
+	 * @param isSigned true if values can be negative and positive
+	 */
 	protected PrimIntegerSpec(Class arrayClass, int bitCount, boolean isSigned) {
 		super(arrayClass);
 		myBitCount = bitCount;
 		amSigned = isSigned;
-		if (myBitCount != -1) {
+		if (myBitCount != UNLIMITED_BITS) {
 			if (amSigned) {
-				/* >>> smalltalkOnly */
-				throw new UnsupportedOperationException();
-				//TODO				myMin = (2. raisedTo(myBitCount - 1)).negated();
-				//TODO				myMax = myMin.negated() - 1;
-				/* <<< smalltalkOnly */
-				/* translateOnly "myMin = 1 << (myBitCount - 1);
-							myMax = ~myMin;" */
+				BigInteger bigMin = BigInteger.valueOf(2).pow(myBitCount - 1).negate();
+				BigInteger bigMax = bigMin.negate().subtract(BigInteger.valueOf(1));
+				myMin = IntegerValue.make(bigMin.longValue());
+				myMax = IntegerValue.make(bigMax.longValue());
 			} else {
-				throw new UnsupportedOperationException();
-				//TODO				/* >>> smalltalkOnly */
-				//				myMin = 0;
-				//				myMax = (2. raisedTo(myBitCount)) - 1;
-				//				/* <<< smalltalkOnly */
-				//				/* translateOnly "myMin = Int32Zero;
-				//							/* the shift is done in two steps to avoid five-bit truncation on SPARCs */
-				//				myMax = ~(((~Int32Zero) << (myBitCount - 1)) << 1);
-				//				" */
+				myMin = IntegerValue.zero();
+				BigInteger bigMax = BigInteger.valueOf(2).pow(myBitCount).subtract(BigInteger.valueOf(1));
+				myMax = IntegerValue.make(bigMax.longValue());
 			}
 		}
 		/*
@@ -100,31 +103,61 @@ public class PrimIntegerSpec extends PrimSpec {
 		*/
 	}
 
+
+	//////////////////////////////////////////////
+	// Accessing
+
 	/**
 	 * How many bits, or zero if it is unlimited
 	 */
 	public int bitCount() {
 		return myBitCount;
-		/*
-		udanax-top.st:34463:PrimIntegerSpec methodsFor: 'accessing'!
-		{Int32 INLINE} bitCount
-			"How many bits, or zero if it is unlimited"
-			
-			^myBitCount!
-		*/
 	}
 
 	/**
-	 * A spec whose range of values contains both ranges
+	 * Return true if this specifications values may be negative.
+	 * 
+	 * @return true if this specifications values may be negative.
+	 */
+	public boolean isSigned() {
+		return amSigned;
+	}
+
+	/**
+	 * Return the maximum value that the specification can hold,
+	 * or 0 if unbounded.
+	 * 
+	 * @return maximum value or 0 if unbounded
+	 */
+	IntegerValue maximumValue() {
+		return myMax;
+	}
+
+	/**
+	 * Return the minimum value that the specification can hold,
+	 * or 0 if unbounded..
+	 * 
+	 * @return minimum value or 0 if unbounded
+	 */
+	IntegerValue minimumValue() {
+		return myMin;
+	}
+
+	/**
+	 * Return a specification whose range of values contains the ranges
+	 * of both <code>this</code> and <code>other</code>.
+	 * 
+	 * @param other other range of values to contain
+	 * @param combined specification
 	 */
 	public PrimIntegerSpec combine(PrimIntegerSpec other) {
 		if (this == other) {
 			return this;
 		}
-		if (myBitCount == 0) {
+		if (myBitCount == UNLIMITED_BITS) {
 			return this;
 		}
-		if (other.bitCount() == 0) {
+		if (other.bitCount() == UNLIMITED_BITS) {
 			return other;
 		}
 		if (myBitCount < other.bitCount()) {
@@ -138,7 +171,13 @@ public class PrimIntegerSpec extends PrimSpec {
 		}
 		/* here we get ad hoc since we need to expand to the next larger size */
 		if (myBitCount == 8) {
+			return PrimSpec.int16();
+		}
+		if (myBitCount == 16) {
 			return PrimSpec.int32();
+		}
+		if (myBitCount == 32) {
+			return PrimSpec.int64();
 		}
 		return PrimSpec.integerVar();
 		/*
@@ -158,19 +197,9 @@ public class PrimIntegerSpec extends PrimSpec {
 		*/
 	}
 
-	/**
-	 * Whether it allows negative values
-	 */
-	public boolean isSigned() {
-		return amSigned;
-		/*
-		udanax-top.st:34481:PrimIntegerSpec methodsFor: 'accessing'!
-		{BooleanVar INLINE} isSigned
-			"Whether it allows negative values"
-			
-			^amSigned!
-		*/
-	}
+
+	//////////////////////////////////////////////
+	// Comparing and Hashing
 
 	public int actualHashForEqual() {
 		int signPart;
@@ -193,21 +222,13 @@ public class PrimIntegerSpec extends PrimSpec {
 	}
 
 	/**
-	 * Whether this spec can hold the given value
+	 * Return true if this specification can hold the given <code>value</code>.
+	 * 
+	 * @param value integer value to test against.
+	 * @return true if this specification can hold the given <code>value</code>.
 	 */
 	public boolean canHold(IntegerValue value) {
-		/* >>> smalltalkOnly */
-		throw new UnsupportedOperationException();
-//		return myBitCount == -1 || (value >= myMin && (value <= myMax));
-		/* <<< smalltalkOnly */
-		/* translateOnly "if (myBitCount = -1) {
-				return TRUE;
-			} else if (amSigned) {
-				return value >= myMin && value <= myMax;
-			} else {
-				return (unsigned) value.asLong () >= (unsigned) myMin
-					&& (unsigned) value.asLong () <= (unsigned) myMax;
-			}" */
+		return myBitCount == UNLIMITED_BITS || (value.isGE(myMin) && value.isLE(myMax));
 		/*
 		udanax-top.st:34515:PrimIntegerSpec methodsFor: 'testing'!
 		{BooleanVar} canHold: value {IntegerVar}
@@ -243,6 +264,10 @@ public class PrimIntegerSpec extends PrimSpec {
 			^ false "compiler fodder"!
 		*/
 	}
+
+
+	//////////////////////////////////////////////
+	// Array Factory Methods
 
 	/**
 	 * Make an array initialized to zero values
@@ -280,20 +305,19 @@ public class PrimIntegerSpec extends PrimSpec {
 	 * Make an array with the values at the given address
 	 */
 	public PrimArray arrayFromBuffer(Object buffer) {
-		throw new UnsupportedOperationException();
-//		if (this == PrimSpec.uInt32()) {
-//			return UInt32Array.make((int[])buffer);
-//		}
-//		if (this == PrimSpec.uInt8()) {
-//			return UInt8Array.make((int[])buffer);
-//		}
-//		if (this == PrimSpec.int32()) {
-//			return Int32Array.make((int[])buffer);
-//		}
-//		if (this == PrimSpec.integerVar()) {
-//			return IntegerVarArray.make((IntegerValue[])buffer);
-//		}
-//		throw new IllegalStateException("BadPrimSpec");
+		if (this == PrimSpec.uInt32()) {
+			return UInt32Array.make((int[])buffer);
+		}
+		if (this == PrimSpec.uInt8()) {
+			return UInt8Array.make((int[])buffer);
+		}
+		if (this == PrimSpec.int32()) {
+			return Int32Array.make((int[])buffer);
+		}
+		if (this == PrimSpec.integerVar()) {
+			return IntegerVarArray.make((IntegerValue[])buffer);
+		}
+		throw new IllegalStateException("BadPrimSpec");
 		/*
 		udanax-top.st:34550:PrimIntegerSpec methodsFor: 'making'!
 		{PrimArray} arrayFromBuffer: count {Int32} with: buffer {void star}

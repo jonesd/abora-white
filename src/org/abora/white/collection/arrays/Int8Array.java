@@ -17,18 +17,23 @@ import org.abora.white.value.PrimIntegerSpec;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
-public class Int32Array extends PrimIntArray {
-	private int[] storage;
+/**
+ * Concrete fixed size array that holds elements of the 8-bit signed integral type.
+ * This maps to the Java <code>byte</int> primitive type.
+ */
+
+public class Int8Array extends PrimIntArray {
+	private byte[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors
 
-	protected Int32Array(int count) {
+	protected Int8Array(int count) {
 		super();
-		storage = new int[count];
+		storage = new byte[count];
 	}
 
-	protected Int32Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
+	protected Int8Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		this(size);
 		int n = count;
 		if (count == -1) {
@@ -37,7 +42,7 @@ public class Int32Array extends PrimIntArray {
 		copyElements(destOffset, from, sourceOffset, n);
 	}
 
-	protected Int32Array(int[] buffer) {
+	protected Int8Array(byte[] buffer) {
 		this(buffer.length);
 		System.arraycopy(buffer, 0, storage, 0, buffer.length);
 	}
@@ -45,31 +50,31 @@ public class Int32Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Static Factory Methods
 
-	/** create an Int32Array filled with zeros */
-	public static Int32Array make(int count) {
-		return new Int32Array(count);
+	/** create an Int8Array filled with zeros */
+	public static Int8Array make(int count) {
+		return new Int8Array(count);
 	}
 
 	/** create an Int32Array filled with the indicated data in 'from' */
-	public static Int32Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		return new Int32Array(size, from, sourceOffset, count, destOffset);
+	public static Int8Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
+		return new Int8Array(size, from, sourceOffset, count, destOffset);
 	}
 
-	public static Int32Array make(int size, PrimArray from, int sourceOffset, int count) {
+	public static Int8Array make(int size, PrimArray from, int sourceOffset, int count) {
 		return make(size, from, sourceOffset, count, 0);
 	}
 
-	public static Int32Array make(int size, PrimArray from, int sourceOffset) {
+	public static Int8Array make(int size, PrimArray from, int sourceOffset) {
 		return make(size, from, sourceOffset, -1);
 	}
 
-	public static Int32Array make(int size, PrimArray from) {
+	public static Int8Array make(int size, PrimArray from) {
 		return make(size, from, 0);
 	}
 
-	/** create an Int32Array filled with the data at 'buffer' */
-	public static Int32Array make(int[] buffer) {
-		return new Int32Array(buffer);
+	/** create an Int8Array filled with the data at 'buffer' */
+	public static Int8Array make(byte[] buffer) {
+		return new Int8Array(buffer);
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
@@ -79,16 +84,17 @@ public class Int32Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Accessing
 
-	/** Store a 32 bit signed integer value */
+	/** Store an 8 bit signed integer value */
 	public void storeInt(int index, int value) {
-		storage[index] = value;
+		//TODO probably need to do a hold() check here
+		storage[index] = (byte)value;
 //		INLINE void Int32Array::storeInt (Int32 index, Int32 value){
 //			/* Store a 32 bit signed integer value */
 //			((Int32*)this->storage())[this->rangeCheck (index)] = value;
 //		}
 	}
 
-	/** Get a 32 bit signed actual integer value */
+	/** Get an 8 bit signed actual integer value */
 	public int intAt(int index) {
 		return storage[index];
 	}
@@ -96,7 +102,6 @@ public class Int32Array extends PrimIntArray {
 	public void storeInteger(int index, IntegerValue value) {
 		if (!((PrimIntegerSpec) spec()).canHold(value)) {
 			throw new IllegalArgumentException("ValueOutOfRange");
-			//			BLAST(ValueOutOfRange);
 		}
 		storeInt(index, value.asInt32()); //TODO was asLong() - why?
 		//		void Int32Array::storeInteger (Int32 index, IntegerVar value){
@@ -137,14 +142,14 @@ public class Int32Array extends PrimIntArray {
 	}
 
 	public PrimSpec spec() {
-		return PrimSpec.int32();
+		return PrimSpec.int8();
 	}
 
 	public int bitCount() {
 		/* Return the maximum bit/entry that can be stored in this array.
 		   The number will be negative for signed arrays. */
 
-		return -32;
+		return -8;
 	}
 
 	//////////////////////////////////////////////
@@ -160,7 +165,7 @@ public class Int32Array extends PrimIntArray {
 	 * 			larger than available elements in the receiver
 	 * @param start index of first element in range
 	 */
-	public void copyToBuffer(int[] buffer, int count, int start) {
+	public void copyToBuffer(byte[] buffer, int count, int start) {
 		int n;
 		if (count >= 0) {
 			n = count;
@@ -197,8 +202,8 @@ public class Int32Array extends PrimIntArray {
 	// Comparing and Hashing
 
 	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
-		if (other instanceof Int32Array) {
-			Int32Array o = (Int32Array) other;
+		if (other instanceof Int8Array) {
+			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
 				int cmp = intAt(i + start) - o.intAt(i + otherStart);
 				if (cmp != 0) {
@@ -263,8 +268,8 @@ public class Int32Array extends PrimIntArray {
 	// Arithmetic Operations
 
 	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
-		if (other instanceof Int32Array) {
-			Int32Array o = (Int32Array) other;
+		if (other instanceof Int8Array) {
+			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
 				storeInt(i + start, intAt(i + start) + o.intAt(i + otherStart));
 			}
@@ -292,8 +297,8 @@ public class Int32Array extends PrimIntArray {
 	}
 
 	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
-		if (other instanceof Int32Array) {
-			Int32Array o = (Int32Array) other;
+		if (other instanceof Int8Array) {
+			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
 				storeInt(i + start, intAt(i + start) - o.intAt(i + otherStart));
 			}

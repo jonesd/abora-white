@@ -18,26 +18,28 @@ public class IEEE32Value extends PrimFloatValue {
 
 	private float value;
 
+	//////////////////////////////////////////////
+	// Constructors
+	
 	protected IEEE32Value(float value) {
 		super();
 		this.value = value;
 	}
 
+
+	//////////////////////////////////////////////
+	// Static Factory Method
+
 	public static IEEE32Value make(float f) {
 		return new IEEE32Value(f);
 	}
 
-	/**
-	 * The value as an IEEE 32-bit floating point number
-	 */
+
+	//////////////////////////////////////////////
+	// Conversions
+
 	public float asIEEE32() {
 		return value;
-		/*
-		all.st:36858:PrimIEEE32 methodsFor: 'accessing'!
-		{IEEE32} asIEEE32
-			"The value as an IEEE 32-bit floating point number"
-			^ myValue!
-		*/
 	}
 
 	public double asIEEE64() {

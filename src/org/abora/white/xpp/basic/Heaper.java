@@ -51,7 +51,7 @@ public abstract class Heaper {
 	 * Defined by subclasses to produce the value returned by hashForEqual.
 	 */
 	protected int actualHashForEqual() {
-		throw new UnsupportedOperationException();
+		return System.identityHashCode(this);
 	}
 
 
@@ -82,7 +82,7 @@ public abstract class Heaper {
 	}
 
 	public String toString() {
-		//TODO performance concerns over the choice of PrintStream
+		//TODO performance concerns over the choice of PrintWriter
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); 
 		PrintWriter printWriter = new PrintWriter(outputStream);
 		printOn(printWriter);

@@ -11,29 +11,37 @@
 package org.abora.white.collection.arrays;
 
 import org.abora.white.value.PrimSpec;
+import org.abora.white.xpp.basic.Heaper;
 
 public class SharedPtrArray extends PtrArray {
+	private int myShareCount = 0;
 
-	private int myShareCount;
+	//////////////////////////////////////////////
+	// Constructors
+
+	protected SharedPtrArray(int count) {
+		super(count);
+	}
 
 	protected SharedPtrArray(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		super(size, from, sourceOffset, count, destOffset);
-		throw new UnsupportedOperationException();
 	}
 
-	protected SharedPtrArray(int count, int[] buffer) {
-		super(count, buffer);
-		throw new UnsupportedOperationException();
+	protected SharedPtrArray(Heaper[] buffer) {
+		super(buffer);
 	}
+
+	//////////////////////////////////////////////
+	// Static Factory Methods
 
 	/** create a PtrArray filled with NULLs */
 	public static SharedPtrArray make(int count) {
-		throw new UnsupportedOperationException();
+		return new SharedPtrArray(count);
 	}
 
 	/** create a SharedPtrArray filled with the indicated data in 'from' */
 	public static PtrArray make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		return new SharedPtrArray(size, from, sourceOffset, count, destOffset);
 	}
 
 	public static PtrArray make(int size, PrimArray from, int sourceOffset, int count) {
@@ -49,28 +57,38 @@ public class SharedPtrArray extends PtrArray {
 	}
 
 	/** create a PtrArray filled with the data from 'buffer' */
-	public static PtrArray make(int count, int[] buffer) {
-		throw new UnsupportedOperationException();
+	public static PtrArray make(Heaper[] buffer) {
+		return new SharedPtrArray(buffer);
 	}
+
+	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
+		return make(size, (PtrArray) source, sourceOffset, count, destOffset);
+	}
+
+	//////////////////////////////////////////////
+	// Accessing
 
 	public PrimSpec spec() {
 		return PrimSpec.sharedPointer();
 	}
 
 	public int shareCount() {
-		throw new UnsupportedOperationException();
+		return myShareCount;
+		//		INLINE Int4 SharedPtrArray::shareCount () {
+		//			return myShareCount;
 	}
 
 	public void shareLess() {
-		throw new UnsupportedOperationException();
+		myShareCount -= 1;
+		//		void SharedPtrArray::shareLess () {
+		//			myShareCount -= 1;
+		//		}
 	}
 
 	public void shareMore() {
-		throw new UnsupportedOperationException();
-	}
-
-
-	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		myShareCount += 1;
+		//		void SharedPtrArray::shareMore () {
+		//			myShareCount += 1;
+		//		}
 	}
 }

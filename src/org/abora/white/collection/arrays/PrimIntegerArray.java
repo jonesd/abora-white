@@ -439,6 +439,10 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		//		}
 	}
 
+
+	//////////////////////////////////////////////
+	// Arithmetic Operations
+
 	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof PrimIntegerArray) {
 			PrimIntegerArray o = (PrimIntegerArray) other;

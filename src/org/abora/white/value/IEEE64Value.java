@@ -16,15 +16,26 @@ package org.abora.white.value;
 public class IEEE64Value extends PrimFloatValue {
 	private double value;
 	
+	//////////////////////////////////////////////
+	// Constructors
+	
 	protected IEEE64Value(double value) {
 		super();
 		this.value = value;
 	}
 
+
+	//////////////////////////////////////////////
+	// Static Factory Methods
+
 	public static IEEE64Value make(double value) {
 		return new IEEE64Value(value);
 	}
 
+
+	//////////////////////////////////////////////
+	// Conversions
+	
 	public float asIEEE32() {
 		return (float)value;
 	}
@@ -32,5 +43,4 @@ public class IEEE64Value extends PrimFloatValue {
 	public double asIEEE64() {
 		return value;
 	}
-
 }

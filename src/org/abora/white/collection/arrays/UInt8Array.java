@@ -10,7 +10,7 @@
  */
 package org.abora.white.collection.arrays;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimSpec;
@@ -20,19 +20,33 @@ public class UInt8Array extends PrimIntArray {
 	//TODO isnt a java byte actually Int8?
 	private byte[] storage;
 
-	//	protected UInt8Array (Int32 count, TCSJ);
+
+	//////////////////////////////////////////////
+	// Constructors
+	
+	protected UInt8Array(int count) {
+		super();
+		storage = new byte[count];
+	}
 
 	protected UInt8Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
 	}
 
-	protected UInt8Array(int count, int[] buffer) {
+	protected UInt8Array(int[] buffer) {
 		throw new UnsupportedOperationException();
 	}
 
+	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
+		throw new UnsupportedOperationException();
+	}
+
+	//////////////////////////////////////////////
+	// Static Factory Methods
+
 	/** create a UInt8Array filled with zeros */
 	public static UInt8Array make(int count) {
-		throw new UnsupportedOperationException();
+		return new UInt8Array(count);
 	}
 
 	/** create a UInt8Array filled with the indicated data in 'from' */
@@ -53,8 +67,8 @@ public class UInt8Array extends PrimIntArray {
 	}
 
 	/** create a UInt8Array filled with the data at 'buffer' */
-	public static UInt8Array make(int count, int[] buffer) {
-		throw new UnsupportedOperationException();
+	public static UInt8Array make(int[] buffer) {
+		return new UInt8Array(buffer);
 	}
 
 	/**
@@ -65,13 +79,17 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
+
+	//////////////////////////////////////////////
+	// Accessing
+
 	/** Store a 32 bit unsigned integer value */
-	public void storeUInt(int index, int value) {
+	public void storeInt(int index, int value) {
 		throw new UnsupportedOperationException();
 	}
 
 	/** Get a 32 bit unsigned actual integer value */
-	public int uIntAt(int index) {
+	public int intAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -92,7 +110,7 @@ public class UInt8Array extends PrimIntArray {
 	}
 
 	public PrimSpec spec() {
-		return PrimSpec.uInt8();
+		return PrimSpec.int8();
 	}
 
 	public int bitCount() {
@@ -102,9 +120,18 @@ public class UInt8Array extends PrimIntArray {
 		return 8;
 	}
 
+	public int count() {
+		return storage.length;
+	}
+
+
+	//////////////////////////////////////////////
+	// Bulk Storage
+
 	public void storeMany(int to, PrimArray other, int count, int from) {
 		throw new UnsupportedOperationException();
 	}
+	
 	public void copyToBuffer(int[] buffer, int size, int count, int start) {
 		throw new UnsupportedOperationException();
 	}
@@ -113,23 +140,38 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public void printOn(PrintStream oo) {
+	protected void copyElements(int to, PrimArray source, int from, int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**	
-	 * A pointer to the actual string.  While one of these are outstanding, one
-	 * may not allocate any PrimArrays, because doing so may cause compaction,
-	 * which would relocate the data.  In order to keep track of whether there
-	 * are outstanding hard pointers, my clients must call noMoreGuts() when
-	 * they will no longer be using the pointer.
-	 */
-	public String gutsOf() {
+	//////////////////////////////////////////////
+	// Printing
+
+	public void printOn(PrintWriter oo) {
 		throw new UnsupportedOperationException();
 	}
-	public void noMoreGuts() {
+
+	protected void printElementOn(int index, PrintWriter oo) {
 		throw new UnsupportedOperationException();
 	}
+
+//	/**	
+//	 * A pointer to the actual string.  While one of these are outstanding, one
+//	 * may not allocate any PrimArrays, because doing so may cause compaction,
+//	 * which would relocate the data.  In order to keep track of whether there
+//	 * are outstanding hard pointers, my clients must call noMoreGuts() when
+//	 * they will no longer be using the pointer.
+//	 */
+//	public String gutsOf() {
+//		throw new UnsupportedOperationException();
+//	}
+//	public void noMoreGuts() {
+//		throw new UnsupportedOperationException();
+//	}
+
+
+	//////////////////////////////////////////////
+	// Comparing and Hashing
 
 	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
@@ -139,27 +181,15 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
+
+	//////////////////////////////////////////////
+	// Arithmetic Operations
+
 	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
 	}
 
 	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
-	}
-
-	protected void printElementOn(int index, PrintStream oo) {
-		throw new UnsupportedOperationException();
-	}
-
-	protected void copyElements(int to, PrimArray source, int from, int count) {
-		throw new UnsupportedOperationException();
-	}
-
-	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
-	}
-
-	public int count() {
-		return storage.length;
 	}
 }

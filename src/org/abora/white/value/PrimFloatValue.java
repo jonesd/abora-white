@@ -33,6 +33,11 @@ public abstract class PrimFloatValue extends PrimValue {
 	*/
 	;
 	
+	/**
+	 * Return the value as an IEEE 64-bit floating point number.
+	 * 
+	 * @return double value as an IEEE 64-bit floating point number.
+	 */
 	public abstract double asIEEE64();
 
 	//TODO what does ug do?

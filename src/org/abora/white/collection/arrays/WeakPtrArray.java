@@ -10,12 +10,28 @@
  */
 package org.abora.white.collection.arrays;
 
+import org.abora.white.xpp.basic.Heaper;
+
 //TODO need to know more about the implementation
 //TODO should this extend SharedPtrArray
 public class WeakPtrArray extends PtrArray {
+	//TODO use Java weak ptr to implement
 
-	protected WeakPtrArray(int count, int[] buffer) {
-		super(count, buffer);
+	//////////////////////////////////////////////
+	// Constructors
+	
+	public WeakPtrArray(int count) {
+		super(count);
+		throw new UnsupportedOperationException();
+	}
+
+	public WeakPtrArray(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
+		super(size, from, sourceOffset, count, destOffset);
+		throw new UnsupportedOperationException();
+	}
+
+	protected WeakPtrArray(Heaper[] buffer) {
+		super(buffer);
 		throw new UnsupportedOperationException();
 	}
 

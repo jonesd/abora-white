@@ -16,23 +16,23 @@ import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
-public class UInt32Array extends PrimIntArray {
-	private int[] storage;
+public class UInt16Array extends PrimIntArray {
+	private char[] storage;
 
 
 	//////////////////////////////////////////////
 	// Constructors
 
-	protected UInt32Array(int count) {
+	protected UInt16Array(int count) {
 		super();
-		this.storage = new int[count];
+		this.storage = new char[count];
 	}
 	
-	protected UInt32Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
+	protected UInt16Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
 	}
 
-	protected UInt32Array(int[] buffer) {
+	protected UInt16Array(char[] buffer) {
 		this(buffer.length);
 		throw new UnsupportedOperationException();
 	}
@@ -41,30 +41,30 @@ public class UInt32Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Static Factory Methods
 	
-	/** create a UInt32Array filled with zeros */
-	public static UInt32Array make(int count) {
+	/** create a UInt16Array filled with zeros */
+	public static UInt16Array make(int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	/** create a UInt32Array filled with the indicated data in 'from' */
-	public static UInt32Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
+	/** create a UInt16Array filled with the indicated data in 'from' */
+	public static UInt16Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
 	}
 
-	public static UInt32Array make(int size, PrimArray from, int sourceOffset, int count) {
+	public static UInt16Array make(int size, PrimArray from, int sourceOffset, int count) {
 		return make(size, from, sourceOffset, count, 0);
 	}
 
-	public static UInt32Array make(int size, PrimArray from, int sourceOffset) {
+	public static UInt16Array make(int size, PrimArray from, int sourceOffset) {
 		return make(size, from, sourceOffset, -1);
 	}
 
-	public static UInt32Array make(int size, PrimArray from) {
+	public static UInt16Array make(int size, PrimArray from) {
 		return make(size, from, 0);
 	}
 
-	/** create a UInt32Array filled with the data at 'buffer' */
-	public static UInt32Array make(int[] buffer) {
+	/** create a UInt16Array filled with the data at 'buffer' */
+	public static UInt16Array make(int[] buffer) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -76,13 +76,13 @@ public class UInt32Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Accessing
 
-	/** Store a 32 bit unsigned integer value */
-	public void storeUInt(int index, int value) {
+	/** Store a 16 bit unsigned integer value */
+	public void storeUInt(int index, char value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/** Get a 32 bit unsigned actual integer value */
-	public int uIntAt(int index) {
+	/** Get a 16 bit unsigned actual integer value */
+	public char uIntAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -107,21 +107,21 @@ public class UInt32Array extends PrimIntArray {
 	}
 
 	public PrimSpec spec() {
-		return PrimSpec.uInt32();
+		return PrimSpec.uInt16();
 	}
 
 	public int bitCount() {
 		/* Return the maximum bits/entry that can be stored in this array.
 		   The number will be negative for signed arrays. */
 
-		return 32;
+		return 16;
 	}
 
 
 	//////////////////////////////////////////////
 	// Bulk Storing
 	
-	public void copyToBuffer(int[] buffer, int size, int count, int start) {
+	public void copyToBuffer(char[] buffer, int size, int count, int start) {
 		throw new UnsupportedOperationException();
 	}
 

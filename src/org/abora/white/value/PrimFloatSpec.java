@@ -19,7 +19,7 @@ import org.abora.white.xpp.basic.Heaper;
  * Specifies different precisions and representations of floating point numbers.
  */
 public class PrimFloatSpec extends PrimSpec {
-	protected int myBitCount;
+	protected final int myBitCount;
 	/*
 	udanax-top.st:34328:
 	PrimSpec subclass: #PrimFloatSpec
@@ -65,8 +65,13 @@ public class PrimFloatSpec extends PrimSpec {
 	}
 
 
+	//////////////////////////////////////////////
+	// Accessing
+
 	/**
-	 * How many total bits per value
+	 * Return the total number of bits per value that meets the specification.
+	 * 
+	 * @return total number of bits per value.
 	 */
 	public int bitCount() {
 		return myBitCount;
@@ -219,6 +224,7 @@ public class PrimFloatSpec extends PrimSpec {
 		if (myBitCount == 64) {
 			return IEEE64Value.make(number);
 		}
+		//TODO should this fail instead?
 		return null;
 		/*
 		udanax-top.st:34412:PrimFloatSpec methodsFor: 'making'!
