@@ -10,9 +10,14 @@
  */
 package org.abora.white.collection.arrays;
 
-public class PtrArray extends PrimArray {
+import java.io.PrintStream;
 
-//	protected PtrArray (Int32 count, TCSJ);
+import org.abora.white.xpp.basic.Heaper;
+
+public class PtrArray extends PrimArray {
+	protected Heaper[] storage;
+
+	//	protected PtrArray (Int32 count, TCSJ);
 
 	protected PtrArray(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
@@ -82,15 +87,15 @@ public class PtrArray extends PrimArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public PrimSpec spec() {
+	//	public PrimSpec spec() {
+	//		throw new UnsupportedOperationException();
+	//	}
+
+	public boolean contentsEQ(PtrArray other) {
 		throw new UnsupportedOperationException();
 	}
 
-	public BooleanVar contentsEQ(PtrArray other) {
-		throw new UnsupportedOperationException();
-	}
-
-	public BooleanVar contentsEqual(PrimArray other) {
+	public boolean contentsEqual(PrimArray other) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -109,9 +114,9 @@ public class PtrArray extends PrimArray {
 		throw new UnsupportedOperationException();
 	}
 
-		public void copyToBuffer(int[] buffer, int size, int count, int start) {
-			throw new UnsupportedOperationException();
-		}
+	public void copyToBuffer(int[] buffer, int size, int count, int start) {
+		throw new UnsupportedOperationException();
+	}
 
 	public int indexOfEQ(Heaper value, int start, int n) {
 		throw new UnsupportedOperationException();
@@ -149,36 +154,27 @@ public class PtrArray extends PrimArray {
 		return indexPastEQ(value, 0);
 	}
 
-	public BooleanVar elementsEQ(int here, PrimArray other, int there, int count) {
+	public boolean elementsEQ(int here, PrimArray other, int there, int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	public BooleanVar elementsEQ(int here, PrimArray other, int there) {
+	public boolean elementsEQ(int here, PrimArray other, int there) {
 		return elementsEQ(here, other, there, -1);
 	}
 
-	public BooleanVar elementsEQ(int here, PrimArray other) {
+	public boolean elementsEQ(int here, PrimArray other) {
 		return elementsEQ(here, other, 0);
 	}
 
-	public BooleanVar elementsEqual(int here, PrimArray other, int there, int count) {
+	public boolean elementsEqual(int here, PrimArray other, int there, int count) {
 		throw new UnsupportedOperationException();
 	}
-
 
 	public int elementsHash(int count, int start) {
 		throw new UnsupportedOperationException();
 	}
 
-	private void receivePtrArray(Rcvr rcvr) {
-		throw new UnsupportedOperationException();
-	}
-
-	private void sendPtrArray(Xmtr xmtr) {
-		throw new UnsupportedOperationException();
-	}
-
-	protected void printElementOn(int index, Stream oo) {
+	protected void printElementOn(int index, PrintStream oo) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -186,22 +182,25 @@ public class PtrArray extends PrimArray {
 		throw new UnsupportedOperationException();
 	}
 
-	/** for bulk methods that need checking and for migration */
-	public void unsafeStore(int index, Heaper ptr) {
+//	/** for bulk methods that need checking and for migration */
+//	public void unsafeStore(int index, Heaper ptr) {
+//		throw new UnsupportedOperationException();
+//	}
+//
+//	/** for bulk methods that need checking and for migration */
+//	public Heaper "*" unsafeFetch(int index) {
+//		throw new UnsupportedOperationException();
+//	}
+
+	public void migrate(int[] destination, boolean destinationIsOld) {
 		throw new UnsupportedOperationException();
 	}
 
-	/** for bulk methods that need checking and for migration */
-	public Heaper "*" unsafeFetch(int index) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void migrate(int[] destination, BooleanVar destinationIsOld) {
-		throw new UnsupportedOperationException();
-	}
-	
 	private void nullEntry() {
 		throw new UnsupportedOperationException();
 	}
 
+	public int count() {
+		return storage.length;
+	}
 }

@@ -10,9 +10,15 @@
  */
 package org.abora.white.collection.arrays;
 
-public class IntegerVarArray extends PrimIntegerArray {
+import java.io.PrintStream;
 
-//	IntegerVarArray (Int32 count, TCSJ);
+import org.abora.white.x.PrimIntValue;
+import org.abora.white.xpp.basic.Heaper;
+
+public class IntegerVarArray extends PrimIntegerArray {
+	private PrimIntValue[] storage;
+
+	//	IntegerVarArray (Int32 count, TCSJ);
 
 	protected IntegerVarArray(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
@@ -49,22 +55,21 @@ public class IntegerVarArray extends PrimIntegerArray {
 		throw new UnsupportedOperationException();
 	}
 
-
 	/** Store an actual integer value */
-	public void storeIntegerVar(int index, IntegerVar value) {
+	public void storeIntegerVar(int index, PrimIntValue value) {
 		throw new UnsupportedOperationException();
 	}
 
 	/** Get an actual integer value */
-	public IntegerVar integerVarAt (int index) {
+	public PrimIntValue integerVarAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void storeInteger(int index, IntegerVar value) {
+	public void storeInteger(int index, PrimIntValue value) {
 		throw new UnsupportedOperationException();
 	}
 
-	public IntegerVar integerAt(int index) {
+	public PrimIntValue integerAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -76,35 +81,15 @@ public class IntegerVarArray extends PrimIntegerArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public PrimSpec spec() {
+	//	public PrimSpec spec() {
+	//		throw new UnsupportedOperationException();
+	//	}
+
+	public void copyToBuffer(int[] buffer, int size, int count, int start) {
 		throw new UnsupportedOperationException();
 	}
-
-		public void copyToBuffer(int[] buffer, int size, int count, int start) {
-			throw new UnsupportedOperationException();
-		}
 
 	public void zeroElements(int from, int count) {
-		throw new UnsupportedOperationException();
-	}
-
-
-	private void receiveIVArray(Rcvr rcvr) {
-		throw new UnsupportedOperationException();
-	}
-
-	private void sendIVArray(Xmtr xmtr) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Only called in construction of fresh array when there is no possibility
-	 * of storage leak from skipping IntegerVar assignment. Also, the normal
-	 * zeroElements is itself unsafe during construction, because the IntegerVar
-	 * code could interpret the random bits in the newly allocated
-	 * IntegerVarArray as pointers to bignums to be freed.
-	 */
-	protected void unsafeZeroElements(int from, int count) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -124,7 +109,7 @@ public class IntegerVarArray extends PrimIntegerArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void printElementOn(int index, Stream oo) {
+	protected void printElementOn(int index, PrintStream oo) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -136,4 +121,7 @@ public class IntegerVarArray extends PrimIntegerArray {
 		throw new UnsupportedOperationException();
 	}
 
+	public int count() {
+		return storage.length;
+	}
 }

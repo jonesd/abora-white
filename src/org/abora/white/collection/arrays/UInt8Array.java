@@ -10,9 +10,16 @@
  */
 package org.abora.white.collection.arrays;
 
-public class UInt8Array extends PrimIntArray {
+import java.io.PrintStream;
 
-//	protected UInt8Array (Int32 count, TCSJ);
+import org.abora.white.x.PrimIntValue;
+import org.abora.white.xpp.basic.Heaper;
+
+public class UInt8Array extends PrimIntArray {
+	//TODO isnt a java byte actually Int8?
+	private byte[] storage;
+
+	//	protected UInt8Array (Int32 count, TCSJ);
 
 	protected UInt8Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
@@ -67,11 +74,11 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public void storeInteger(int index, IntegerVar value) {
+	public void storeInteger(int index, PrimIntValue value) {
 		throw new UnsupportedOperationException();
 	}
 
-	public IntegerVar integerAt(int index) {
+	public PrimIntValue integerAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -83,26 +90,26 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public PrimSpec spec() {
-		throw new UnsupportedOperationException();
-	}
-
-	public int bitCount() {
-		throw new UnsupportedOperationException();
-	}
+	//	public PrimSpec spec() {
+	//		throw new UnsupportedOperationException();
+	//	}
+	//
+	//	public int bitCount() {
+	//		throw new UnsupportedOperationException();
+	//	}
 
 	public void storeMany(int to, PrimArray other, int count, int from) {
 		throw new UnsupportedOperationException();
 	}
-		public void copyToBuffer(int[] buffer, int size, int count, int start) {
-			throw new UnsupportedOperationException();
-		}
+	public void copyToBuffer(int[] buffer, int size, int count, int start) {
+		throw new UnsupportedOperationException();
+	}
 
 	public void zeroElements(int from, int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void printOn(Stream oo) {
+	public void printOn(PrintStream oo) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -117,14 +124,6 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 	public void noMoreGuts() {
-		throw new UnsupportedOperationException();
-	}
-
-	private void receiveUInt8Array(Rcvr rcvr) {
-		throw new UnsupportedOperationException();
-	}
-
-	private void sendUInt8Array(Xmtr xmtr) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -144,7 +143,7 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void printElementOn(int index, Stream oo) {
+	protected void printElementOn(int index, PrintStream oo) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -156,4 +155,7 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
+	public int count() {
+		return storage.length;
+	}
 }

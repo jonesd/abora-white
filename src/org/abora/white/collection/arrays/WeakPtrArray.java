@@ -10,6 +10,13 @@
  */
 package org.abora.white.collection.arrays;
 
-
+//TODO need to know more about the implementation
+//TODO should this extend SharedPtrArray
 public class WeakPtrArray extends PtrArray {
+
+	protected WeakPtrArray(int count, int[] buffer) {
+		super(count, buffer);
+		throw new UnsupportedOperationException();
+	}
+
 }

@@ -10,9 +10,13 @@
  */
 package org.abora.white.collection.arrays;
 
-public class UInt32Array extends PrimIntArray {
+import java.io.PrintStream;
 
-//	protected UInt32Array (Int32 count, TCSJ);
+import org.abora.white.x.PrimIntValue;
+import org.abora.white.xpp.basic.Heaper;
+
+public class UInt32Array extends PrimIntArray {
+	private int[] storage;
 
 	protected UInt32Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
@@ -59,11 +63,11 @@ public class UInt32Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public void storeInteger(int index, IntegerVar value) {
+	public void storeInteger(int index, PrimIntValue value) {
 		throw new UnsupportedOperationException();
 	}
 
-	public IntegerVar integerAt(int index) {
+	public PrimIntValue integerAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -75,26 +79,17 @@ public class UInt32Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public PrimSpec spec() {
+	//	public PrimSpec spec() {
+	//		throw new UnsupportedOperationException();
+	//	}
+
+	//	public int bitCount() {
+	//		throw new UnsupportedOperationException();
+	//	}
+
+	public void copyToBuffer(int[] buffer, int size, int count, int start) {
 		throw new UnsupportedOperationException();
 	}
-
-	public int bitCount() {
-		throw new UnsupportedOperationException();
-	}
-
-		public void copyToBuffer(int[] buffer, int size, int count, int start) {
-			throw new UnsupportedOperationException();
-		}
-
-	private void receiveInt32Array(Rcvr rcvr) {
-		throw new UnsupportedOperationException();
-	}
-
-	private void sendInt32Array(Xmtr xmtr) {
-		throw new UnsupportedOperationException();
-	}
-
 
 	protected int compareData(int myStart, PrimDataArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
@@ -112,12 +107,16 @@ public class UInt32Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void printElementOn(int index, Stream oo) {
+	protected void printElementOn(int index, PrintStream oo) {
 		throw new UnsupportedOperationException();
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
 		throw new UnsupportedOperationException();
+	}
+
+	public int count() {
+		return storage.length;
 	}
 
 }
