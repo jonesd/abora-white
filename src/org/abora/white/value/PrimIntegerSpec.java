@@ -10,14 +10,17 @@
  */
 package org.abora.white.value;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
 import org.abora.white.collection.arrays.Int32Array;
+import org.abora.white.collection.arrays.Int8Array;
 import org.abora.white.collection.arrays.IntegerVarArray;
 import org.abora.white.collection.arrays.PrimArray;
 import org.abora.white.collection.arrays.PrimIntegerArray;
 import org.abora.white.collection.arrays.UInt32Array;
 import org.abora.white.collection.arrays.UInt8Array;
+import org.abora.white.hash.FHash;
 import org.abora.white.xpp.basic.Heaper;
 
 public class PrimIntegerSpec extends PrimSpec {
@@ -208,17 +211,7 @@ public class PrimIntegerSpec extends PrimSpec {
 		} else {
 			signPart = 0;
 		}
-		throw new UnsupportedOperationException();
-//TODO		return (getCategory().hashForEqual() ^ (FHash.fastHash(myBitCount))) ^ signPart;
-		/*
-		udanax-top.st:34508:PrimIntegerSpec methodsFor: 'testing'!
-		{UInt32} actualHashForEqual
-			| signPart {UInt32} |
-			amSigned ifTrue: [signPart _ 255] ifFalse: [signPart _ UInt32Zero].
-			^(self getCategory hashForEqual
-				bitXor: (FHash fastHash.UInt32: myBitCount))
-				bitXor: signPart!
-		*/
+		return getClass().hashCode() ^ FHash.hashInt(myBitCount) ^ FHash.hashInt(signPart);
 	}
 
 	/**
@@ -340,9 +333,9 @@ public class PrimIntegerSpec extends PrimSpec {
 	/**
 	 * Make an array the contents of the string
 	 */
-	public PrimIntegerArray string(String string) {
-		if (this == PrimSpec.uInt8()) {
-			return UInt8Array.string(string);
+	public PrimIntegerArray string(String string) throws UnsupportedEncodingException {
+		if (this == PrimSpec.int8()) {
+			return Int8Array.asciiString(string);
 		}
 		throw new UnsupportedOperationException();
 		/*

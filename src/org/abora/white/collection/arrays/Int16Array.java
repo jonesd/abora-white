@@ -73,7 +73,7 @@ public class Int16Array extends PrimIntArray {
 	}
 
 	public static Int16Array make(PrimArray from) {
-		return make(from.count(), from, 0);
+		return make(from.count(), from);
 	}
 
 	/** create an Int16Array filled with the data at 'buffer' */

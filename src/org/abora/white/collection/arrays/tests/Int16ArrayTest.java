@@ -13,11 +13,12 @@ import junit.framework.TestCase;
 
 import org.abora.white.collection.arrays.IEEE32Array;
 import org.abora.white.collection.arrays.IEEE64Array;
-import org.abora.white.collection.arrays.Int32Array;
 import org.abora.white.collection.arrays.Int16Array;
+import org.abora.white.collection.arrays.Int32Array;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 
 public class Int16ArrayTest extends TestCase {
 
@@ -45,7 +46,7 @@ public class Int16ArrayTest extends TestCase {
 		}
 	}
 
-	public void testMakeCopy() {
+	public void testMake() {
 		Int16Array array = Int16Array.make(AssertArrays.makeInt16ArrayEmpty());
 		assertEquals(0, array.count());
 
@@ -56,7 +57,27 @@ public class Int16ArrayTest extends TestCase {
 		array = Int16Array.make(7, AssertArrays.makeInt16Array12345());
 		AssertArrays.assertEquals(7, array.count());
 		AssertArrays.assertEquals(Int16Array.make(new short[]{1,2,3,4,5,0,0}), array);
-		
+
+		array = Int16Array.make(7, AssertArrays.makeInt16Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(Int16Array.make(new short[]{0,0,0,0,0,2,3}), array);		
+
+		try {
+			Int16Array.make(4, AssertArrays.makeInt16Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		Int16Array array = Int16Array.make(new short[] {});
+		assertEquals(0, array.count());
+
+		array = Int16Array.make(new short[] {1, 2});
+		assertEquals(2, array.count());
+		assertEquals(1, array.int16At(0));
+		assertEquals(2, array.int16At(1));		
 	}
 
 	public void testInt16At() {
@@ -1069,5 +1090,11 @@ public class Int16ArrayTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 			// expected
 		}
+	}
+
+	public void testBitCount() {
+		Int16Array array = AssertArrays.makeInt16Array1(); 
+		assertEquals(((PrimIntegerSpec)array.spec()).bitCount(), Math.abs(array.bitCount()));
+		assertTrue(array.bitCount() < 0);
 	}
 }

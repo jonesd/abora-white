@@ -12,7 +12,6 @@ package org.abora.white.collection.arrays;
 
 import java.io.PrintWriter;
 
-import org.abora.white.exception.CopyOutOfBoundsException;
 import org.abora.white.exception.NotInTableException;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
@@ -346,7 +345,7 @@ public abstract class PrimArray extends Heaper {
 			n = other.count() - from;
 		}
 		if (n < 0 || to < 0 || from < 0 || from + n > other.count() || to + n > count()) {
-			throw new CopyOutOfBoundsException();
+			throw new IndexOutOfBoundsException();
 		}
 		for (int i = 0; i < n; i += 1) {
 			storeValue(to + i, other.fetchValue(from + i));

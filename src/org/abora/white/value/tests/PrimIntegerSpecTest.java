@@ -67,4 +67,23 @@ public class PrimIntegerSpecTest extends TestCase {
 		assertSame(PrimSpec.int32(), PrimSpec.int16().combine(PrimSpec.uInt16()));
 		assertSame(PrimSpec.int64(), PrimSpec.int32().combine(PrimSpec.uInt32()));
 	}
+
+	public void testValue() {
+		IntegerValue value = PrimSpec.int32().value(123);
+		assertEquals(123, value.asInt32());
+	}
+
+	public void testIsEqual() {
+		assertTrue(PrimSpec.int32().isEqual(PrimSpec.int32()));
+		assertFalse(PrimSpec.int32().isEqual(PrimSpec.int64()));
+		assertFalse(PrimSpec.int32().isEqual(PrimSpec.uInt32()));		
+		assertFalse(PrimSpec.int32().isEqual(PrimSpec.iEEE32()));		
+	}
+	
+	public void testActualHashForEqual() {
+		assertTrue(PrimSpec.int32().actualHashForEqual() == PrimSpec.int32().actualHashForEqual());
+		assertFalse(PrimSpec.int32().actualHashForEqual() == PrimSpec.int64().actualHashForEqual());
+		assertFalse(PrimSpec.int32().actualHashForEqual() == PrimSpec.uInt32().actualHashForEqual());
+		assertFalse(PrimSpec.int32().actualHashForEqual() == PrimSpec.iEEE32().actualHashForEqual());
+	}
 }

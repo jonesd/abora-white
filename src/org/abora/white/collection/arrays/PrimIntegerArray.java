@@ -10,11 +10,11 @@
  */
 package org.abora.white.collection.arrays;
 
+import org.abora.white.hash.FHash;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimIntegerSpec;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
-import org.abora.white.hash.FHash;
 
 /**
  * A common superclass for primitive arrays of integer types; this is the point

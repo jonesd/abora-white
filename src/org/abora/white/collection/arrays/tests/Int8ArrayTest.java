@@ -7,6 +7,7 @@
  */
 package org.abora.white.collection.arrays.tests;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
@@ -18,6 +19,7 @@ import org.abora.white.collection.arrays.Int8Array;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 
 public class Int8ArrayTest extends TestCase {
 
@@ -43,6 +45,52 @@ public class Int8ArrayTest extends TestCase {
 		} catch (NegativeArraySizeException e) {
 			//expected
 		}
+	}
+
+	public void testMake() {
+		Int8Array array = Int8Array.make(AssertArrays.makeInt8ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = Int8Array.make(AssertArrays.makeInt8Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeInt8Array12345(), array);
+
+		array = Int8Array.make(7, AssertArrays.makeInt8Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(Int8Array.make(new byte[]{1,2,3,4,5,0,0}), array);
+
+		array = Int8Array.make(7, AssertArrays.makeInt8Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(Int8Array.make(new byte[]{0,0,0,0,0,2,3}), array);		
+
+		try {
+			Int8Array.make(4, AssertArrays.makeInt8Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		Int8Array array = Int8Array.make(new byte[] {});
+		assertEquals(0, array.count());
+
+		array = Int8Array.make(new byte[] {1, 2});
+		assertEquals(2, array.count());
+		assertEquals(1, array.int8At(0));
+		assertEquals(2, array.int8At(1));		
+	}
+
+	public void testString() throws UnsupportedEncodingException {
+		Int8Array array = Int8Array.asciiString("");
+		assertEquals(0, array.count());
+		
+		array = Int8Array.asciiString("a \t");
+		//TODO include top-bit
+		assertEquals(3, array.count());
+		assertEquals('a', array.int8At(0));
+		assertEquals(' ', array.int8At(1));
+		assertEquals('\t', array.int8At(2));
 	}
 
 	public void testInt8At() {
@@ -1055,5 +1103,11 @@ public class Int8ArrayTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 			// expected
 		}
+	}
+
+	public void testBitCount() {
+		Int8Array array = AssertArrays.makeInt8Array1(); 
+		assertEquals(((PrimIntegerSpec)array.spec()).bitCount(), Math.abs(array.bitCount()));
+		assertTrue(array.bitCount() < 0);
 	}
 }

@@ -19,6 +19,7 @@ import org.abora.white.collection.arrays.PrimIntegerArray;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 
 public class Int32ArrayTest extends TestCase {
 
@@ -44,6 +45,40 @@ public class Int32ArrayTest extends TestCase {
 		} catch (NegativeArraySizeException e) {
 			//expected
 		}
+	}
+
+	public void testMake() {
+		Int32Array array = Int32Array.make(AssertArrays.makeInt32ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = Int32Array.make(AssertArrays.makeInt32Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeInt32Array12345(), array);
+
+		array = Int32Array.make(7, AssertArrays.makeInt32Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(Int32Array.make(new int[]{1,2,3,4,5,0,0}), array);
+
+		array = Int32Array.make(7, AssertArrays.makeInt32Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(Int32Array.make(new int[]{0,0,0,0,0,2,3}), array);		
+
+		try {
+			Int32Array.make(4, AssertArrays.makeInt32Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		Int32Array array = Int32Array.make(new int[] {});
+		assertEquals(0, array.count());
+
+		array = Int32Array.make(new int[] {1, 2});
+		assertEquals(2, array.count());
+		assertEquals(1, array.int32At(0));
+		assertEquals(2, array.int32At(1));		
 	}
 
 	public void testInt32At() {
@@ -1186,4 +1221,9 @@ public class Int32ArrayTest extends TestCase {
 		assertFalse(AssertArrays.makeInt32Array12345().contentsHash() == AssertArrays.makeInt32Array12321().contentsHash());
 	}
 
+	public void testBitCount() {
+		Int32Array array = AssertArrays.makeInt32Array1(); 
+		assertEquals(((PrimIntegerSpec)array.spec()).bitCount(), Math.abs(array.bitCount()));
+		assertTrue(array.bitCount() < 0);
+	}
 }

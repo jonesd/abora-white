@@ -84,17 +84,13 @@ public class UInt8Array extends PrimIntArray {
 		return make(size, from, 0);
 	}
 
+	public static UInt8Array make(PrimArray from) {
+		return make(from.count(), from);
+	}
+
 	/** create a UInt8Array filled with the data at 'buffer' */
 	public static UInt8Array make(short[] buffer) {
 		return new UInt8Array(buffer);
-	}
-
-	/**
-	 * create a UInt8Array of size strlen(string) filled with the contents of
-	 * the string (keep the '\0' ?)
-	 */
-	public static UInt8Array string(String string) {
-		throw new UnsupportedOperationException();
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
@@ -202,9 +198,6 @@ public class UInt8Array extends PrimIntArray {
 	protected int signOfNonZeroAfter(int index) {
 		for (int i = index; i < count(); i += 1) {
 			short value = uInt8At(i);
-			if (value < 0) {
-				return -1;
-			}
 			if (value > 0) {
 				return +1;
 			}

@@ -41,12 +41,38 @@ public class IEEE32ArrayTest extends TestCase {
 		assertEquals(0.0f, array.iEEE32At(0), DIFF);
 	}
 
-	public void testMakePrimArray() {
-		IEEE32Array made = IEEE32Array.make(AssertArrays.makeIEEE32ArrayEmpty());
-		AssertArrays.assertEquals(AssertArrays.makeIEEE32ArrayEmpty(), made);
-		
-		made = IEEE32Array.make(AssertArrays.makeIEEE32Array12345());
-		AssertArrays.assertEquals(AssertArrays.makeIEEE32Array12345(), made);
+	public void testMake() {
+		IEEE32Array array = IEEE32Array.make(AssertArrays.makeIEEE32ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = IEEE32Array.make(AssertArrays.makeIEEE32Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeIEEE32Array12345(), array);
+
+		array = IEEE32Array.make(7, AssertArrays.makeIEEE32Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(IEEE32Array.make(new float[]{1.1f,2.2f,3.3f,4.4f,5.5f,0f,0f}), array);
+
+		array = IEEE32Array.make(7, AssertArrays.makeIEEE32Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(IEEE32Array.make(new float[]{0f,0f,0f,0f,0f,2.2f,3.3f}), array);		
+
+		try {
+			IEEE32Array.make(4, AssertArrays.makeIEEE32Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		IEEE32Array array = IEEE32Array.make(new float[] {});
+		assertEquals(0, array.count());
+
+		array = IEEE32Array.make(new float[] {1.1f, 2.2f});
+		assertEquals(2, array.count());
+		assertEquals(1.1f, array.iEEE32At(0), DIFF);
+		assertEquals(2.2f, array.iEEE32At(1), DIFF);		
 	}
 
 

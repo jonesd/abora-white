@@ -18,6 +18,7 @@ import org.abora.white.collection.arrays.UInt16Array;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 
 public class UInt16ArrayTest extends TestCase {
 
@@ -43,6 +44,40 @@ public class UInt16ArrayTest extends TestCase {
 		} catch (NegativeArraySizeException e) {
 			//expected
 		}
+	}
+
+	public void testMake() {
+		UInt16Array array = UInt16Array.make(AssertArrays.makeUInt16ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = UInt16Array.make(AssertArrays.makeUInt16Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeUInt16Array12345(), array);
+
+		array = UInt16Array.make(7, AssertArrays.makeUInt16Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(UInt16Array.make(new char[]{1,2,3,4,5,0,0}), array);
+
+		array = UInt16Array.make(7, AssertArrays.makeUInt16Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(UInt16Array.make(new char[]{0,0,0,0,0,2,3}), array);		
+
+		try {
+			UInt16Array.make(4, AssertArrays.makeUInt16Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		UInt16Array array = UInt16Array.make(new char[] {});
+		assertEquals(0, array.count());
+
+		array = UInt16Array.make(new char[] {1, 2});
+		assertEquals(2, array.count());
+		assertEquals(1, array.uInt16At(0));
+		assertEquals(2, array.uInt16At(1));		
 	}
 
 	public void testUInt16At() {
@@ -997,10 +1032,10 @@ public class UInt16ArrayTest extends TestCase {
 	}
 	
 	public void testString() {
-		UInt16Array array = UInt16Array.make("");
+		UInt16Array array = UInt16Array.unicodeString("");
 		assertEquals(0, array.count());
 		
-		array = UInt16Array.make("a \u0424\t");
+		array = UInt16Array.unicodeString("a \u0424\t");
 		assertEquals(4, array.count());
 		assertEquals('a', array.uInt16At(0));
 		assertEquals(' ', array.uInt16At(1));
@@ -1009,10 +1044,10 @@ public class UInt16ArrayTest extends TestCase {
 	}
 	
 	public void testAsString() {
-		UInt16Array array = UInt16Array.make("");
+		UInt16Array array = UInt16Array.unicodeString("");
 		assertEquals("", array.asString());
 		
-		array = UInt16Array.make("a \u0424\t");
+		array = UInt16Array.unicodeString("a \u0424\t");
 		assertEquals("a \u0424\t", array.asString());
 	}
 
@@ -1062,5 +1097,11 @@ public class UInt16ArrayTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 			// expected
 		}
+	}
+
+	public void testBitCount() {
+		UInt16Array array = AssertArrays.makeUInt16Array1(); 
+		assertEquals(((PrimIntegerSpec)array.spec()).bitCount(), Math.abs(array.bitCount()));
+		assertTrue(array.bitCount() >= 0);
 	}
 }

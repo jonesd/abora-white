@@ -13,6 +13,7 @@ package org.abora.white.value;
 import org.abora.white.collection.arrays.IEEE32Array;
 import org.abora.white.collection.arrays.IEEE64Array;
 import org.abora.white.collection.arrays.PrimArray;
+import org.abora.white.hash.FHash;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -20,35 +21,6 @@ import org.abora.white.xpp.basic.Heaper;
  */
 public class PrimFloatSpec extends PrimSpec {
 	protected final int myBitCount;
-	/*
-	udanax-top.st:34328:
-	PrimSpec subclass: #PrimFloatSpec
-		instanceVariableNames: 'myBitCount {Int32}'
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'X++ PrimArrays'!
-	*/
-	/*
-	udanax-top.st:34332:
-	PrimFloatSpec comment:
-	'Specifies different precisions and representations of floating point numbers.'!
-	*/
-	/*
-	udanax-top.st:34334:
-	(PrimFloatSpec getOrMakeCxxClassDescription)
-		attributes: ((Set new) add: #CONCRETE; add: #(COPY xpp ); yourself)!
-	*/
-	/*
-	udanax-top.st:34436:
-	PrimFloatSpec class
-		instanceVariableNames: ''!
-	*/
-	/*
-	udanax-top.st:34439:
-	(PrimFloatSpec getOrMakeCxxClassDescription)
-		attributes: ((Set new) add: #CONCRETE; add: #(COPY xpp ); yourself)!
-	*/
-
 
 	//////////////////////////////////////////////
 	// Constructors
@@ -56,12 +28,6 @@ public class PrimFloatSpec extends PrimSpec {
 	protected PrimFloatSpec(Class arrayClass, int bitCount) {
 		super(arrayClass);
 		myBitCount = bitCount;
-		/*
-		udanax-top.st:34346:PrimFloatSpec methodsFor: 'create'!
-		create: primClass {Category} with: bitCount {Int32}
-			super create: primClass.
-			myBitCount := bitCount.!
-		*/
 	}
 
 
@@ -75,24 +41,11 @@ public class PrimFloatSpec extends PrimSpec {
 	 */
 	public int bitCount() {
 		return myBitCount;
-		/*
-		udanax-top.st:34339:PrimFloatSpec methodsFor: 'accessing'!
-		{Int32 INLINE} bitCount
-			"How many total bits per value"
-			
-			^myBitCount!
-		*/
 	}
 
 	public int actualHashForEqual() {
-		throw new UnsupportedOperationException();
-//		return getCategory().hashForEqual() ^ (FHash.fastHash(myBitCount));
-		/*
-		udanax-top.st:34353:PrimFloatSpec methodsFor: 'testing'!
-		{UInt32} actualHashForEqual
-			^self getCategory hashForEqual
-				bitXor: (FHash fastHash.UInt32: myBitCount)!
-		*/
+		//TODO using class rather than category, is that ok? should we use class.name instead?
+		return getClass().hashCode() ^ FHash.hashInt(myBitCount);
 	}
 
 	public boolean isEqual(Heaper other) {
@@ -102,15 +55,6 @@ public class PrimFloatSpec extends PrimSpec {
 		} else {
 			return false;
 		}
-		/*
-		udanax-top.st:34358:PrimFloatSpec methodsFor: 'testing'!
-		{BooleanVar} isEqual: other {Heaper}
-			other cast: PrimFloatSpec into: [ :spec |
-				^myBitCount = spec bitCount]
-			others:
-				[^false].
-			^ false "compiler fodder"!
-		*/
 	}
 
 	/**

@@ -12,8 +12,8 @@ package org.abora.white.collection.arrays;
 
 import java.io.PrintWriter;
 
-import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.IEEE32Value;
+import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 

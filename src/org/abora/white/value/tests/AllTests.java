@@ -25,6 +25,7 @@ public class AllTests {
 		suite.addTest(new TestSuite(PrimFloatSpecTest.class));
 		suite.addTest(new TestSuite(PrimIntegerSpecTest.class));
 		suite.addTest(new TestSuite(PrimSpecTest.class));
+		suite.addTest(new TestSuite(IntegerValueTest.class));
 		//$JUnit-END$
 		return suite;
 	}

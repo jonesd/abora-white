@@ -10,8 +10,6 @@ package org.abora.white.hash.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.abora.white.hash.FHash;
-
 /**
  * @author jonesd
  */

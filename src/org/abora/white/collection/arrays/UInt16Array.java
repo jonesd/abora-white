@@ -67,12 +67,22 @@ public class UInt16Array extends PrimIntArray {
 		return make(size, from, 0);
 	}
 
+	public static UInt16Array make(PrimArray from) {
+		return make(from.count(), from);
+	}
+
 	/** create an UInt16Array filled with the data at 'buffer' */
 	public static UInt16Array make(char[] buffer) {
 		return new UInt16Array(buffer);
 	}
 
-	public static UInt16Array make(String string) {
+	/**
+	 * Return a new array filled with the specified string.
+	 * 
+	 * @param string string to fill array with.
+	 * @return a new array filled with the specified string.
+	 */
+	public static UInt16Array unicodeString(String string) {
 		return make(string.toCharArray());
 	}
 

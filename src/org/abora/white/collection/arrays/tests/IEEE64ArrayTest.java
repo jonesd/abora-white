@@ -39,12 +39,38 @@ public class IEEE64ArrayTest extends TestCase {
 		assertEquals(0.0, array.iEEE64At(0), DIFF);
 	}
 
-	public void testMakePrimArray() {
-		IEEE64Array made = IEEE64Array.make(AssertArrays.makeIEEE64ArrayEmpty());
-		AssertArrays.assertEquals(AssertArrays.makeIEEE64ArrayEmpty(), made);
-		
-		made = IEEE64Array.make(AssertArrays.makeIEEE64Array12345());
-		AssertArrays.assertEquals(AssertArrays.makeIEEE64Array12345(), made);
+	public void testMake() {
+		IEEE64Array array = IEEE64Array.make(AssertArrays.makeIEEE64ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = IEEE64Array.make(AssertArrays.makeIEEE64Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeIEEE64Array12345(), array);
+
+		array = IEEE64Array.make(7, AssertArrays.makeIEEE64Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(IEEE64Array.make(new double[]{1.1, 2.2, 3.3, 4.4, 5.5, 0, 0}), array);
+
+		array = IEEE64Array.make(7, AssertArrays.makeIEEE64Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(IEEE64Array.make(new double[]{0, 0, 0, 0, 0, 2.2, 3.3}), array);		
+
+		try {
+			IEEE64Array.make(4, AssertArrays.makeIEEE64Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		IEEE64Array array = IEEE64Array.make(new double[] {});
+		assertEquals(0, array.count());
+
+		array = IEEE64Array.make(new double[] {1.1, 2.2});
+		assertEquals(2, array.count());
+		assertEquals(1.1f, array.iEEE64At(0), DIFF);
+		assertEquals(2.2f, array.iEEE64At(1), DIFF);		
 	}
 
 	public void testIEEE64At() {

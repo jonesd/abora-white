@@ -10,13 +10,13 @@
  */
 package org.abora.white.value.tests;
 
+import junit.framework.TestCase;
+
 import org.abora.white.collection.arrays.PrimArray;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.PrimSpec;
-
-import junit.framework.TestCase;
 
 public class PrimSpecTest extends TestCase {
 	//TODO duplicate spec - move to some shared place
@@ -144,7 +144,7 @@ public class PrimSpecTest extends TestCase {
 		assertSame(PrimSpec.uInt32(), PrimSpec.toHold(IntegerValue.make(4294967295L)));
 		assertSame(PrimSpec.int64(), PrimSpec.toHold(IntegerValue.make(4294967296L)));
 		assertSame(PrimSpec.int64(), PrimSpec.toHold(IntegerValue.make(9223372036854775807L)));
-		//TODO IntegerValue once it uses BigInteger 
+		assertSame(PrimSpec.integerVar(), PrimSpec.toHold(IntegerValue.make(9223372036854775807L).plus(IntegerValue.make(1))));
 
 		// Negative numbers
 		assertSame(PrimSpec.int8(), PrimSpec.toHold(IntegerValue.make(-1)));
@@ -155,7 +155,7 @@ public class PrimSpecTest extends TestCase {
 		assertSame(PrimSpec.int32(), PrimSpec.toHold(IntegerValue.make(-2147483648)));
 		assertSame(PrimSpec.int64(), PrimSpec.toHold(IntegerValue.make(-2147483649L)));
 		assertSame(PrimSpec.int64(), PrimSpec.toHold(IntegerValue.make(-9223372036854775808L)));
-		//TODO IntegerValue once it uses BigInteger 
+		assertSame(PrimSpec.integerVar(), PrimSpec.toHold(IntegerValue.make(-9223372036854775808L).minus(IntegerValue.make(1))));
 	}
 	
 	public void testArray() {
@@ -203,6 +203,10 @@ public class PrimSpecTest extends TestCase {
 
 		array = PrimSpec.uInt32().array();
 		assertSame(PrimSpec.uInt32(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.integerVar().array();
+		assertSame(PrimSpec.integerVar(), array.spec());
 		assertEquals(0, array.count());
 
 		array = PrimSpec.iEEE32().array();

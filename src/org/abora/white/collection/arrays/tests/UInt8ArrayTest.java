@@ -18,6 +18,7 @@ import org.abora.white.collection.arrays.UInt8Array;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 
 public class UInt8ArrayTest extends TestCase {
 
@@ -46,6 +47,40 @@ public class UInt8ArrayTest extends TestCase {
 		} catch (NegativeArraySizeException e) {
 			//expected
 		}
+	}
+
+	public void testMake() {
+		UInt8Array array = UInt8Array.make(AssertArrays.makeUInt8ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = UInt8Array.make(AssertArrays.makeUInt8Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeUInt8Array12345(), array);
+
+		array = UInt8Array.make(7, AssertArrays.makeUInt8Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(UInt8Array.make(new short[]{1,2,3,4,5,0,0}), array);
+
+		array = UInt8Array.make(7, AssertArrays.makeUInt8Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(UInt8Array.make(new short[]{0,0,0,0,0,2,3}), array);		
+
+		try {
+			UInt8Array.make(4, AssertArrays.makeUInt8Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		UInt8Array array = UInt8Array.make(new short[] {});
+		assertEquals(0, array.count());
+
+		array = UInt8Array.make(new short[] {1, 2});
+		assertEquals(2, array.count());
+		assertEquals(1, array.uInt8At(0));
+		assertEquals(2, array.uInt8At(1));		
 	}
 
 	public void testUInt8At() {
@@ -1072,5 +1107,11 @@ public class UInt8ArrayTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 			// expected
 		}
+	}
+
+	public void testBitCount() {
+		UInt8Array array = AssertArrays.makeUInt8Array1(); 
+		assertEquals(((PrimIntegerSpec)array.spec()).bitCount(), Math.abs(array.bitCount()));
+		assertTrue(array.bitCount() >= 0);
 	}
 }

@@ -83,6 +83,10 @@ public class UInt32Array extends PrimIntArray {
 		return make(size, from, 0);
 	}
 
+	public static UInt32Array make(PrimArray from) {
+		return make(from.count(), from);
+	}
+
 	/** create a UInt32Array filled with the data at 'buffer' */
 	public static UInt32Array make(long[] buffer) {
 		return new UInt32Array(buffer);
@@ -183,9 +187,6 @@ public class UInt32Array extends PrimIntArray {
 	protected int signOfNonZeroAfter(int index) {
 		for (int i = index; i < count(); i += 1) {
 			long value = uInt32At(i);
-			if (value < 0) {
-				return -1;
-			}
 			if (value > 0) {
 				return +1;
 			}

@@ -12,13 +12,10 @@ package org.abora.white.value.tests;
 
 import junit.framework.TestCase;
 
-import org.abora.white.value.PrimFloatSpec;
 import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.PrimSpec;
 
 public class PrimFloatSpecTest extends TestCase {
-	protected PrimFloatSpec spec;
-
 	public PrimFloatSpecTest(String arg0) {
 		super(arg0);
 	}
@@ -26,15 +23,24 @@ public class PrimFloatSpecTest extends TestCase {
 	public static void main(String[] args) {
 		junit.swingui.TestRunner.run(PrimFloatSpecTest.class);
 	}
-	
-	public void setUp() {
-		spec = PrimSpec.iEEE32();
-	}
-	
+		
 	public void testValue() {
-		PrimFloatValue value = spec.value(0.0);
-		
-		
+		PrimFloatValue value = PrimSpec.iEEE32().value(123.456);
+		assertEquals(123.456f, value.asIEEE32(), 0.00001f);
+
+		value = PrimSpec.iEEE64().value(123.456);
+		assertEquals(123.456f, value.asIEEE64(), 0.00001f);
 	}
 
+	public void testIsEqual() {
+		assertTrue(PrimSpec.iEEE32().isEqual(PrimSpec.iEEE32()));
+		assertFalse(PrimSpec.iEEE32().isEqual(PrimSpec.iEEE64()));
+		assertFalse(PrimSpec.iEEE32().isEqual(PrimSpec.int32()));		
+	}
+	
+	public void testActualHashForEqual() {
+		assertTrue(PrimSpec.iEEE32().actualHashForEqual() == PrimSpec.iEEE32().actualHashForEqual());
+		assertFalse(PrimSpec.iEEE32().actualHashForEqual() == PrimSpec.iEEE64().actualHashForEqual());
+		assertFalse(PrimSpec.iEEE32().actualHashForEqual() == PrimSpec.int32().actualHashForEqual());
+	}
 }

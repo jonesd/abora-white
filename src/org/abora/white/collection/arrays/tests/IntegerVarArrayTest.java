@@ -14,7 +14,6 @@ import junit.framework.TestCase;
 import org.abora.white.collection.arrays.IEEE32Array;
 import org.abora.white.collection.arrays.IEEE64Array;
 import org.abora.white.collection.arrays.IntegerVarArray;
-import org.abora.white.collection.arrays.Int64Array;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
@@ -43,6 +42,40 @@ public class IntegerVarArrayTest extends TestCase {
 		} catch (NegativeArraySizeException e) {
 			//expected
 		}
+	}
+
+	public void testMake() {
+		IntegerVarArray array = IntegerVarArray.make(AssertArrays.makeIntegerVarArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = IntegerVarArray.make(AssertArrays.makeIntegerVarArray12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeIntegerVarArray12345(), array);
+
+		array = IntegerVarArray.make(7, AssertArrays.makeIntegerVarArray12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(IntegerVarArray.make(new IntegerValue[]{IntegerValue.make(1),IntegerValue.make(2),IntegerValue.make(3),IntegerValue.make(4),IntegerValue.make(5),IntegerValue.make(0),IntegerValue.make(0)}), array);
+
+		array = IntegerVarArray.make(7, AssertArrays.makeIntegerVarArray12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(IntegerVarArray.make(new IntegerValue[]{IntegerValue.make(0),IntegerValue.make(0),IntegerValue.make(0),IntegerValue.make(0),IntegerValue.make(0),IntegerValue.make(2),IntegerValue.make(3)}), array);		
+
+		try {
+			IntegerVarArray.make(4, AssertArrays.makeIntegerVarArray12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		IntegerVarArray array = IntegerVarArray.make(new IntegerValue[] {});
+		assertEquals(0, array.count());
+
+		array = IntegerVarArray.make(new IntegerValue[] {IntegerValue.make(1), IntegerValue.make(2)});
+		assertEquals(2, array.count());
+		assertEquals(IntegerValue.make(1), array.integerAt(0));
+		assertEquals(IntegerValue.make(2), array.integerAt(1));		
 	}
 
 	public void testIntegerVarAt() {

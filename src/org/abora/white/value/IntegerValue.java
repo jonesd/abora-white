@@ -13,6 +13,7 @@ package org.abora.white.value;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 
+import org.abora.white.hash.FHash;
 import org.abora.white.xpp.basic.Heaper;
 
 public class IntegerValue extends PrimIntValue implements Comparable {
@@ -389,14 +390,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	}
 
 	public int actualHashForEqual() {
-		//TODO should we use FHash?
-		return value.hashCode();
-//		return FHash.fastHash(myValue.DOTasLong());
-		/*
-		udanax-top.st:35120:PrimIntValue methodsFor: 'testing'!
-		{UInt32} actualHashForEqual
-			^FHash fastHash.UInt32: myValue DOTasLong!
-		*/
+		return FHash.hashInt(value.hashCode());
 	}
 
 	public void printContentsOn(PrintWriter oo) {
@@ -410,6 +404,10 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	
 	public String toString() {
 		return value.toString();
+	}
+
+	public BigInteger toBigInteger() {
+		return value;
 	}
 
 //	public int precision() {

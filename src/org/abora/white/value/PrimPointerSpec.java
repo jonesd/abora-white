@@ -19,45 +19,16 @@ import org.abora.white.xpp.basic.Heaper;
  * Describes a kind of primitive pointer array
  */
 public class PrimPointerSpec extends PrimSpec {
-	/*
-	udanax-top.st:34628:
-	PrimSpec subclass: #PrimPointerSpec
-		instanceVariableNames: ''
-		classVariableNames: ''
-		poolDictionaries: ''
-		category: 'X++ PrimArrays'!
-	*/
-	/*
-	udanax-top.st:34632:
-	PrimPointerSpec comment:
-	'Describes a kind of primitive pointer array'!
-	*/
-	/*
-	udanax-top.st:34634:
-	(PrimPointerSpec getOrMakeCxxClassDescription)
-		attributes: ((Set new) add: #CONCRETE; add: #(COPY xpp ); yourself)!
-	*/
 
 	//////////////////////////////////////////////
 	// Constructors
 
 	protected PrimPointerSpec(Class arrayClass) {
 		super(arrayClass);
-		/*
-		udanax-top.st:34665:PrimPointerSpec methodsFor: 'create'!
-		create: primClass {Category}
-			super create: primClass.!
-		*/
 	}
 
 	public int actualHashForEqual() {
-		throw new UnsupportedOperationException();
-		//TODO return getCategory().hashForEqual() ^ arrayClass().hashForEqual();
-		/*
-		udanax-top.st:34639:PrimPointerSpec methodsFor: 'testing'!
-		{UInt32} actualHashForEqual
-			^self getCategory hashForEqual bitXor: self arrayClass hashForEqual!
-		*/
+		return getClass().hashCode() ^ arrayClass().hashCode();
 	}
 
 	public boolean isEqual(Heaper other) {

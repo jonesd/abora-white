@@ -11,6 +11,7 @@
 package org.abora.white.collection.arrays;
 
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimIntegerSpec;
@@ -71,11 +72,36 @@ public class Int8Array extends PrimIntArray {
 		return make(size, from, 0);
 	}
 
+	public static Int8Array make(PrimArray from) {
+		return make(from.count(), from);
+	}
+
 	/** create an Int8Array filled with the data at 'buffer' */
 	public static Int8Array make(byte[] buffer) {
 		return new Int8Array(buffer);
 	}
 
+	/**
+	 * Return a new array filled with the specified ASCII string.
+	 * String characters are assumed to be ASCII values.
+	 * 
+	 * @param string string to fill array with.
+	 * @return a new array filled with the specified string.
+	 */
+	public static Int8Array asciiString(String string) throws UnsupportedEncodingException {
+		return new Int8Array(string.getBytes("US-ASCII")); 
+	}
+
+	/**
+	 * Return a new array filled with the specified string in UTF-8 format.
+	 * 
+	 * @param string string to fill array with.
+	 * @return a new array filled with the specified string.
+	 */
+	public static Int8Array utf8String(String string) throws UnsupportedEncodingException {
+		return new Int8Array(string.getBytes("UTF-8")); 
+	}
+	
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
 		return make(size, (PrimIntegerArray) source, sourceOffset, count, destOffset);
 	}

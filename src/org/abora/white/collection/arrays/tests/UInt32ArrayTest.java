@@ -19,6 +19,7 @@ import org.abora.white.collection.arrays.UInt32Array;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 
 public class UInt32ArrayTest extends TestCase {
 
@@ -47,6 +48,40 @@ public class UInt32ArrayTest extends TestCase {
 		} catch (NegativeArraySizeException e) {
 			//expected
 		}
+	}
+
+	public void testMake() {
+		UInt32Array array = UInt32Array.make(AssertArrays.makeUInt32ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = UInt32Array.make(AssertArrays.makeUInt32Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeUInt32Array12345(), array);
+
+		array = UInt32Array.make(7, AssertArrays.makeUInt32Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(UInt32Array.make(new long[]{1,2,3,4,5,0,0}), array);
+
+		array = UInt32Array.make(7, AssertArrays.makeUInt32Array12345(), 1, 2, 5);
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(UInt32Array.make(new long[]{0,0,0,0,0,2,3}), array);		
+
+		try {
+			UInt32Array.make(4, AssertArrays.makeUInt32Array12345());
+			fail("4");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+	
+	public void testMakeBuffer() {
+		UInt32Array array = UInt32Array.make(new long[] {});
+		assertEquals(0, array.count());
+
+		array = UInt32Array.make(new long[] {1, 2});
+		assertEquals(2, array.count());
+		assertEquals(1, array.uInt32At(0));
+		assertEquals(2, array.uInt32At(1));		
 	}
 
 	public void testUInt32At() {
@@ -1058,5 +1093,11 @@ public class UInt32ArrayTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 			// expected
 		}
+	}
+
+	public void testBitCount() {
+		UInt32Array array = AssertArrays.makeUInt32Array1(); 
+		assertEquals(((PrimIntegerSpec)array.spec()).bitCount(), Math.abs(array.bitCount()));
+		assertTrue(array.bitCount() >= 0);
 	}
 }

@@ -72,6 +72,10 @@ public class Int64Array extends PrimIntArray {
 		return make(size, from, 0);
 	}
 
+	public static Int64Array make(PrimArray from) {
+		return make(from.count(), from);
+	}
+
 	/** create an Int64Array filled with the data at 'buffer' */
 	public static Int64Array make(long[] buffer) {
 		return new Int64Array(buffer);

@@ -97,20 +97,6 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 				return FHash.hashInt(n) ^ FHash.hashDouble(floatAt(start)) ^ FHash.hashDouble(floatAt(start + n - 1));
 			}
 		}
-		//TODO double check implementation
-//		int hash = 17;
-//		for (int i = start; i < count; i += 1) {
-//			double value = floatAt(i);
-//			hash = hash * 37 + (int)value;
-//		}
-//		return hash;
-		//			return this->getCategory()->hashForEqual() ^ ::fastHash(count);
-		//		UInt32 PrimFloatArray::elementsHash (Int32 count/* = -1*/,
-		//							 Int32 /*start*//* = Int32Zero*/)
-		//		{
-		//			/* make this actually do something !!!! */
-		//			return this->getCategory()->hashForEqual() ^ ::fastHash(count);
-		//		}
 	}
 
 	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
