@@ -14,6 +14,8 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 
 import org.abora.white.hash.FHash;
+import org.abora.white.spaces.basic.Position;
+import org.abora.white.spaces.integers.IntegerPos;
 import org.abora.white.xpp.basic.Heaper;
 
 public class IntegerValue extends PrimIntValue implements Comparable {
@@ -93,6 +95,13 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	}
 
 	/**
+	 * Return true if the first number is greater than the second number.
+	 */
+	public boolean isGT(IntegerValue another) {
+		return compareTo(another) > 0;
+	}
+
+	/**
 	 * Return true if the first number is less than the second number.
 	 */
 	public boolean isLT(IntegerValue another) {
@@ -106,9 +115,18 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 		return compareTo(another) <= 0;
 	}
 
+	public boolean isZero() {
+		//TODO more direct tests?
+		return isEqual(IntegerValue.zero());
+	}
 
 	//////////////////////////////////////////////
 	// Conversions
+
+	public IntegerPos integer() {
+		// TODO review
+		return IntegerPos.make(this);
+	}
 
 	public int intValue() {
 		//TODO only here to fit in with BigInteger. Do we need it?
@@ -409,6 +427,16 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	public BigInteger toBigInteger() {
 		return value;
 	}
+
+	public IntegerValue abs() {
+		//TODO skip make if not needed
+		return IntegerValue.make(value.abs());
+	}
+
+	public IntegerValue negated() {
+		return IntegerValue.make(value.negate());
+	}
+
 
 //	public int precision() {
 //		passe()

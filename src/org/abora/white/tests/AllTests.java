@@ -20,8 +20,9 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for org.abora.white.tests");
 
 		suite.addTest(org.abora.white.collection.arrays.tests.AllTests.suite());
-		suite.addTest(org.abora.white.value.tests.AllTests.suite());
+		suite.addTest(org.abora.white.collection.tables.tests.AllTests.suite());
 		suite.addTest(org.abora.white.hash.tests.AllTests.suite());
+		suite.addTest(org.abora.white.value.tests.AllTests.suite());
 
 		//$JUnit-BEGIN$
 		//$JUnit-END$

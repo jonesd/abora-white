@@ -14,15 +14,14 @@ public abstract class PrimIntArray extends PrimIntegerArray {
 
 	//////////////////////////////////////////////
 	// Constructors
-	
+
 	protected PrimIntArray() {
 		super();
 	}
 
-
 	//////////////////////////////////////////////
 	// Static Factory Methods
-	
+
 	/**	
 	 * Make an array initialized to zeros. The values are signed if bitCount is
 	 * negative
@@ -59,10 +58,9 @@ public abstract class PrimIntArray extends PrimIntegerArray {
 		//		}
 	}
 
-
 	//////////////////////////////////////////////
 	// Accessing
-	
+
 	/**
 	 * Return the maximum bits/entry that can be stored in this array
 	 */

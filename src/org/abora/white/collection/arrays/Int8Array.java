@@ -88,8 +88,13 @@ public class Int8Array extends PrimIntArray {
 	 * @param string string to fill array with.
 	 * @return a new array filled with the specified string.
 	 */
-	public static Int8Array asciiString(String string) throws UnsupportedEncodingException {
-		return new Int8Array(string.getBytes("US-ASCII")); 
+	public static Int8Array asciiString(String string) {
+		//TODO should we be catching encoding exception?
+		try {
+			return new Int8Array(string.getBytes("US-ASCII"));
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException(e.toString());
+		}
 	}
 
 	/**
@@ -98,10 +103,15 @@ public class Int8Array extends PrimIntArray {
 	 * @param string string to fill array with.
 	 * @return a new array filled with the specified string.
 	 */
-	public static Int8Array utf8String(String string) throws UnsupportedEncodingException {
-		return new Int8Array(string.getBytes("UTF-8")); 
+	public static Int8Array utf8String(String string) {
+		//TODO should we be catching encoding exception?
+		try {
+			return new Int8Array(string.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException(e.toString());
+		}
 	}
-	
+
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
 		return make(size, (PrimIntegerArray) source, sourceOffset, count, destOffset);
 	}

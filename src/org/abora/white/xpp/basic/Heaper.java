@@ -13,16 +13,17 @@ package org.abora.white.xpp.basic;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
-public abstract class Heaper {
+import org.abora.white.rcvr.Rcvr;
+import org.abora.white.rcvr.Xmtr;
 
+public abstract class Heaper {
 
 	//////////////////////////////////////////////
 	// Constructors
-	
+
 	public Heaper() {
 		super();
 	}
-
 
 	//////////////////////////////////////////////
 	// Comparison and Hashing
@@ -36,7 +37,7 @@ public abstract class Heaper {
 			return super.equals(other);
 		}
 	}
-	
+
 	/**
 	 * Return true if the two objects are equal.
 	 */
@@ -64,10 +65,9 @@ public abstract class Heaper {
 		return System.identityHashCode(this);
 	}
 
-
 	//////////////////////////////////////////////
 	// Printing
-	
+
 	/**
 	 * This should rarely be overridden.  In Tofu, it prints ClassName(...),
 	 * where ... is either produced by printInsideOn or is ??? if printInsideOn
@@ -93,10 +93,29 @@ public abstract class Heaper {
 
 	public String toString() {
 		//TODO performance concerns over the choice of PrintWriter
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); 
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter printWriter = new PrintWriter(outputStream);
 		printOn(printWriter);
 		printWriter.flush();
 		return outputStream.toString();
+	}
+
+	public void destroy() {
+		//TODO probably dont need - just here to satisfy senders
+		throw new UnsupportedOperationException();
+	}
+
+	public void destruct() {
+		//TODO is this significant? - just here to satisfy senders
+		throw new UnsupportedOperationException();
+	}
+
+	public void sendSelfTo(Xmtr xmtr) {
+		throw new UnsupportedOperationException();
+	}
+
+	public Heaper(Rcvr receiver) {
+		super();
+		throw new UnsupportedOperationException();
 	}
 }
