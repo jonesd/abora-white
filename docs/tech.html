@@ -49,10 +49,34 @@
 
 <h3>Developing with Eclipse</h3>
 
+	<p>TODO: .project resources, templates to ease writing.</p>
+
 <h3>Programming Patterns</h3>
 
 <h4>Object Creation</h4>
 
+		<p>Object creation is requested using static factory
+			methods rather than directly calling constructors. This
+			is an often used pattern that has a few benefits; factory
+			methods can have names, they gain flexibility by being able to
+			return subclasses of the declared type and also they can re-use
+			existing objects if required.</p>
+
+		<p>The default name for the factory methods is <tt>make</tt>
+			though there are some more descriptively named cases as
+			well.</p>
+
+		<p>Some simple examples of its usage:<br>
+<pre>	IntegerValue nine = IntegerValue.make(9);
+	IntegerValue zero = IntegerValue.zero();</pre></p>
+
+		<p>Constructors are obviously still used under the covers, and are
+			often marked as <tt>protected</tt> to discourage their direct
+			calling.</p>
+
+		<p>TODO: References, why the name make, are there any idoms for
+		naming these factories beyond make, problems with return
+		inheritance, rehydrating with the Rcvr constructor.</p>
 
 <!-- abora:footer -->
     </body>
