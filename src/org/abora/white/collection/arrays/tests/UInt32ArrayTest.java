@@ -131,7 +131,7 @@ public class UInt32ArrayTest extends TestCase {
 		AssertArrays.assertEquals(2, UInt32Array.make(new long[] { 0, 1 }).count());
 	}
 
-	public void testStoreUInt8() {
+	public void testStoreUInt32() {
 		UInt32Array empty = UInt32Array.make(0);
 		UInt32Array tri = UInt32Array.make(3);
 
@@ -141,6 +141,13 @@ public class UInt32ArrayTest extends TestCase {
 		assertEquals(tri.uInt32At(1), 1);
 		tri.storeUInt32(2, UINT32_MAX_VALUE);
 		assertEquals(tri.uInt32At(2), UINT32_MAX_VALUE);
+
+		// silent wrapping of values outside range
+		tri.storeUInt32(0, UINT32_MIN_VALUE - 1);
+		assertEquals(UINT32_MAX_VALUE, tri.uInt32At(0));
+		
+		tri.storeUInt32(1, UINT32_MAX_VALUE + 1);
+		assertEquals(UINT32_MIN_VALUE, tri.uInt32At(1));
 
 		try {
 			tri.storeUInt32(-1,  1);

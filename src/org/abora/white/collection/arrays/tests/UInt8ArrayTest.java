@@ -141,6 +141,13 @@ public class UInt8ArrayTest extends TestCase {
 		tri.storeUInt8(2, UINT8_MAX_VALUE);
 		assertEquals(tri.uInt8At(2), UINT8_MAX_VALUE);
 
+		// silent wrapping of values outside range
+		tri.storeUInt8(0, (short)(UINT8_MIN_VALUE - 1));
+		assertEquals(UINT8_MAX_VALUE, tri.uInt8At(0));
+		
+		tri.storeUInt8(1, (short)(UINT8_MAX_VALUE + 1));
+		assertEquals(UINT8_MIN_VALUE, tri.uInt8At(1));
+
 		try {
 			tri.storeUInt8(-1, (short) 1);
 			fail("-1");
