@@ -23,7 +23,7 @@ import org.abora.white.xpp.basic.Heaper;
  */
 
 public class Int16Array extends PrimIntArray {
-	private short[] storage;
+	private final short[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors

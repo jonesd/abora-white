@@ -10,14 +10,15 @@
  */
 package org.abora.white.collection.arrays;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class UInt32Array extends PrimIntArray {
-	private int[] storage;
+	private final int[] storage;
 
 
 	//////////////////////////////////////////////
@@ -29,12 +30,31 @@ public class UInt32Array extends PrimIntArray {
 	}
 	
 	protected UInt32Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		this(size);
+		int n = count;
+		if (count == -1) {
+			n = from.count() - sourceOffset;
+		}
+		copyElements(destOffset, from, sourceOffset, n);
 	}
 
 	protected UInt32Array(long[] buffer) {
 		this(buffer.length);
-		throw new UnsupportedOperationException();
+		for (int i = 0; i < buffer.length; i++) {
+			long uInt32 = buffer[i];
+			storage[i] = toSignedByte(uInt32);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+	// Unsigned Util
+	
+	private long toUnsignedInt(int int32) {
+		return (long)(int32 & 0xffffffffL);
+	}
+	
+	private int toSignedByte(long uInt32) {
+		return (int)(uInt32 & 0xffffffffL);
 	}
 
 
@@ -48,7 +68,7 @@ public class UInt32Array extends PrimIntArray {
 
 	/** create a UInt32Array filled with the indicated data in 'from' */
 	public static UInt32Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		return new UInt32Array(size, from, sourceOffset, count, destOffset);
 	}
 
 	public static UInt32Array make(int size, PrimArray from, int sourceOffset, int count) {
@@ -65,11 +85,11 @@ public class UInt32Array extends PrimIntArray {
 
 	/** create a UInt32Array filled with the data at 'buffer' */
 	public static UInt32Array make(long[] buffer) {
-		throw new UnsupportedOperationException();
+		return new UInt32Array(buffer);
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		return make(size, (PrimIntegerArray) source, sourceOffset, count, destOffset);
 	}
 
 
@@ -77,29 +97,36 @@ public class UInt32Array extends PrimIntArray {
 	// Accessing
 
 	/** Store a 32 bit unsigned integer value */
-	public void storeUInt(int index, int value) {
-		throw new UnsupportedOperationException();
+	public void storeUInt32(int index, long value) {
+		storage[index] = toSignedByte(value);
 	}
 
 	/** Get a 32 bit unsigned actual integer value */
-	public int uIntAt(int index) {
-		throw new UnsupportedOperationException();
+	public long uInt32At(int index) {
+		return toUnsignedInt(storage[index]);
 	}
 
 	public void storeInteger(int index, IntegerValue value) {
-		throw new UnsupportedOperationException();
+		if (!((PrimIntegerSpec) spec()).canHold(value)) {
+			throw new IllegalArgumentException("ValueOutOfRange");
+		}
+		storeUInt32(index, value.asUInt32());
 	}
 
 	public IntegerValue integerAt(int index) {
-		throw new UnsupportedOperationException();
+		return IntegerValue.make(uInt32At(index));
 	}
 
 	public void storeValue(int index, Heaper value) {
-		throw new UnsupportedOperationException();
+		if (value == null) {
+			throw new NullPointerException();
+		}
+		IntegerValue v = (IntegerValue) value;
+		storeInteger(index, v);
 	}
 
 	public Heaper fetchValue(int index) {
-		throw new UnsupportedOperationException();
+		return IntegerValue.make(uInt32At(index));
 	}
 
 	public int count() {
@@ -111,9 +138,6 @@ public class UInt32Array extends PrimIntArray {
 	}
 
 	public int bitCount() {
-		/* Return the maximum bits/entry that can be stored in this array.
-		   The number will be negative for signed arrays. */
-
 		return 32;
 	}
 
@@ -121,39 +145,87 @@ public class UInt32Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Bulk Storing
 	
-	public void copyToBuffer(int[] buffer, int size, int count, int start) {
-		throw new UnsupportedOperationException();
+	public void copyToBuffer(long[] buffer, int count, int start) {
+		int n;
+		if (count >= 0) {
+			n = count;
+		} else {
+			n = count() - start;
+		}
+		if (n > buffer.length) {
+			n = buffer.length;
+		}
+		for (int i = 0; i < n; i++) {
+			long uInt32 = uInt32At(start + i);
+			buffer[i] = uInt32;
+		}
 	}
 
 
 	//////////////////////////////////////////////
 	// Comparison and Hashing
 	
-	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt32Array) {
+			UInt32Array o = (UInt32Array) other;
+			for (int i = 0; i < count; i += 1) {
+				long cmp = uInt32At(i + start) - o.uInt32At(i + otherStart);
+				if (cmp != 0) {
+					return cmp < 0 ? -1 : 1;
+				}
+			}
+			return 0;
+		} else {
+			return super.compareData(start, other, otherStart, count);
+		}
 	}
 
-	protected int signOfNonZeroAfter(int start) {
-		throw new UnsupportedOperationException();
+	protected int signOfNonZeroAfter(int index) {
+		for (int i = index; i < count(); i += 1) {
+			long value = uInt32At(i);
+			if (value < 0) {
+				return -1;
+			}
+			if (value > 0) {
+				return +1;
+			}
+		}
+		return 0;
 	}
 
 
 	//////////////////////////////////////////////
 	// Arithmetic Operations
 
-	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt32Array) {
+			UInt32Array o = (UInt32Array) other;
+			for (int i = 0; i < count; i += 1) {
+				long resultant = uInt32At(i + start) + o.uInt32At(i + otherStart);
+				storeUInt32(i + start, resultant);
+			}
+		} else {
+			super.addData(start, other, otherStart, count);
+		}
 	}
 
-	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt32Array) {
+			UInt32Array o = (UInt32Array) other;
+			for (int i = 0; i < count; i += 1) {
+				long resultant = uInt32At(i + start) - o.uInt32At(i + otherStart);
+				storeUInt32(i + start, resultant);
+			}
+		} else {
+			super.subtractData(start, other, otherStart, count);
+		}
 	}
 
 
 	//////////////////////////////////////////////
 	// Printing
 
-	protected void printElementOn(int index, PrintStream oo) {
-		throw new UnsupportedOperationException();
+	protected void printElementOn(int index, PrintWriter oo) {
+		oo.print(uInt32At(index));
 	}
 }

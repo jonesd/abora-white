@@ -23,7 +23,7 @@ import org.abora.white.xpp.basic.Heaper;
  */
 
 public class Int64Array extends PrimIntArray {
-	private long[] storage;
+	private final long[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors

@@ -10,7 +10,6 @@
  */
 package org.abora.white.collection.arrays;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import org.abora.white.value.IntegerValue;
@@ -18,7 +17,7 @@ import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class IntegerVarArray extends PrimIntegerArray {
-	private IntegerValue[] storage;
+	private final IntegerValue[] storage;
 
 
 	//////////////////////////////////////////////

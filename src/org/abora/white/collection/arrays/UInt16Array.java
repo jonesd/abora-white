@@ -18,7 +18,7 @@ import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class UInt16Array extends PrimIntArray {
-	private char[] storage;
+	private final char[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors
@@ -70,6 +70,10 @@ public class UInt16Array extends PrimIntArray {
 	/** create an UInt16Array filled with the data at 'buffer' */
 	public static UInt16Array make(char[] buffer) {
 		return new UInt16Array(buffer);
+	}
+
+	public static UInt16Array make(String string) {
+		return make(string.toCharArray());
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
@@ -214,4 +218,15 @@ public class UInt16Array extends PrimIntArray {
 		//TODO should this print out in String format instead?
 		oo.print((int)uInt16At(index));
 	}
+	
+	//////////////////////////////////////////////
+	// Conversions
+	
+	public String asString() {
+		//TODO what to do about the name. don't know whether to stay
+		// clear of toString
+		
+		return String.copyValueOf(storage);
+	}
+
 }

@@ -978,4 +978,25 @@ public class UInt16ArrayTest extends TestCase {
 		assertEquals("[empty]", AssertArrays.makeUInt16ArrayEmpty().toString());
 		assertEquals("[1 2 3 4 5]", AssertArrays.makeUInt16Array12345().toString());
 	}
+	
+	public void testString() {
+		UInt16Array array = UInt16Array.make("");
+		assertEquals(0, array.count());
+		
+		array = UInt16Array.make("a \u0424\t");
+		assertEquals(4, array.count());
+		assertEquals('a', array.uInt16At(0));
+		assertEquals(' ', array.uInt16At(1));
+		assertEquals('\u0424', array.uInt16At(2));
+		assertEquals('\t', array.uInt16At(3));
+	}
+	
+	public void testAsString() {
+		UInt16Array array = UInt16Array.make("");
+		assertEquals("", array.asString());
+		
+		array = UInt16Array.make("a \u0424\t");
+		assertEquals("a \u0424\t", array.asString());
+	}
+
 }

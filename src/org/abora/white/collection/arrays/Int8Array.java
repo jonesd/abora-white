@@ -21,9 +21,8 @@ import org.abora.white.xpp.basic.Heaper;
  * Concrete fixed size array that holds elements of the 8-bit signed integral type.
  * This maps to the Java <code>byte</int> primitive type.
  */
-
 public class Int8Array extends PrimIntArray {
-	private byte[] storage;
+	private final byte[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors

@@ -13,12 +13,12 @@ package org.abora.white.collection.arrays;
 import java.io.PrintWriter;
 
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class UInt8Array extends PrimIntArray {
-	//TODO isnt a java byte actually Int8?
-	private byte[] storage;
+	private final byte[] storage;
 
 
 	//////////////////////////////////////////////
@@ -106,27 +106,34 @@ public class UInt8Array extends PrimIntArray {
 	// Accessing
 
 	public void storeUInt8(int index, short value) {
-		throw new UnsupportedOperationException();
+		storage[index] = toSignedByte(value);
 	}
 
 	public short uInt8At(int index) {
-		throw new UnsupportedOperationException();
+		return toUnsignedByte(storage[index]);
 	}
 
 	public void storeInteger(int index, IntegerValue value) {
-		throw new UnsupportedOperationException();
+		if (!((PrimIntegerSpec) spec()).canHold(value)) {
+			throw new IllegalArgumentException("ValueOutOfRange");
+		}
+		storeUInt8(index, value.asUInt8());
 	}
 
 	public IntegerValue integerAt(int index) {
-		throw new UnsupportedOperationException();
+		return IntegerValue.make(uInt8At(index));
 	}
 
 	public void storeValue(int index, Heaper value) {
-		throw new UnsupportedOperationException();
+		if (value == null) {
+			throw new NullPointerException();
+		}
+		IntegerValue v = (IntegerValue) value;
+		storeInteger(index, v);
 	}
 
 	public Heaper fetchValue(int index) {
-		throw new UnsupportedOperationException();
+		return IntegerValue.make(uInt8At(index));
 	}
 
 	public PrimSpec spec() {
@@ -145,44 +152,31 @@ public class UInt8Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Bulk Storage
 
-	public void storeMany(int to, PrimArray other, int count, int from) {
-		throw new UnsupportedOperationException();
-	}
-	
-	public void copyToBuffer(int[] buffer, int size, int count, int start) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void zeroElements(int from, int count) {
-		throw new UnsupportedOperationException();
-	}
-
-	protected void copyElements(int to, PrimArray source, int from, int count) {
-		throw new UnsupportedOperationException();
-	}
-
-	//////////////////////////////////////////////
-	// Printing
-
-	public void printOn(PrintWriter oo) {
-		throw new UnsupportedOperationException();
-	}
-
-	protected void printElementOn(int index, PrintWriter oo) {
-		throw new UnsupportedOperationException();
-	}
-
-//	/**	
-//	 * A pointer to the actual string.  While one of these are outstanding, one
-//	 * may not allocate any PrimArrays, because doing so may cause compaction,
-//	 * which would relocate the data.  In order to keep track of whether there
-//	 * are outstanding hard pointers, my clients must call noMoreGuts() when
-//	 * they will no longer be using the pointer.
-//	 */
-//	public String gutsOf() {
+//	public void storeMany(int to, PrimArray other, int count, int from) {
 //		throw new UnsupportedOperationException();
 //	}
-//	public void noMoreGuts() {
+	
+	public void copyToBuffer(short[] buffer, int count, int start) {
+		int n;
+		if (count >= 0) {
+			n = count;
+		} else {
+			n = count() - start;
+		}
+		if (n > buffer.length) {
+			n = buffer.length;
+		}
+		for (int i = 0; i < n; i++) {
+			short s = uInt8At(start + i);
+			buffer[i] = s;
+		}
+	}
+
+//	public void zeroElements(int from, int count) {
+//		throw new UnsupportedOperationException();
+//	}
+
+//	protected void copyElements(int to, PrimArray source, int from, int count) {
 //		throw new UnsupportedOperationException();
 //	}
 
@@ -190,23 +184,78 @@ public class UInt8Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Comparing and Hashing
 
-	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt8Array) {
+			UInt8Array o = (UInt8Array) other;
+			for (int i = 0; i < count; i += 1) {
+				int cmp = uInt8At(i + start) - o.uInt8At(i + otherStart);
+				if (cmp != 0) {
+					return cmp < 0 ? -1 : 1;
+				}
+			}
+			return 0;
+		} else {
+			return super.compareData(start, other, otherStart, count);
+		}
 	}
 
-	protected int signOfNonZeroAfter(int start) {
-		throw new UnsupportedOperationException();
+	protected int signOfNonZeroAfter(int index) {
+		for (int i = index; i < count(); i += 1) {
+			short value = uInt8At(i);
+			if (value < 0) {
+				return -1;
+			}
+			if (value > 0) {
+				return +1;
+			}
+		}
+		return 0;
 	}
 
 
 	//////////////////////////////////////////////
 	// Arithmetic Operations
 
-	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt8Array) {
+			UInt8Array o = (UInt8Array) other;
+			for (int i = 0; i < count; i += 1) {
+				int resultant = uInt8At(i + start) + o.uInt8At(i + otherStart);
+				storeUInt8(i + start, (short) resultant);
+			}
+		} else {
+			super.addData(start, other, otherStart, count);
+		}
 	}
 
-	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
+	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt8Array) {
+			UInt8Array o = (UInt8Array) other;
+			for (int i = 0; i < count; i += 1) {
+				int resultant = uInt8At(i + start) - o.uInt8At(i + otherStart);
+				storeUInt8(i + start, (short) resultant);
+			}
+		} else {
+			super.subtractData(start, other, otherStart, count);
+		}
+	}
+
+
+	//////////////////////////////////////////////
+	// Printing
+
+//	public void printOn(PrintWriter oo) {
+//		throw new UnsupportedOperationException();
+//	}
+
+	protected void printElementOn(int index, PrintWriter oo) {
+		oo.print(uInt8At(index));
+	}
+
+	//////////////////////////////////////////////
+	// Conversions
+	
+	public String asString() {
 		throw new UnsupportedOperationException();
 	}
 }

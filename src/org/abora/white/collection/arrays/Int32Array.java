@@ -18,7 +18,7 @@ import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class Int32Array extends PrimIntArray {
-	private int[] storage;
+	private final int[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors

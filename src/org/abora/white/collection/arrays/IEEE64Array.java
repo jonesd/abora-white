@@ -24,7 +24,7 @@ import org.abora.white.xpp.basic.Heaper;
  * the double-precision 64-bit format IEEE 754 values.
  */
 public class IEEE64Array extends PrimFloatArray {
-	private double[] storage;
+	private final double[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors
