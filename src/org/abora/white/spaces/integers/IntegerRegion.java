@@ -70,6 +70,26 @@ import org.abora.white.xpp.basic.Heaper;
  * <p>
  * IntegerRegions are immutable.
  * <p>
+ * <h3>Implementation</h3>
+ * Zero or more transition points, from entering to exiting the region and visa-versa.
+ * Transitions are ordered from negative infinity through positive
+ * infinity and stored in <code>myTransitions</code>, together with a <code>myTransitionCount</code> of the
+ * the first transitions that should be considered. The count appears to be just a
+ * performance improvement in place of continually requesting the count of myTransition.
+ * <code>myStartsInside</code> indicates whether the first transition points is an entering, or
+ * exiting transition.
+ * <p>
+ * Empty Region: <code>myStartsInside = false, myTransitions={}</code><br>
+ * Full Region: <code>myStartsInside = true, myTransitions={}</code><br>
+ * Before 10: <code>myStartsInside = true, myTransitions={10}</code><br>
+ * After 10: <code>myStartsInside = false, myTransitions={10}</code><br>
+ * Between 5 & 10: <code>myStartsInside = false, myTransitions={5, 10}</code><br>
+ * <p>
+ * Statics cache the Empty and Full regions.
+ * There are additionally a number of less obvious statics that are more dynamic, and
+ * reflect the assumption that there will be a significant number of consequitive repeated requests
+ * for the same regions. 
+ * <p>
  * See OrderedRegion.
  */
 public class IntegerRegion extends XnRegion {
@@ -193,7 +213,7 @@ public class IntegerRegion extends XnRegion {
 	/////////////////////////////////////////////
 	// Constructors
 
-	public IntegerRegion(boolean startsInside, int count, IntegerVarArray transitions) {
+	protected IntegerRegion(boolean startsInside, int count, IntegerVarArray transitions) {
 		super();
 		myStartsInside = startsInside;
 		myTransitionCount = count;
@@ -395,6 +415,7 @@ public class IntegerRegion extends XnRegion {
 	 * No integers, the empty region
 	 */
 	public static IntegerRegion make() {
+		//TODO should this method be called empty()? like SequenceRegion
 		return EmptyIntegerRegion;
 		/*
 		udanax-top.st:69179:IntegerRegion class methodsFor: 'pseudo constructors'!
@@ -1183,9 +1204,9 @@ public class IntegerRegion extends XnRegion {
 
 	public boolean isEqual(Heaper other) {
 		if (other instanceof IntegerRegion) {
-			IntegerRegion ir = (IntegerRegion) other;
-			return ir.isBoundedBelow() != myStartsInside
-				&& (ir.transitionCount() == myTransitionCount && (ir.secretTransitions().elementsEqual(0, myTransitions, 0, myTransitionCount)));
+			IntegerRegion region = (IntegerRegion) other;
+			return region.isBoundedBelow() != myStartsInside
+				&& (region.transitionCount() == myTransitionCount && (region.secretTransitions().elementsEqual(0, myTransitions, 0, myTransitionCount)));
 		} else {
 			return false;
 		}

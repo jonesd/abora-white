@@ -10,10 +10,12 @@ package org.abora.white.spaces.integers.tests;
 import junit.framework.TestCase;
 
 import org.abora.white.exception.AboraRuntimeException;
+import org.abora.white.spaces.basic.XnRegion;
 import org.abora.white.spaces.integers.IntegerPos;
 import org.abora.white.spaces.integers.IntegerRegion;
 import org.abora.white.spaces.integers.IntegerSpace;
 import org.abora.white.tumbler.RealPos;
+import org.abora.white.tumbler.SequenceRegion;
 import org.abora.white.value.IntegerValue;
 
 public class IntegerRegionTest extends TestCase {
@@ -549,5 +551,149 @@ public class IntegerRegionTest extends TestCase {
 		} catch (ClassCastException e) {
 			// expected
 		}
+	}
+	
+	public void testIntersects() {
+		IntegerRegion empty = IntegerRegion.make();
+		IntegerRegion full = IntegerRegion.allIntegers();
+		
+		assertFalse(empty.intersects(empty));
+		assertFalse(empty.intersects(full));
+		assertFalse(full.intersects(empty));
+		
+		assertTrue(full.intersects(full));
+		
+		IntegerRegion after10 = IntegerRegion.after(IntegerValue.make(10));
+		assertTrue(after10.intersects(after10));
+		assertTrue(after10.intersects(full));
+		assertFalse(after10.intersects(empty));
+		
+		IntegerRegion after10hole15 = (IntegerRegion)after10.without(IntegerPos.make(15));
+		
+		assertTrue(after10.intersects(after10hole15));
+		
+		IntegerRegion lower = IntegerRegion.before(IntegerValue.make(5));
+		
+		assertFalse(lower.intersects(after10hole15));
+		assertFalse(lower.intersects(empty));
+		assertTrue(lower.intersects(full));
+		
+		IntegerRegion lower2 = (IntegerRegion)lower.unionWith(IntegerRegion.make(IntegerValue.make(15)));
+		
+		assertTrue(lower2.intersects(after10));
+		assertFalse(lower2.intersects(after10hole15));
+		
+		IntegerRegion lower3 = (IntegerRegion) lower2.unionWith(IntegerRegion.make(IntegerValue.make(23)));
+
+		assertTrue(lower3.intersects(after10));
+		assertTrue(lower3.intersects(after10hole15));
+	}
+	
+	public void testIsBoundedAbove() {
+		assertTrue(IntegerRegion.make().isBoundedAbove());
+		assertFalse(IntegerRegion.allIntegers().isBoundedAbove());
+		
+		assertTrue(IntegerRegion.before(IntegerValue.one()).isBoundedAbove());
+		assertFalse(IntegerRegion.after(IntegerValue.one()).isBoundedAbove());
+
+		assertTrue(((IntegerRegion)IntegerRegion.before(IntegerValue.one()).without(IntegerPos.make(-4))).isBoundedAbove());
+		assertFalse(((IntegerRegion)IntegerRegion.after(IntegerValue.one()).without(IntegerPos.make(4))).isBoundedAbove());
+	}
+
+	public void testIsBoundedBelow() {
+		assertTrue(IntegerRegion.make().isBoundedBelow());
+		assertFalse(IntegerRegion.allIntegers().isBoundedBelow());
+		
+		assertFalse(IntegerRegion.before(IntegerValue.one()).isBoundedBelow());
+		assertTrue(IntegerRegion.after(IntegerValue.one()).isBoundedBelow());
+
+		assertFalse(((IntegerRegion)IntegerRegion.before(IntegerValue.one()).without(IntegerPos.make(-4))).isBoundedBelow());
+		assertTrue(((IntegerRegion)IntegerRegion.after(IntegerValue.one()).without(IntegerPos.make(4))).isBoundedBelow());
+	}
+	
+	public void testIsEmpty() {
+		assertTrue(IntegerRegion.make().isEmpty());
+		assertFalse(IntegerRegion.allIntegers().isEmpty());
+		
+		assertFalse(IntegerRegion.before(IntegerValue.one()).isEmpty());
+		assertFalse(IntegerRegion.after(IntegerValue.one()).isEmpty());
+	}
+	
+	public void testIsEqual() {
+		// Full/Empty
+		assertTrue(IntegerRegion.make().isEqual(IntegerRegion.make()));
+		assertTrue(IntegerRegion.allIntegers().isEqual(IntegerRegion.allIntegers()));
+		assertFalse(IntegerRegion.make().isEqual(IntegerRegion.allIntegers()));
+		
+		assertTrue(IntegerRegion.after(IntegerValue.one()).isEqual(IntegerRegion.after(IntegerValue.one())));
+		assertTrue(IntegerRegion.before(IntegerValue.one()).isEqual(IntegerRegion.before(IntegerValue.one())));
+		assertFalse(IntegerRegion.after(IntegerValue.one()).isEqual(IntegerRegion.before(IntegerValue.one())));
+		
+		assertFalse(IntegerRegion.after(IntegerValue.one()).isEqual(IntegerRegion.after(IntegerValue.one()).without(IntegerPos.make(10))));
+
+		// Different class
+		assertFalse(IntegerRegion.make().isEqual(SequenceRegion.empty()));
+	}
+	
+	public void testIsFinite() {
+		// Full/Empty
+		assertTrue(IntegerRegion.make().isFinite());
+		assertFalse(IntegerRegion.allIntegers().isFinite());
+		
+		assertFalse(IntegerRegion.before(IntegerValue.one()).isFinite());
+		assertFalse(IntegerRegion.after(IntegerValue.one()).isFinite());
+		
+		assertTrue(IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).isFinite());
+		assertTrue(IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).without(IntegerPos.make(6)).isFinite());
+	}
+
+	public void testIsFull() {
+		// Full/Empty
+		assertFalse(IntegerRegion.make().isFull());
+		assertTrue(IntegerRegion.allIntegers().isFull());
+		
+		assertFalse(IntegerRegion.before(IntegerValue.one()).isFull());
+		assertFalse(IntegerRegion.after(IntegerValue.one()).isFull());
+		
+		assertFalse(IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).isFull());
+		assertFalse(IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).without(IntegerPos.make(6)).isFull());
+	}
+
+	public void testIsSimple() {
+		// Full/Empty
+		assertTrue(IntegerRegion.make().isSimple());
+		assertTrue(IntegerRegion.allIntegers().isSimple());
+		assertFalse(IntegerRegion.allIntegers().without(IntegerPos.make(10)).isSimple());
+		
+		assertTrue(IntegerRegion.before(IntegerValue.one()).isSimple());
+		assertTrue(IntegerRegion.after(IntegerValue.one()).isSimple());
+		
+		assertTrue(IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).isSimple());
+		assertFalse(IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).without(IntegerPos.make(6)).isSimple());
+	}
+	
+	public void testIsSubsetOf() {
+		// Full/Empty
+		assertTrue(IntegerRegion.make().isSubsetOf(IntegerRegion.make()));
+		assertTrue(IntegerRegion.allIntegers().isSubsetOf(IntegerRegion.allIntegers()));
+		assertTrue(IntegerRegion.make().isSubsetOf(IntegerRegion.allIntegers()));
+		assertFalse(IntegerRegion.allIntegers().isSubsetOf(IntegerRegion.make()));
+		
+		//TODO needs more
+	}
+	
+	public void testComplement() {
+		// Full/Empty
+		IntegerRegion region = IntegerRegion.make();
+		XnRegion complement = region.complement();
+		assertEquals(IntegerRegion.allIntegers(), complement);
+		
+		region = IntegerRegion.allIntegers();
+		complement = region.complement();
+		assertEquals(IntegerRegion.make(), complement);
+		
+		region = IntegerRegion.after(IntegerValue.make(10));
+		complement = region.complement();
+		assertEquals(IntegerRegion.before(IntegerValue.make(10)), complement);
 	}
 }
