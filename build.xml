@@ -16,7 +16,9 @@
    <property name="junit.dir" location="${build}/docs/junit"/>
    <property name="javadoc.dir" location="${build}/docs/api"/>
    <property name="clover.dir" location="${build}/docs/clover"/>
+   <property name="clover.history.dir" location="${build}/docs/clover-historical"/>
 
+	<taskdef resource="clovertasks"/>
 	<property name="clover.home" value="${env.CLOVER_HOME}"/>
    
    
@@ -26,12 +28,8 @@
     <mkdir dir="${build}/bin"/>
     <mkdir dir="${build}/docs"/>
 
-	<property name="clover.initstring" location="${build}/clover_coverage.db"/>
-	<property name="clover.excludes" value="**/tests/**"/>
-	
 	<path id="clover.classpath">
 		<pathelement path="${clover.home}/lib/clover.jar"/>
-  		<pathelement path="${clover.home}/lib/velocity.jar"/>
 	</path>
   </target>
 
@@ -78,7 +76,7 @@
   		<classpath>
   			<pathelement path="${build}/bin"/>
   		</classpath>
-		   <classpath refid="clover.classpath"/>	
+		   <classpath refid="clover.classpath"/>
   	</junit>
   </target>
   
@@ -127,19 +125,37 @@
 	  <antcall target="clover.report"/>
 	</target>
 
-	<target name="with.clover" if="env.CLOVER_HOME">
-		<echo message="*** Including Clover support ***"/>
-		<property name="build.compiler"
-            value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
-	</target>
+<!--**************************************************************-->
+<!--** Clover Code Coverage Support ******************************-->
+<!--**************************************************************-->
+
+<target name="with.clover" if="env.CLOVER_HOME">
+	<echo message="*** Including Clover support ***"/>
+		<clover-setup initString="${build}/clover_coverage.db">
+	 		<files>
+				<exclude name="**/tests/**"/>
+	 		</files>
+		</clover-setup>
+	<property name="build.compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+</target>
 	
-	<target name="clover.report" depends="init" if="env.CLOVER_HOME">
-  <java classname="com.cortexeb.tools.clover.reporters.html.HtmlReporter" fork="true">
-   <arg line="--outputdir ${clover.dir} --showSrc --initstring ${clover.initstring} --title '${Name}'"/>
-   <classpath refid="clover.classpath"/>
-  </java>
+<target name="clover.report" depends="init, with.clover" if="env.CLOVER_HOME">
+	<clover-report>
+		<Current title="${Name}" outfile="${clover.dir}">
+			<format type="html" srcLevel="true"/> 
+		</Current>
+		<Historical title="${Name}" outfile="${clover.history.dir}" historyDir="${basedir}/clover-historical">
+			<format type="html"/>
+		</Historical>
+	</clover-report>
 </target>
 
-	<target name="just.clover" depends="with.clover, clean, compile, test, clover.report"/>
+<target name="clover.historypoint" depends="with.clover, init">
+	<mkdir dir="${basedir}/clover-historical"/>
+	<clover-historypoint historyDir="${basedir}/clover-historical"/>
+</target>
 
+<target name="just.clover" depends="with.clover, clean, compile, test, clover.report"/>
+
+<!--**************************************************************-->
 </project>
