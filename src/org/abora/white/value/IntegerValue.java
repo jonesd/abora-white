@@ -11,16 +11,16 @@
 package org.abora.white.value;
 
 import java.io.PrintWriter;
+import java.math.BigInteger;
 
 import org.abora.white.xpp.basic.Heaper;
 
 public class IntegerValue extends PrimIntValue implements Comparable {
-	//TODO try and get operation names to match BigInteger
-	
-	//TODO automatically convert to BigInteger if we overflow
-	private final long value;
+	//TODO This is surely a performance disaster. Couldnt we just use int/long?
+	private final BigInteger value;
 
 	private static final IntegerValue ZERO = new IntegerValue(0);
+	private static final IntegerValue ONE = new IntegerValue(1);
 
 	//////////////////////////////////////////////
 	// Constructors
@@ -32,6 +32,16 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 */
 	protected IntegerValue(long value) {
 		super();
+		this.value = BigInteger.valueOf(value);
+	}
+
+	/**
+	 * Construct a new instance with value.
+	 * 
+	 * @param value 
+	 */
+	protected IntegerValue(BigInteger value) {
+		super();
 		this.value = value;
 	}
 
@@ -42,7 +52,15 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 		return ZERO;
 	}
 
+	public static IntegerValue one() {
+		return ONE;
+	}
+
 	public static IntegerValue make(long value) {
+		return new IntegerValue(value);
+	}
+
+	public static IntegerValue make(BigInteger value) {
 		return new IntegerValue(value);
 	}
 
@@ -53,27 +71,38 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	public boolean isEqual(Heaper other) {
 		if (other instanceof IntegerValue) {
 			IntegerValue o = (IntegerValue) other;
-			return value == o.value;
+			return value.equals(o.value);
 		} else {
 			//TODO what about floats/etc?
 			return false;
 		}
-		/*
-		udanax-top.st:35124:PrimIntValue methodsFor: 'testing'!
-		{BooleanVar} isEqual: other {Heaper}
-			^(other isKindOf: PrimIntValue) and: [(other cast: PrimIntValue) asIntegerVar = myValue]!
-		*/
 	}
 
 	public int compareTo(Object other) {
 		IntegerValue o = (IntegerValue) other;
-		if (value < o.value) {
-			return -1;
-		} else if (value > o.value) {
-			return +1;
-		} else {
-			return 0;
-		}
+		return value.compareTo(o.value);
+	}
+
+
+	/**
+	 * Return true if the first number is greater than or equal to the second number.
+	 */
+	public boolean isGE(IntegerValue another) {
+		return compareTo(another) >= 0;
+	}
+
+	/**
+	 * Return true if the first number is less than the second number.
+	 */
+	public boolean isLT(IntegerValue another) {
+		return compareTo(another) < 0;
+	}
+
+	/**
+	 * Return true if the first number is less than or equal to the second number.
+	 */
+	public boolean isLE(IntegerValue another) {
+		return compareTo(another) <= 0;
 	}
 
 
@@ -94,42 +123,35 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * The value as a 8 bit signed integer
 	 */
 	public byte asInt8() {
-		return (byte)value;
+		return value.byteValue();
 	}
 
 	/**
 	 * The value as a 16 bit signed integer
 	 */
 	public short asInt16() {
-		return (short)value;
+		return value.shortValue();
 	}
 
 	/**
 	 * The value as a 32 bit signed integer
 	 */
 	public int asInt32() {
-		return (int)value;
-		/*
-		udanax-top.st:35089:PrimIntValue methodsFor: 'accessing'!
-		{Int32 INLINE} asInt32
-			"The value as a 32 bit signed integer"
-		
-			^myValue DOTasInt32!
-		*/
+		return value.intValue();
 	}
 
 	/**
 	 * The value as a 64 bit signed integer
 	 */
 	public long asInt64() {
-		return value;
+		return value.longValue();
 	}
 	
 	/**
 	 * The value as a BooleanVar.
 	 */
 	public boolean asBooleanVar() {
-		return value != 0;
+		return value.compareTo(BigInteger.ZERO) != 0;
 		/*
 		udanax-top.st:35084:PrimIntValue methodsFor: 'accessing'!
 		{BooleanVar INLINE} asBooleanVar
@@ -177,7 +199,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the the first number bitwise and'd with the second.
 	 */
 	public IntegerValue bitwiseAnd(IntegerValue another) {
-		return new IntegerValue(value & another.value);
+		return new IntegerValue(value.and(another.value));
 		/*
 		udanax-top.st:35022:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} bitwiseAnd: another {PrimIntValue}
@@ -191,7 +213,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the the first number bitwise or'd with the second.
 	 */
 	public IntegerValue bitwiseOr(IntegerValue another) {
-		return new IntegerValue(value | another.value);
+		return new IntegerValue(value.or(another.value));
 		/*
 		udanax-top.st:35027:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} bitwiseOr: another {PrimIntValue}
@@ -205,7 +227,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the the first number bitwise xor'd with the second.
 	 */
 	public IntegerValue bitwiseXor(IntegerValue another) {
-		return new IntegerValue(value ^ another.value);
+		return new IntegerValue(value.xor(another.value));
 		/*
 		udanax-top.st:35032:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} bitwiseXor: another {PrimIntValue}
@@ -220,7 +242,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 */
 	public IntegerValue dividedBy(IntegerValue another) {
 		//TODO does this actually match the advertised and Smalltalk behaviour?
-		return new IntegerValue(value / another.value);
+		return new IntegerValue(value.divide(another.value));
 		/*
 		udanax-top.st:35037:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} dividedBy: another {PrimIntValue}
@@ -229,40 +251,12 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 			^myValue // another asIntegerVar!
 		*/
 	}
-
-	/**
-	 * Return true if the first number is greater than or equal to the second number.
-	 */
-	public boolean isGE(IntegerValue another) {
-		return value >= another.value;
-		/*
-		udanax-top.st:35042:PrimIntValue methodsFor: 'operations'!
-		{BooleanVar CLIENT login} isGE: another {PrimIntValue}
-			"Return true if the first number is greater than or euqla to the second number."
-		
-			^myValue >= another asIntegerVar!
-		*/
-	}
-
-	/**
-	 * Return true if the first number is less than the second number.
-	 */
-	public boolean isLT(IntegerValue another) {
-		return value < another.value;
-	}
-
-	/**
-	 * Return true if the first number is less than or equal to the second number.
-	 */
-	public boolean isLE(IntegerValue another) {
-		return value <= another.value;
-	}
-
 	/**
 	 * Return the the first number shifted to the left by the second amount.
 	 */
 	public IntegerValue leftShift(IntegerValue another) {
-		return new IntegerValue(value << another.value);
+		//TODO should this just have an int parameter?
+		return new IntegerValue(value.shiftLeft(another.asInt32()));
 		/*
 		udanax-top.st:35047:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} leftShift: another {PrimIntValue}
@@ -276,8 +270,9 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the largest of the two numbers.
 	 */
 	public IntegerValue maximum(IntegerValue another) {
+		//TODO rename to max for Java compatability?
 		//TODO efficiency improvement by returning maximum rather than re-creating
-		return new IntegerValue(Math.max(value, another.value));
+		return new IntegerValue(value.max(another.value));
 		/*
 		udanax-top.st:35052:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} maximum: another {PrimIntValue}
@@ -291,8 +286,9 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the smallest of the two numbers.
 	 */
 	public IntegerValue minimum(IntegerValue another) {
+		//TODO rename to min for Java compatability?
 		//TODO efficiency improvement by returning minimum rather than re-creating
-		return new IntegerValue(Math.min(value, another.value));
+		return new IntegerValue(value.min(another.value));
 		/*
 		udanax-top.st:35057:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} minimum: another {PrimIntValue}
@@ -306,7 +302,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the difference two numbers.
 	 */
 	public IntegerValue minus(IntegerValue another) {
-		return new IntegerValue(value - another.value);
+		return new IntegerValue(value.subtract(another.value));
 		/*
 		udanax-top.st:35062:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} minus: another {PrimIntValue}
@@ -320,7 +316,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the the first number modulo the second.
 	 */
 	public IntegerValue mod(IntegerValue another) {
-		return new IntegerValue(value % another.value);
+		return new IntegerValue(value.mod(another.value));
 		/*
 		udanax-top.st:35067:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} mod: another {PrimIntValue}
@@ -334,7 +330,8 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Return the sum of two numbers.
 	 */
 	public IntegerValue plus(IntegerValue another) {
-		return new IntegerValue(value + another.value);
+		// TODO should we rename to add to match java?
+		return new IntegerValue(value.add(another.value));
 		/*
 		udanax-top.st:35072:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} plus: another {PrimIntValue}
@@ -348,7 +345,8 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 * Multiply the two numbers and return the result.
 	 */
 	public IntegerValue times(IntegerValue another) {
-		return new IntegerValue(value * another.value);
+		//TODO should we rename to multiply to match java?
+		return new IntegerValue(value.multiply(another.value));
 		/*
 		udanax-top.st:35077:PrimIntValue methodsFor: 'operations'!
 		{IntegerVar CLIENT login} times: another {PrimIntValue}
@@ -401,7 +399,8 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	}
 
 	public int actualHashForEqual() {
-		throw new UnsupportedOperationException();
+		//TODO should we use FHash?
+		return value.hashCode();
 //		return FHash.fastHash(myValue.DOTasLong());
 		/*
 		udanax-top.st:35120:PrimIntValue methodsFor: 'testing'!

@@ -312,7 +312,7 @@ public class PrimIntegerSpec extends PrimSpec {
 			return UInt32Array.make((int[])buffer);
 		}
 		if (this == PrimSpec.uInt8()) {
-			return UInt8Array.make((int[])buffer);
+			return UInt8Array.make((short[])buffer);
 		}
 		if (this == PrimSpec.int32()) {
 			return Int32Array.make((int[])buffer);

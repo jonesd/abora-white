@@ -33,7 +33,9 @@ public abstract class PrimArithmeticArray extends PrimArray {
 
 	/**
 	 * Arithmetic addition of the respective elements of other
-	 * to this over the specified index range. 
+	 * to this over the specified index range.
+	 * <p>
+	 * Note that arithmetic overflows aren't faulted.  
 	 * 
 	 * @param to first index of receiver to be included
 	 * @param other other elements to be added to the receivers elements
@@ -81,7 +83,10 @@ public abstract class PrimArithmeticArray extends PrimArray {
 
 	/**
 	 * Arithmetic addition of the respective elements of other
-	 * to this over the specified index range. 
+	 * to this over the specified index range.
+	 * <p>
+	 * Note that arithmetic overflows aren't faulted.  
+	 * <p>
 	 * Subclasses should override.
 	 */
 	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
@@ -91,7 +96,9 @@ public abstract class PrimArithmeticArray extends PrimArray {
 
 	/**
 	 * Arithmetic subtraction of the respective elements of other
-	 * from this over the specified index range. 
+	 * from this over the specified index range.
+	 * <p> 
+	 * Note that arithmetic overflows aren't faulted.  
 	 * 
 	 * @param to first index of receiver to be included
 	 * @param other other elements to be subtracted from the receivers elements
@@ -141,6 +148,9 @@ public abstract class PrimArithmeticArray extends PrimArray {
 	/**
 	 * Subtract the respective elements of other from this over the given index
 	 * range.
+	 * <p> 
+	 * Note that arithmetic overflows aren't faulted.
+	 * <p>  
 	 * Subclasses should override.
 	 */
 	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {

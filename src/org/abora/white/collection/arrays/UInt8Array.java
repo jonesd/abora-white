@@ -33,8 +33,9 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected UInt8Array(int[] buffer) {
-		throw new UnsupportedOperationException();
+	protected UInt8Array(short[] buffer) {
+		this(buffer.length);
+		System.arraycopy(buffer, 0, storage, 0, buffer.length);
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
@@ -67,7 +68,7 @@ public class UInt8Array extends PrimIntArray {
 	}
 
 	/** create a UInt8Array filled with the data at 'buffer' */
-	public static UInt8Array make(int[] buffer) {
+	public static UInt8Array make(short[] buffer) {
 		return new UInt8Array(buffer);
 	}
 
@@ -83,13 +84,11 @@ public class UInt8Array extends PrimIntArray {
 	//////////////////////////////////////////////
 	// Accessing
 
-	/** Store a 32 bit unsigned integer value */
-	public void storeInt(int index, int value) {
+	public void storeUInt8(int index, short value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/** Get a 32 bit unsigned actual integer value */
-	public int intAt(int index) {
+	public short uInt8At(int index) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -75,6 +75,8 @@ public abstract class PrimArray extends Heaper {
 	 * 
 	 * @param index index in array the element will be stored at.
 	 * @param value heaper to store in <code>this</code>.
+	 * @throws ClassCastException if <code>value</code> is not compatible with the elements of this array
+	 * @throws IllegalArgumentException if <code>value</code> can not be held by this array
 	 */
 	public abstract void storeValue(int index, Heaper value);
 
@@ -178,6 +180,8 @@ public abstract class PrimArray extends Heaper {
 	 * @param count number of consequentive elements in range or all
 	 * 			elements from <code>start</code> if -1.
 	 * @param start index of first element in range.
+	 * @throws ClassCastException if <code>other</code> is not compatible with this array
+	 * @throws IllegalArgumentException if <code>other</code>s elements can not be held by this array
 	 */
 	//TODO possibly rename to fill(...) to better match Java terminology
 	public abstract void storeAll(Heaper value, int count, int start);
@@ -210,6 +214,8 @@ public abstract class PrimArray extends Heaper {
 	 * 			all others elements starting at from. Fail if <code>count</code> is
 	 * 			greater than number of available elements.
 	 * @param from first index of the other array to be included in the range.
+	 * @throws ClassCastException if <code>other</code> is not compatible with this array
+	 * @throws IllegalArgumentException if <code>other</code>s elements can not be held by this array
 	 */
 	public void storeMany(int to, PrimArray other, int count, int from) {
 		int n;

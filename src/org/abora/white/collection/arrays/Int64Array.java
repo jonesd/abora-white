@@ -85,7 +85,7 @@ public class Int64Array extends PrimIntArray {
 	// Accessing
 
 	/** Store an 64 bit signed integer value */
-	public void storeInt(int index, long value) {
+	public void storeInt64(int index, long value) {
 		//TODO probably need to do a hold() check here
 		storage[index] = value;
 //		INLINE void Int32Array::storeInt (Int32 index, Int32 value){
@@ -95,7 +95,7 @@ public class Int64Array extends PrimIntArray {
 	}
 
 	/** Get an 64 bit signed actual integer value */
-	public long intAt(int index) {
+	public long int64At(int index) {
 		return storage[index];
 	}
 
@@ -103,7 +103,7 @@ public class Int64Array extends PrimIntArray {
 		if (!((PrimIntegerSpec) spec()).canHold(value)) {
 			throw new IllegalArgumentException("ValueOutOfRange");
 		}
-		storeInt(index, value.asInt64()); //TODO was asLong() - why?
+		storeInt64(index, value.asInt64()); //TODO was asLong() - why?
 		//		void Int32Array::storeInteger (Int32 index, IntegerVar value){
 		//			/* Store an integer value */
 		//
@@ -115,7 +115,7 @@ public class Int64Array extends PrimIntArray {
 	}
 
 	public IntegerValue integerAt(int index) {
-		return IntegerValue.make(intAt(index));
+		return IntegerValue.make(int64At(index));
 		//		IntegerVar Int32Array::integerAt (Int32 index){
 		//			/* Get an actual integer value */
 		//			IntegerVar rv = this->intAt(index);
@@ -127,11 +127,11 @@ public class Int64Array extends PrimIntArray {
 		if (value == null) {
 			throw new NullPointerException();
 		}
-		storeInt(index, ((IntegerValue) value).asInt32());
+		storeInteger(index, (IntegerValue)value);
 	}
 
 	public Heaper fetchValue(int index) {
-		return IntegerValue.make(intAt(index));
+		return IntegerValue.make(int64At(index));
 		//		RPTR(Heaper) OR(NULL) Int32Array::fetchValue (Int32 index) {
 		//			return PrimIntValue::make(this->intAt(index));
 		//		}
@@ -205,7 +205,7 @@ public class Int64Array extends PrimIntArray {
 		if (other instanceof Int64Array) {
 			Int64Array o = (Int64Array) other;
 			for (int i = 0; i < count; i += 1) {
-				long cmp = intAt(i + start) - o.intAt(i + otherStart);
+				long cmp = int64At(i + start) - o.int64At(i + otherStart);
 				if (cmp != 0) {
 					return cmp < 0 ? -1 : 1;
 				}
@@ -240,7 +240,7 @@ public class Int64Array extends PrimIntArray {
 
 	protected int signOfNonZeroAfter(int index) {
 		for (int i = index; i < count(); i += 1) {
-			long val = intAt(i);
+			long val = int64At(i);
 			if (val < 0) {
 				return -1;
 			}
@@ -271,7 +271,8 @@ public class Int64Array extends PrimIntArray {
 		if (other instanceof Int64Array) {
 			Int64Array o = (Int64Array) other;
 			for (int i = 0; i < count; i += 1) {
-				storeInt(i + start, intAt(i + start) + o.intAt(i + otherStart));
+				long resultant = int64At(i + start) + o.int64At(i + otherStart);
+				storeInt64(i + start, resultant);
 			}
 		} else {
 			super.addData(start, other, otherStart, count);
@@ -300,7 +301,8 @@ public class Int64Array extends PrimIntArray {
 		if (other instanceof Int64Array) {
 			Int64Array o = (Int64Array) other;
 			for (int i = 0; i < count; i += 1) {
-				storeInt(i + start, intAt(i + start) - o.intAt(i + otherStart));
+				long resultant = int64At(i + start) - o.int64At(i + otherStart);
+				storeInt64(i + start, resultant);
 			}
 		} else {
 			super.subtractData(start, other, otherStart, count);
@@ -330,6 +332,6 @@ public class Int64Array extends PrimIntArray {
 	// Printing
 
 	protected void printElementOn(int index, PrintWriter oo) {
-		oo.print(intAt(index));
+		oo.print(int64At(index));
 	}
 }

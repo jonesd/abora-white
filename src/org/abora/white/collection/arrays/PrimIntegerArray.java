@@ -103,10 +103,21 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		return hold(index, value, false);
 	}
 
-	/** Store an integer value */
+	/**
+	 * Store an integer <code>value</code> at the specified <code>index</code>.
+	 * 
+	 * @param index index in array the element will be stored at.
+	 * @param value integer to store in <code>this</code>.
+	 * @throws IllegalArgumentException if value can not be held by array
+	 */
 	public abstract void storeInteger(int index, IntegerValue value);
 
-	/** Get an actual integer value */
+	/**
+	 * Fetch an integer value at the specified <code>index</code>.
+	 * 
+	 * @param index index in array whose element will be returned
+	 * @return the integer at the specified <code>index</code>.
+	 */
 	public abstract IntegerValue integerAt(int index);
 
 	public int elementsHash(int count, int start) {
@@ -260,7 +271,7 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 
 	public int indexPastInteger(IntegerValue value, int start, int nth) {
 		//TODO compare contents of this method with PrimFloatArray
-		
+
 		if (count() == 0 || nth == 0) {
 			return -1;
 		}
@@ -440,7 +451,6 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		//			return 0;
 		//		}
 	}
-
 
 	//////////////////////////////////////////////
 	// Arithmetic Operations

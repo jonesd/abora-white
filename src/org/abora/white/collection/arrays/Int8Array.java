@@ -172,26 +172,6 @@ public class Int8Array extends PrimIntArray {
 			n = buffer.length;
 		}
 		System.arraycopy(storage, start, buffer, 0, n);
-		//		void Int32Array::copyToBuffer (void * buffer,
-		//						   Int32 size,
-		//						   Int+32 count /*= -1*/,
-		//						   Int32 start /* = Int32Zero*/)
-		//		{
-		//			Int32 bufSize;
-		//			Int32 n;
-		//
-		//			bufSize = size / sizeof(Int32);
-		//			if (count >= 0) {
-		//			n = count;
-		//			} else {
-		//			n = this->count() - start;
-		//			}
-		//			if (n > bufSize) {
-		//			n = bufSize;
-		//			}
-		//			MEMMOVE (buffer, (Int32*)this->storage() + start,
-		//				 (int)(n * sizeof(Int32)));
-		//		}
 	}
 
 	//////////////////////////////////////////////
@@ -210,33 +190,11 @@ public class Int8Array extends PrimIntArray {
 		} else {
 			return super.compareData(start, other, otherStart, count);
 		}
-		//		Int32 Int32Array::compareData (Int32 start, 
-		//						   APTR(PrimDataArray) other,
-		//						   Int32 otherStart,
-		//						   Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(Int32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				Int32 cmp;
-		//				cmp = this->intAt(i + start) - o->intAt(i + otherStart);
-		//				if (cmp != 0) {
-		//					return cmp < 0 ? -1 : 1;
-		//				}
-		//				}
-		//				return 0;
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				return this->PrimIntegerArray::compareData (start, other, 
-		//									otherStart, count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//			return 0;
 	}
 
 	protected int signOfNonZeroAfter(int index) {
 		for (int i = index; i < count(); i += 1) {
-			int val = int8At(i);
+			byte val = int8At(i);
 			if (val < 0) {
 				return -1;
 			}
@@ -245,19 +203,6 @@ public class Int8Array extends PrimIntArray {
 			}
 		}
 		return 0;
-		//		Int32 Int32Array::signOfNonZeroAfter (Int32 index) {
-		//			for (Int32 i = index; i < this->count(); i += 1) {
-		//			Int32 val;
-		//	
-		//			if ((val = this->intAt(i)) < 0) {
-		//				return -1;
-		//			}
-		//			if (val > 0) {
-		//				return +1;
-		//			}
-		//			}
-		//			return 0;
-		//		}
 	}
 
 	//////////////////////////////////////////////
@@ -267,59 +212,24 @@ public class Int8Array extends PrimIntArray {
 		if (other instanceof Int8Array) {
 			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
-				storeInt8(i + start, (byte)(int8At(i + start) + o.int8At(i + otherStart)));
+				int resultant = int8At(i + start) + o.int8At(i + otherStart);
+				storeInt8(i + start, (byte)resultant);
 			}
 		} else {
 			super.addData(start, other, otherStart, count);
 		}
-		//		void Int32Array::addData (Int32 start, 
-		//					  APTR(PrimDataArray) other,
-		//					  Int32 otherStart,
-		//					  Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(Int32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeInt (i + start,
-		//						this->intAt(i + start) 
-		//						+ o->intAt(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimIntegerArray::addData (start, other, otherStart, count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 
 	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof Int8Array) {
 			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
-				storeInt8(i + start, (byte)(int8At(i + start) - o.int8At(i + otherStart)));
+				int resultant = int8At(i + start) - o.int8At(i + otherStart);
+				storeInt8(i + start, (byte)resultant);
 			}
 		} else {
 			super.subtractData(start, other, otherStart, count);
 		}
-		//		void Int32Array::subtractData (Int32 start, 
-		//						APTR(PrimDataArray) other,
-		//						Int32 otherStart,
-		//						Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(Int32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeInt (i + start,
-		//						this->intAt(i + start) 
-		//						- o->intAt(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimIntegerArray::subtractData (start, other, otherStart,
-		//								  count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 
 	//////////////////////////////////////////////
