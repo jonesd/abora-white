@@ -30,6 +30,17 @@
         description="generate the distribution" >
     <mkdir dir="${dist}/lib"/>
     <jar jarfile="${dist}/lib/${name}-${DSTAMP}.jar" basedir="${build}/bin"/>
+    <!-- TODO following over-complexity is a poor attempt to get all
+    	zipped content under a common root dir -->
+    <property name="parent.dir" value="${name}"/>
+    <zip destfile="${dist}/${name}-${DSTAMP}.src.zip" basedir=".." excludes="**/*">
+  	 	<fileset dir="..">
+    		<include name="${parent.dir}/build.xml"/>
+    		<include name="${parent.dir}/ReadMe.txt"/>
+    		<include name="${parent.dir}/src/**/*.java"/>
+    		<include name="${parent.dir}/docs/**/*.html"/>
+    	</fileset>
+    </zip>
   </target>
 
   <target name="clean"
@@ -41,7 +52,7 @@
 
   <target name="test" depends="compile">
   	<mkdir dir="${junit.dir}/report"/>
-  	<junit printsummary="true">
+  	<junit printsummary="true" haltonerror="true">
   		 <formatter type="xml"/>
   		  <batchtest fork="yes" todir="${junit.dir}/report">
     <fileset dir="${src}">
@@ -72,7 +83,8 @@
            author="true"
            version="true"
            use="true"
-           windowtitle="${Name} API">
+           windowtitle="${Name} API"
+           additionalparam="-linksource">
            
    <packageset dir="${src}" defaultexcludes="yes">
       <include name="org/abora/white/**" />
