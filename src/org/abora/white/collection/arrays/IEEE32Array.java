@@ -22,6 +22,15 @@ import org.abora.white.xpp.basic.Heaper;
 public class IEEE32Array extends PrimFloatArray {
 	private float[] storage = null;
 
+	/** 
+	 * Construct a new array of the specified size with
+	 * all elements initialized to zero.
+	 *
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 * 
+	 * @param count size of array
+	 */
 	protected IEEE32Array(int count) {
 		super();
 		storage = new float[count];
@@ -43,7 +52,7 @@ public class IEEE32Array extends PrimFloatArray {
 	/** create an IEEE32Array filled with the indicated data in 'from' */
 	public static IEEE32Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		IEEE32Array array = new IEEE32Array(size);
-		array.addData(destOffset, (PrimDataArray) from, sourceOffset, count);
+		array.addData(destOffset, (PrimArithmeticArray) from, sourceOffset, count);
 		return array;
 	}
 
@@ -59,6 +68,9 @@ public class IEEE32Array extends PrimFloatArray {
 		return make(size, from, 0);
 	}
 
+	//////////////////////////////////////////////
+	// accessing
+	
 	/** create an IEEE32Array filled with the data at 'buffer' */
 	public static IEEE32Array make(float[] buffer) {
 		IEEE32Array array = make(buffer.length);
@@ -72,12 +84,6 @@ public class IEEE32Array extends PrimFloatArray {
 	/** Store an actual floating point value */
 	public void storeIEEE32(int index, float value) {
 		storage[index] = value;
-
-		//		INLINE void IEEE32Array::storeIEEE32 (Int32 index, IEEE32 value){
-		//			/* Store a floating point value */
-		//    
-		//			((IEEE32*)this->storage())[this->rangeCheck (index)] = value;
-		//		}
 	}
 
 	/** Get an actual floating point number */
@@ -224,29 +230,9 @@ public class IEEE32Array extends PrimFloatArray {
 			n = buffer.length;
 		}
 		System.arraycopy(storage, start, buffer, 0, n);
-		//		void IEEE32Array::copyToBuffer (void * buffer,
-		//						Int32 size,
-		//						Int32 count /*= -1*/,
-		//						Int32 start /* = Int32Zero*/)
-		//		{
-		//			Int32 bufSize;
-		//			Int32 n;
-		//
-		//			bufSize = size / sizeof(IEEE32);
-		//			if (count >= 0) {
-		//			n = count;
-		//			} else {
-		//			n = this->count() - start;
-		//			}
-		//			if (n > bufSize) {
-		//			n = bufSize;
-		//			}
-		//			MEMMOVE (buffer, (IEEE32*)this->storage() + start,
-		//				 (int)(n * sizeof(IEEE32)));
-		//		}
 	}
 
-	protected int compareData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE32Array) {
 			IEEE32Array o = (IEEE32Array) other;
 			for (int i = 0; i < count; i += 1) {
@@ -259,30 +245,6 @@ public class IEEE32Array extends PrimFloatArray {
 		} else {
 			return super.compareData(myStart, other, otherStart, count);
 		}
-
-		//		Int32 IEEE32Array::compareData (Int32 start, 
-		//						APTR(PrimDataArray) other,
-		//						Int32 otherStart,
-		//						Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(IEEE32Array, o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				IEEE32 cmp;
-		//				cmp = this->iEEE32At(i + start) - o->iEEE32At(i + otherStart);
-		//				if (cmp != 0.0) {
-		//					return ((Int32) cmp) < 0 ? -1 : 1;
-		//				}
-		//				}
-		//				return 0;
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				return this->PrimFloatArray::compareData (start, other,
-		//									  otherStart, count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//			return 0;
-		//		}
 	}
 
 	protected int signOfNonZeroAfter(int start) {
@@ -296,23 +258,9 @@ public class IEEE32Array extends PrimFloatArray {
 			}
 		}
 		return 0;
-
-		//		Int32 IEEE32Array::signOfNonZeroAfter (Int32 index) {
-		//			for (Int32 i = index; i < this->count(); i += 1) {
-		//			IEEE32 val;
-		//	
-		//			if ((val = this->iEEE32At(i)) < 0.0) {
-		//				return -1;
-		//			}
-		//			if (val > 0.0) {
-		//				return +1;
-		//			}
-		//			}
-		//			return 0;
-		//		}
 	}
 
-	protected void addData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE32Array) {
 			IEEE32Array o = (IEEE32Array) other;
 			for (int i = 0; i < count; i += 1) {
@@ -321,28 +269,9 @@ public class IEEE32Array extends PrimFloatArray {
 		} else {
 			super.addData(myStart, other, otherStart, count);
 		}
-
-		//		void IEEE32Array::addData (Int32 start, 
-		//					   APTR(PrimDataArray) other,
-		//					   Int32 otherStart,
-		//					   Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(IEEE32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeIEEE32 (i + start,
-		//						   this->iEEE32At(i + start) 
-		//						   + o->iEEE32At(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimFloatArray::addData (start, other, otherStart, count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 
-	protected void subtractData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE32Array) {
 			IEEE32Array o = (IEEE32Array) other;
 			for (int i = 0; i < count; i += 1) {
@@ -351,26 +280,6 @@ public class IEEE32Array extends PrimFloatArray {
 		} else {
 			super.subtractData(myStart, other, otherStart, count);
 		}
-
-		//		void IEEE32Array::subtractData (Int32 start, 
-		//						APTR(PrimDataArray) other,
-		//						Int32 otherStart,
-		//						Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(IEEE32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeIEEE32 (i + start,
-		//						   this->iEEE32At(i + start) 
-		//						   - o->iEEE32At(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimFloatArray::subtractData (start, other, otherStart,
-		//								count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 
 	protected void printElementOn(int index, PrintWriter oo) {

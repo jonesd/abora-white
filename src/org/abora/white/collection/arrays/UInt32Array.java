@@ -91,7 +91,7 @@ public class UInt32Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected int compareData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -99,11 +99,11 @@ public class UInt32Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void addData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void subtractData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -515,11 +515,15 @@ public class IEEE32ArrayTest extends TestCase {
 	public void testAddElements() {
 		IEEE32Array array = makeIEEE32ArrayEmpty();
 		array.addElements(0, makeIEEE32Array12321(), -1, 0);
-		assertTrue(makeIEEE32ArrayEmpty().isEqual(array));
+		assertEquals(makeIEEE32ArrayEmpty(), array, DIFF);
 
 		array = makeIEEE32Array1();
 		array.addElements(0, IEEE32Array.make(new float[]{9f}), -1, 0);
 		assertEquals(IEEE32Array.make(new float[]{10.1f}), array, DIFF);
+
+		array = IEEE32Array.make(5);
+		array.addElements(0, makeIEEE32Array12321(), -1, 0);
+		assertEquals(makeIEEE32Array12321(), array, DIFF);
 
 		array = makeIEEE32Array12345();
 		array.addElements(0, makeIEEE32Array12321(), -1, 0);
@@ -529,7 +533,122 @@ public class IEEE32ArrayTest extends TestCase {
 		array.addElements(2, makeIEEE32Array12321(), -1, 0);
 		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 4.4f, 6.6f, 8.8f}), array, DIFF);
 
+		array = makeIEEE32Array12345();
+		array.addElements(2, makeIEEE32Array12321(), -1);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 4.4f, 6.6f, 8.8f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.addElements(2, makeIEEE32Array12321());
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 4.4f, 6.6f, 8.8f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.addElements(2, makeIEEE32Array12321(), 2, 1);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 5.5f, 7.7f, 5.5f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		try {
+			array.addElements(2, makeIEEE32Array12321(), 4, 1);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
 	}
 
+	public void testSubtractElements() {
+		IEEE32Array array = makeIEEE32ArrayEmpty();
+		array.subtractElements(0, makeIEEE32Array12321(), -1, 0);
+		assertEquals(makeIEEE32ArrayEmpty(), array, DIFF);
+
+		array = makeIEEE32Array1();
+		array.subtractElements(0, IEEE32Array.make(new float[]{9f}), -1, 0);
+		assertEquals(IEEE32Array.make(new float[]{-7.9f}), array, DIFF);
+
+		array = IEEE32Array.make(5);
+		array.subtractElements(0, makeIEEE32Array12321(), -1, 0);
+		assertEquals(IEEE32Array.make(new float[]{-1.1f, -2.2f, -3.3f, -2.2f, -1.1f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.subtractElements(0, makeIEEE32Array12321(), -1, 0);
+		assertEquals(IEEE32Array.make(new float[]{0.0f, 0.0f, 0.0f, 2.2f, 4.4f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.subtractElements(2, makeIEEE32Array12321(), -1, 0);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 2.2f, 2.2f, 2.2f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.subtractElements(2, makeIEEE32Array12321(), -1);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 2.2f, 2.2f, 2.2f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.subtractElements(2, makeIEEE32Array12321());
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 2.2f, 2.2f, 2.2f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.subtractElements(2, makeIEEE32Array12321(), 2, 1);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 1.1f, 1.1f, 5.5f}), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		try {
+			array.subtractElements(2, makeIEEE32Array12321(), 4, 1);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+
+	public void testCompare() {
+		// same
+		IEEE32Array array1 = makeIEEE32ArrayEmpty();
+		IEEE32Array array2 = makeIEEE32ArrayEmpty();
+		assertEquals(0, array1.compare(array2));
+
+		array1 = makeIEEE32Array12345();
+		array2 = makeIEEE32Array12345();
+		assertEquals(0, array1.compare(array2));
+		
+		array1 = makeIEEE32Array12321();
+		array2 = makeIEEE32Array12321();
+		assertEquals(0, array1.compare(array2));
+
+		// different
+		array1 = makeIEEE32Array12321();
+		array2 = makeIEEE32Array12345();
+		assertEquals(-1, array1.compare(array2));
+
+		array1 = makeIEEE32Array12345();
+		array2 = makeIEEE32Array12321();
+		assertEquals(1, array1.compare(array2));
+		
+		// auto-filling with 0
+		array1 = makeIEEE32ArrayEmpty();
+		array2 = makeIEEE32Array1();
+		assertEquals(-1, array1.compare(array2));
+
+		array1 = makeIEEE32Array1();
+		array2 = makeIEEE32ArrayEmpty();
+		assertEquals(1, array1.compare(array2));
+
+		array1 = IEEE32Array.make(new float[]{0.0f, 0.0f});
+		array2 = IEEE32Array.make(new float[]{0.0f});
+		assertEquals(0, array1.compare(array2));
+
+		// compare sub-regions		
+		array1 = makeIEEE32Array12321();
+		array2 = makeIEEE32Array12345();
+		assertEquals(1, array1.compare(array2, 2, 2, 1));
+
+		array1 = makeIEEE32Array12321();
+		array2 = makeIEEE32Array12345();
+		assertEquals(1, array1.compare(array2, 2, 2));
+
+		array1 = makeIEEE32Array12321();
+		array2 = makeIEEE32Array12345();
+		assertEquals(0, array1.compare(array2, 1, 4));
+
+		// trim down count
+		array1 = makeIEEE32Array12321();
+		array2 = makeIEEE32Array12345();
+		assertEquals(-1, array1.compare(array2, 10));
+	}
 }
 

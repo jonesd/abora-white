@@ -10,7 +10,9 @@
  */
 package org.abora.white.xpp.basic;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 
 public abstract class Heaper {
 
@@ -83,4 +85,11 @@ public abstract class Heaper {
 		//		}
 	}
 
+	public String toString() {
+		//TODO performance concerns over the choice of PrintStream
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); 
+		PrintStream printStream = new PrintStream(outputStream);
+		printOn(printStream);
+		return outputStream.toString();
+	}
 }

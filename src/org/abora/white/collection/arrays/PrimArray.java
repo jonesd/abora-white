@@ -34,7 +34,12 @@ public abstract class PrimArray extends Heaper {
 	//TODO Implement Collection?
 
 //	protected static int OurGutsCount = 0;
-
+	/**
+	 * Construct a new array.
+	 * 
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 */
 	protected PrimArray() {
 		super();
 	}
@@ -57,32 +62,42 @@ public abstract class PrimArray extends Heaper {
 //	}
 
 	/**
-	 * How many elements the array can hold
+	 * Return the number of elements the array can hold.
 	 */
-	public abstract int count(); //{
-//		return myCount;
-//
-////		INLINE Int32 PrimArray::count () {
-////			return myCount;
-////		}
-//	}
+	public abstract int count();
 
 	/**
-	 * Store a value; may be a Heaper, NULL, or a PrimValue as appropriate
-	 * to PrimArray subclass.  It is expected that most PrimArray clients
-	 * will want to use less abstract access methods
+	 * Store a value; may be a Heaper, null, or a PrimValue as appropriate
+	 * to PrimArray subclass.
+	 * 
+	 * It is expected that most PrimArray clients will want to use
+	 * less abstract access methods
 	 */
 	public abstract void storeValue(int index, Heaper value);
 
 	/** 
-	 * Fetch a value; may be a Heaper, NULL, or a PrimValue as appropriate
-	 * to PrimArray subclass.  It is expected that most PrimArray clients
+	 * Fetch a value; may be a Heaper, null, or a PrimValue as appropriate
+	 * to PrimArray subclass.
+	 * 
+	 * It is expected that most PrimArray clients
 	 * will want to use less abstract access methods.
+	 * 
+	 * @param index index in array whose element will be returned
 	 */
 	public abstract Heaper fetchValue(int index);
 
 	/**
 	 * Same fetchValue except it will BLAST if value is NULL 
+	 */
+	/** 
+	 * Fetch a value; may be a Heaper or a PrimValue as appropriate
+	 * to PrimArray subclass, or throw an exception if value is null.
+	 * 
+	 * It is expected that most PrimArray clients will want to use
+	 * less abstract access methods.
+	 * 
+	 * @param index index in array whose element will be returned
+	 * @throws NotInTableException if a null value was fetched
 	 */
 	public Heaper getValue(int index) {
 		Heaper result = fetchValue(index);
@@ -90,26 +105,13 @@ public abstract class PrimArray extends Heaper {
 			throw new NotInTableException();
 		}
 		return result;
-		/*
-				RPTR(Heaper) PrimArray::getValue (Int32 index) {
-					SPTR(Heaper) result;
-		
-					result = this->fetchValue (index);
-					if (result == NULL) {
-					BLAST(NotInTable);
-					}
-					return result;
-				}
-		*/
 	}
 
 //	/** 
 //	 * A description of the kinds of things which can be stored 
 //	 * in  this array
 //	 */
-//	public PrimSpec spec() {
-//		throw new UnsupportedOperationException();
-//	}
+//	public abstract PrimSpec spec();
 
 	/** 
 	 * Whether the two ranges contain semantically the same 
@@ -118,9 +120,7 @@ public abstract class PrimArray extends Heaper {
 	 * even though they may be represented as different sizes. Two floats
 	 * likewise.
 	 */
-	public boolean contentsEqual(PrimArray other) {
-		throw new UnsupportedOperationException();
-	}
+	public abstract boolean contentsEqual(PrimArray other);
 
 	/**
 	 * A hash of the entire contents of the array. If two arrays are
@@ -382,25 +382,16 @@ public abstract class PrimArray extends Heaper {
 		oo.print("]");
 	}
 
+	protected void printElementOn(int index, PrintWriter oo) {
+		throw new UnsupportedOperationException();
+	}
+
 	//TODO remove this if we dont end up using it
 	protected int rangeCheck(int index) {
 		if (index < 0 || index >= count()) {
 			throw new IndexOutOfBoundsException();
 		}
 		return index;
-
-		//		INLINE Int32 PrimArray::rangeCheck (Int32 index) {
-		//		#if ! (defined(NO_PRIMARRAY_RANGE_CHECK) || defined(PRODUCT))
-		//			if (index < 0 || index >= this->count()) {
-		//			this->outOfBounds();
-		//			}
-		//		#endif /* NO_PRIMARRAY_RANGE_CHECK */
-		//			return index;
-		//		}
-	}
-
-	protected void printElementOn(int index, PrintWriter oo) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -459,21 +450,6 @@ public abstract class PrimArray extends Heaper {
 //		Heap.cleanup();
 //	}
 
-//	/** 
-//	 * the canonical out-of-bounds blast for prim arrays
-//	 */
-//	protected void outOfBounds() {
-//		throw new AboraRuntimeException(AboraRuntimeException.INDEX_OUT_OF_BOUNDS);
-//	}
-
-////	/** used in compaction */
-////	protected int size() {
-////		throw new UnsupportedOperationException();
-////	}
-//	/** used in compaction */
-//	protected void moveTo(int newLoc) {
-//		throw new UnsupportedOperationException();
-//	}
 
 	//TODO made up
 	public boolean isEqual(Heaper other) {

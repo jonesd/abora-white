@@ -23,6 +23,15 @@ import org.abora.white.xpp.basic.Heaper;
 public class IEEE64Array extends PrimFloatArray {
 	private double[] storage;
 
+	/** 
+	 * Construct a new array of the specified size with
+	 * all elements initialized to zero.
+	 *
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 * 
+	 * @param count size of array
+	 */
 	protected IEEE64Array(int count) {
 		super();
 		storage = new double[count];
@@ -199,7 +208,7 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
-	protected int compareData(int start, PrimDataArray other, int otherStart, int count) {
+	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE64Array) {
 			IEEE64Array o = (IEEE64Array) other;
 			for (int i = 0; i < count; i += 1) {
@@ -263,7 +272,7 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
-	protected void addData(int start, PrimDataArray other, int otherStart, int count) {
+	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE64Array) {
 			IEEE64Array o = (IEEE64Array) other;
 			for (int i = 0; i < count; i += 1) {
@@ -292,7 +301,7 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
-	protected void subtractData(int start, PrimDataArray other, int otherStart, int count) {
+	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE64Array) {
 			IEEE64Array o = (IEEE64Array) other;
 			for (int i = 0; i < count; i += 1) {

@@ -17,7 +17,7 @@ import org.abora.white.xpp.basic.Heaper;
  * A common superclass for primitive arrays of integer types; this is the point
  * to add bulk operations for Boolean operations, etc if we ever want them
  */
-public abstract class PrimIntegerArray extends PrimDataArray {
+public abstract class PrimIntegerArray extends PrimArithmeticArray {
 
 	protected PrimIntegerArray() {
 		super();
@@ -92,15 +92,15 @@ public abstract class PrimIntegerArray extends PrimDataArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected int compareData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void addData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void subtractData(int myStart, PrimDataArray other, int otherStart, int count) {
+	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		throw new UnsupportedOperationException();
 	}
 }

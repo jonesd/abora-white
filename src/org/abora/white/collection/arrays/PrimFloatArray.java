@@ -16,8 +16,14 @@ import org.abora.white.xpp.basic.Heaper;
 /**
  * Array composed of floating point numbers of the same precision. 
  */
-public abstract class PrimFloatArray extends PrimDataArray {
+public abstract class PrimFloatArray extends PrimArithmeticArray {
 
+	/**
+	 * Construct a new array.
+	 * 
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 */
 	protected PrimFloatArray() {
 		super();
 	}
@@ -213,7 +219,7 @@ public abstract class PrimFloatArray extends PrimDataArray {
 		//		}
 	}
 
-	protected int compareData(int start, PrimDataArray other, int otherStart, int count) {
+	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof PrimFloatArray) {
 			PrimFloatArray o = (PrimFloatArray) other;
 			for (int i = 0; i < count; i += 1) {
@@ -251,7 +257,7 @@ public abstract class PrimFloatArray extends PrimDataArray {
 		//		}
 	}
 
-	protected void addData(int start, PrimDataArray other, int otherStart, int count) {
+	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof PrimFloatArray) {
 			PrimFloatArray o = (PrimFloatArray) other;
 			for (int i = 0; i < count; i += 1) {
@@ -280,7 +286,7 @@ public abstract class PrimFloatArray extends PrimDataArray {
 		//		}
 	}
 
-	protected void subtractData(int start, PrimDataArray other, int otherStart, int count) {
+	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof PrimFloatArray) {
 			PrimFloatArray o = (PrimFloatArray) other;
 			for (int i = 0; i < count; i += 1) {
