@@ -283,6 +283,9 @@
 		<ul>
 			<li>PrimIntegerArray:indexPastInteger - when nth is < 0, wont
 				find match on index=0 (should have result >= 0)</li>
+			<li>Pair:isEqual - throws exception if you use obsolete pairs
+				with alternative null values: <tt>(Pair.pairWithNulls(aHeaper,
+					null)).isEqual(Pair.pairWithNulls(null, aHeaper))</tt></li>
 		</ul>
 
 <!-- abora:footer -->
