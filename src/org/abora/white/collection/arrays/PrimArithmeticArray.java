@@ -29,7 +29,7 @@ public abstract class PrimArithmeticArray extends PrimArray {
 
 
 	//////////////////////////////////////////////
-	// arithmetic manipulations
+	// Arithmetic Manipulations
 
 	/**
 	 * Arithmetic addition of the respective elements of other
@@ -150,7 +150,7 @@ public abstract class PrimArithmeticArray extends PrimArray {
 
 
 	//////////////////////////////////////////////
-	// testing
+	// Comparing and Hashing
 	
 	/**
 	 * Return -1, 0, or +1 according to whether the elements in the specified
@@ -158,7 +158,7 @@ public abstract class PrimArithmeticArray extends PrimArray {
 	 * specified span of the other. The other array must be of a compatible
 	 * type. If the count is negative or goes beyond the end of either array,
 	 * then the shorter array is considered to be extended with zeros.
-	 * 
+	 * <p>
 	 * NOTE: Because of zero extension, this is not the same as elementsEqual; it is
 	 * possible that a->compare (b) == 0 even though ! a->contentsEqual (b)
 	 * 

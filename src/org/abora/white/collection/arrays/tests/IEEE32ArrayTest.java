@@ -867,7 +867,11 @@ public class IEEE32ArrayTest extends TestCase {
 		array = makeIEEE32Array12345();
 		copy = (IEEE32Array) array.copy(2, 1, 2, 1);
 		assertEquals(IEEE32Array.make(new float[]{0.0f, 0.0f, 2.2f, 3.3f, 0.0f}), copy, DIFF);
-		
+	}
+	
+	public void testToString() {
+		assertEquals("[empty]", makeIEEE32ArrayEmpty().toString());
+		assertEquals("[1.1 2.2 3.3 4.4 5.5]", makeIEEE32Array12345().toString());
 	}
 }
 

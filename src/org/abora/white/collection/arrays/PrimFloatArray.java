@@ -14,7 +14,13 @@ import org.abora.white.value.PrimFloatValue;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
- * Array composed of floating point numbers of the same precision. 
+ * Fixed size array containing floating point numbers of the same precision.
+ * <p>
+ * The <code>double</code> primitive type is assumed to have the greatest
+ * precision stored by all subclass implementations and so is used to implement
+ * general floating-point implementations. Subclasses should reimplement operations for
+ * performance or where their specific element type has to be reflected in the
+ * API.
  */
 public abstract class PrimFloatArray extends PrimArithmeticArray {
 
@@ -23,7 +29,7 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 
 	/**
 	 * Construct a new array.
-	 * 
+	 * <p>
 	 * Restrict public access to constructor; use suitable static
 	 * factory method instead.  
 	 */
@@ -62,8 +68,14 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 	// Comparing and Hashing
 	
 	public int elementsHash(int count, int start) {
-		/* TODO make this actually do something !!!! */
 		throw new UnsupportedOperationException();
+//		//TODO double check implementation
+//		int hash = 17;
+//		for (int i = start; i < count; i += 1) {
+//			double value = floatAt(i);
+//			hash = hash * 37 + (int)value;
+//		}
+//		return hash;
 		//			return this->getCategory()->hashForEqual() ^ ::fastHash(count);
 		//		UInt32 PrimFloatArray::elementsHash (Int32 count/* = -1*/,
 		//							 Int32 /*start*//* = Int32Zero*/)
@@ -72,6 +84,25 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		//			return this->getCategory()->hashForEqual() ^ ::fastHash(count);
 		//		}
 	}
+
+	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof PrimFloatArray) {
+			PrimFloatArray o = (PrimFloatArray) other;
+			for (int i = 0; i < count; i += 1) {
+				double cmp = floatAt(i + start) - o.floatAt(i + otherStart);
+				if (cmp != 0.0) {
+					return ((int) cmp) < 0 ? -1 : 1;
+				}
+			}
+			return 0;
+		} else {
+			return super.compareData(start, other, otherStart, count);
+		}
+	}
+
+
+	//////////////////////////////////////////////
+	// Searching/Finding
 
 	public int indexOf(Heaper value, int start, int nth) {
 		//TODO contents of indexOf && indexPast are the same except
@@ -147,20 +178,9 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		return -1;
 	}
 
-	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
-		if (other instanceof PrimFloatArray) {
-			PrimFloatArray o = (PrimFloatArray) other;
-			for (int i = 0; i < count; i += 1) {
-				double cmp = floatAt(i + start) - o.floatAt(i + otherStart);
-				if (cmp != 0.0) {
-					return ((int) cmp) < 0 ? -1 : 1;
-				}
-			}
-			return 0;
-		} else {
-			return super.compareData(start, other, otherStart, count);
-		}
-	}
+
+	//////////////////////////////////////////////
+	// Arithmetic Manipulations
 
 	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof PrimFloatArray) {

@@ -18,10 +18,16 @@ import org.abora.white.value.IEEE64Value;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
- * Basic array composed of Java double or IEEE64 values.
+ * Concrete fixed size array that holds elements of the Java <code>double</code>
+ * floating-point primitive data type. This is conceptually associated with
+ * the double-precision 64-bit format IEEE 754 values.
  */
 public class IEEE64Array extends PrimFloatArray {
 	private double[] storage;
+
+
+	//////////////////////////////////////////////
+	// Constructors
 
 	/** 
 	 * Construct a new array of the specified size with
@@ -36,6 +42,10 @@ public class IEEE64Array extends PrimFloatArray {
 		super();
 		storage = new double[count];
 	}
+
+
+	//////////////////////////////////////////////
+	// Static Factory Methods
 
 	/** create an IEEE64 array filled with zeros */
 	public static IEEE64Array make(int count) {
@@ -77,6 +87,11 @@ public class IEEE64Array extends PrimFloatArray {
 		return IEEE64Array.make(buffer.length, buffer);
 	}
 
+	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
+		throw new UnsupportedOperationException();
+	}
+
+
 	//////////////////////////////////////////////
 	// accessing
 
@@ -109,6 +124,10 @@ public class IEEE64Array extends PrimFloatArray {
 		return IEEE64Value.make(iEEE64At(index));
 	}
 
+	public int count() {
+		return storage.length;
+	}
+
 	//	public PrimSpec spec() {
 	//		throw new UnsupportedOperationException();
 	//	}
@@ -117,6 +136,10 @@ public class IEEE64Array extends PrimFloatArray {
 	//	public int bitCount() {
 	//		throw new UnsupportedOperationException();
 	//	}
+
+
+	//////////////////////////////////////////////
+	// Bulk Storing
 
 	public void storeAll(Heaper value, int count, int start) {
 		int n = count() - start;
@@ -216,6 +239,33 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
+	protected void copyElements(int to, PrimArray source, int from, int count) {
+		int n = count;
+		if (n == -1) {
+			n = source.count() - from;
+		}
+		double[] sourceStorage = ((IEEE64Array) source).storage;
+		System.arraycopy(sourceStorage, from, storage, to, n);
+		//		void IEEE64Array::copyElements (Int32 to, 
+		//						APTR(PrimArray) source,
+		//						Int32 from,
+		//						Int32 count)
+		//		{
+		//			Int32 n = count;
+		//			if (n == -1) {
+		//			n = source->count() - from;
+		//			}
+		//			/* we can hold the source storage pointer since this is atomic */
+		//			IEEE64 * sourceBits = ((IEEE64*)CAST(IEEE64Array,source)->storage()) +from;
+		//			IEEE64 * destBits = ((IEEE64*)this->storage()) + to;
+		//			MEMMOVE (destBits, sourceBits, (int) (n * sizeof(IEEE64)));
+		//		}
+	}
+
+
+	//////////////////////////////////////////////
+	// Comparing and Hashing
+
 	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE64Array) {
 			IEEE64Array o = (IEEE64Array) other;
@@ -280,6 +330,10 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
+
+	//////////////////////////////////////////////
+	// Arithmetic Manipulations
+
 	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE64Array) {
 			IEEE64Array o = (IEEE64Array) other;
@@ -339,38 +393,11 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
+
+	//////////////////////////////////////////////
+	// Printing
+
 	protected void printElementOn(int index, PrintStream oo) {
 		oo.print(iEEE64At(index));
-	}
-
-	protected void copyElements(int to, PrimArray source, int from, int count) {
-		int n = count;
-		if (n == -1) {
-			n = source.count() - from;
-		}
-		double[] sourceStorage = ((IEEE64Array) source).storage;
-		System.arraycopy(sourceStorage, from, storage, to, n);
-		//		void IEEE64Array::copyElements (Int32 to, 
-		//						APTR(PrimArray) source,
-		//						Int32 from,
-		//						Int32 count)
-		//		{
-		//			Int32 n = count;
-		//			if (n == -1) {
-		//			n = source->count() - from;
-		//			}
-		//			/* we can hold the source storage pointer since this is atomic */
-		//			IEEE64 * sourceBits = ((IEEE64*)CAST(IEEE64Array,source)->storage()) +from;
-		//			IEEE64 * destBits = ((IEEE64*)this->storage()) + to;
-		//			MEMMOVE (destBits, sourceBits, (int) (n * sizeof(IEEE64)));
-		//		}
-	}
-
-	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
-	}
-
-	public int count() {
-		return storage.length;
 	}
 }

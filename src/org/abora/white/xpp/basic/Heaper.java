@@ -11,7 +11,6 @@
 package org.abora.white.xpp.basic;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 
 public abstract class Heaper {
@@ -24,6 +23,7 @@ public abstract class Heaper {
 	 * Return true if the two objects are equal.
 	 */
 	public abstract boolean isEqual(Heaper other);
+	//TODO use equals?
 	/*
 	Xanadu-Xpp-Basic.st:285:Heaper methodsFor: 'testing'!
 	{BooleanVar} isEqual: other {Heaper}
@@ -35,7 +35,8 @@ public abstract class Heaper {
 	 * The value returned does not change during the life of the object.
 	 */
 	public int hashForEqual() {
-		throw new UnsupportedOperationException();
+		//TODO use hashCode?
+		return actualHashForEqual();
 	}
 
 	/**
@@ -45,12 +46,16 @@ public abstract class Heaper {
 		throw new UnsupportedOperationException();
 	}
 
+
+	//////////////////////////////////////////////
+	// Printing
+	
 	/**
 	 * This should rarely be overridden.  In Tofu, it prints ClassName(...),
 	 * where ... is either produced by printInsideOn or is ??? if printInsideOn
 	 * it not overridden.
 	 */
-	public void printOn(PrintStream oo) {
+	public void printOn(PrintWriter oo) {
 		oo.print(getClass().getName());
 		oo.print('(');
 		try {
@@ -59,37 +64,21 @@ public abstract class Heaper {
 			oo.print("***PRINT BLASTED***");
 		}
 		oo.print(')');
-		//		void Heaper::printOn (ostream& oo)
-		//		{
-		//			oo << this->getCategory()->name() << "(";
-		//			do {
-		//				INSTALL_SHIELD(pr);
-		//				SHIELD_UP_BEGIN(pr,AllBlastsFilter) {
-		//					oo << "***PRINT BLASTED***";
-		//					break;
-		//				} SHIELD_UP_END(pr);
-		//				this->printContentsOn(oo);
-		//			} while (FALSE);
-		//			oo << ")";
-		//		}
 	}
 
 	/**
 	 * Subclasses override this method to customize their printing.
 	 */
-	public void printContentsOn(PrintStream oo) {
+	public void printContentsOn(PrintWriter oo) {
 		oo.print("????");
-		//		void Heaper::printContentsOn (ostream& oo)
-		//		{
-		//			oo << "????";
-		//		}
 	}
 
 	public String toString() {
 		//TODO performance concerns over the choice of PrintStream
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); 
-		PrintStream printStream = new PrintStream(outputStream);
-		printOn(printStream);
+		PrintWriter printWriter = new PrintWriter(outputStream);
+		printOn(printWriter);
+		printWriter.flush();
 		return outputStream.toString();
 	}
 }

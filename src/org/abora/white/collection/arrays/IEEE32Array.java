@@ -17,8 +17,9 @@ import org.abora.white.value.IEEE32Value;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
- * Array collection which holds IEEE32 values,
- * which match the Java float primitive type.
+ * Concrete fixed size array that holds elements of the Java <code>float</code>
+ * floating-point primitive data type. This is conceptually associated with
+ * the single-precision 32-bit format IEEE 754 values.
  */
 public class IEEE32Array extends PrimFloatArray {
 	private final float[] storage;
@@ -40,6 +41,16 @@ public class IEEE32Array extends PrimFloatArray {
 		super();
 		storage = new float[count];
 	}
+
+	/** 
+	 * Construct a new array of the specified size with
+	 * all elements initialized to zero.
+	 *
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 * 
+	 * @param count number of elements this will be able to hold
+	 */
 
 	protected IEEE32Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		this(size);
@@ -108,7 +119,12 @@ public class IEEE32Array extends PrimFloatArray {
 	//////////////////////////////////////////////
 	// accessing
 
-	/** Store an actual floating point value */
+	/**
+	 * Store a floating point <code>value</code> at the specified <code>index</code>.
+	 * 
+	 * @param index index in array the element will be stored at.
+	 * @param value floating point value to store in <code>this</code>.
+	 */
 	public void storeIEEE32(int index, float value) {
 		storage[index] = value;
 	}
@@ -137,6 +153,10 @@ public class IEEE32Array extends PrimFloatArray {
 		return IEEE32Value.make(iEEE32At(index));
 	}
 
+	public int count() {
+		return storage.length;
+	}
+
 	//	public PrimSpec spec() {
 	//		return PrimSpec.iEEE32();
 	//
@@ -158,7 +178,7 @@ public class IEEE32Array extends PrimFloatArray {
 
 
 	//////////////////////////////////////////////
-	// bulk storing
+	// Bulk Storing
 
 	public void storeAll(Heaper value, int count, int start) {
 		int n = count() - start;
@@ -202,6 +222,10 @@ public class IEEE32Array extends PrimFloatArray {
 		System.arraycopy(storage, start, buffer, 0, n);
 	}
 
+
+	//////////////////////////////////////////////
+	// Comparing and Hashing
+
 	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE32Array) {
 			IEEE32Array o = (IEEE32Array) other;
@@ -230,6 +254,10 @@ public class IEEE32Array extends PrimFloatArray {
 		return 0;
 	}
 
+
+	//////////////////////////////////////////////
+	// Arithmetic Manipulations
+
 	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
 		if (other instanceof IEEE32Array) {
 			IEEE32Array o = (IEEE32Array) other;
@@ -252,11 +280,11 @@ public class IEEE32Array extends PrimFloatArray {
 		}
 	}
 
+
+	//////////////////////////////////////////////
+	// Printing
+	
 	protected void printElementOn(int index, PrintWriter oo) {
 		oo.print(iEEE32At(index));
-	}
-
-	public int count() {
-		return storage.length;
 	}
 }
