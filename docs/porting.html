@@ -1,10 +1,12 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
-            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+            "http://www.w3.org/TR/html4/loose.dtd">
 
   <html>
 
     <head>
       <meta	http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<link rel="stylesheet" type="text/css" href="../style.css" />
+
 	  <title>Porting Udanax-Gold</title>
     </head>
 
@@ -108,13 +110,13 @@
 			will be executed for every step. See the #forEach and
 			#forPositions method for example implementation.</p>
 
-<p><pre>	{void} forEach: fn {BlockClosure} 
+<pre>	{void} forEach: fn {BlockClosure} 
 		[| elem {Heaper} |
 		[(elem _ self fetch) ~~ NULL]
 			whileTrue:
 				[fn value: elem.
 				self step]]
-			valueNowOrOnUnwindDo: [self destroy]!</pre></p>
+			valueNowOrOnUnwindDo: [self destroy]!</pre>
 
 		<p>The X++ translation does not support BlockClosures, so instead
 			makes use of the preprocessor define to macros to expand FOR_EACH, or
@@ -150,11 +152,11 @@
 			}
 		} finally {
 			stepper.destroy();
-		}</pre></p>
+		}</pre>
 
 		<p>...and the original Smalltalk source:<br>
 <pre>	(s _ myArray stepper) forEach: [ :e {Heaper} |
-		newArray atInt: (myDsp ofInt: s index) store: e].</pre></p>
+		newArray atInt: (myDsp ofInt: s index) store: e].</pre>
 
 <h3>Object Birth</h3>
 
@@ -207,7 +209,7 @@
 <pre>	other
 		cast: AndFilter into: [:af |
 			^af subFilters isEqual: self subFilters]
-		others: [^false].</pre></p>
+		others: [^false].</pre>
 
 		<p>This is quite simply hand translated into the following using
 			standard Java instanceof operator.<br>
@@ -216,7 +218,7 @@
 		return af.subFilters().isEqual(subFilters());
 	} else {
 		return false;
-	}</pre></p>
+	}</pre>
 
 		<p>One case to watch out for is if no <tt>others</tt> section is
 			defined. Reading the X++ notes for the comparable
@@ -290,7 +292,7 @@
 				with alternative null values: <tt>(Pair.pairWithNulls(aHeaper,
 					null)).isEqual(Pair.pairWithNulls(null, aHeaper))</tt></li>
 
-			<li>MuSet & ImmuSet use incompatible contentsHash mechanisms.
+			<li>MuSet &amp; ImmuSet use incompatible contentsHash mechanisms.
 			ActualHashSet adds together element hashes, whereas ImmuSets
 			(inherited from ScruSet) bitXor together element hashes. I
 			assume this is an oversight rather than a designed, but
