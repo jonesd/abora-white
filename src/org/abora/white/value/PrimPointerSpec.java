@@ -98,28 +98,28 @@ public class PrimPointerSpec extends PrimSpec {
 		*/
 	}
 
-	/**
-	 * Make an array initialized to null values
-	 */
-	public PrimArray array(int count) {
-		if (this == PrimSpec.pointer()) {
-			return PtrArray.nulls(count);
-		}
-		if (this == PrimSpec.sharedPointer()) {
-			return SharedPtrArray.make(count);
-		}
-		throw new IllegalStateException("BadPrimSpec");
-		/*
-		udanax-top.st:34670:PrimPointerSpec methodsFor: 'making'!
-		{PrimArray} array: count {Int32 default: Int32Zero}
-			"Make an array initialized to null values"
-			[self == (PrimSpec pointer basicCast: Heaper star) ifTrue: [^PtrArray nulls: count].
-			self == (PrimSpec sharedPointer basicCast: Heaper star) ifTrue: [^SharedPtrArray make: count].
-			Heaper BLAST: #BadPrimSpec] translateOnly.
-			[^myClass create: count] smalltalkOnly.
-			^ NULL "compiler fodder"!
-		*/
-	}
+//	/**
+//	 * Make an array initialized to null values
+//	 */
+//	public PrimArray array(int count) {
+//		if (this == PrimSpec.pointer()) {
+//			return PtrArray.nulls(count);
+//		}
+//		if (this == PrimSpec.sharedPointer()) {
+//			return SharedPtrArray.make(count);
+//		}
+//		throw new IllegalStateException("BadPrimSpec");
+//		/*
+//		udanax-top.st:34670:PrimPointerSpec methodsFor: 'making'!
+//		{PrimArray} array: count {Int32 default: Int32Zero}
+//			"Make an array initialized to null values"
+//			[self == (PrimSpec pointer basicCast: Heaper star) ifTrue: [^PtrArray nulls: count].
+//			self == (PrimSpec sharedPointer basicCast: Heaper star) ifTrue: [^SharedPtrArray make: count].
+//			Heaper BLAST: #BadPrimSpec] translateOnly.
+//			[^myClass create: count] smalltalkOnly.
+//			^ NULL "compiler fodder"!
+//		*/
+//	}
 
 	/**
 	 * Make an array with the values at the given address

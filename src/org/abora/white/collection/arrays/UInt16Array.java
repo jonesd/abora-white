@@ -43,7 +43,7 @@ public class UInt16Array extends PrimIntArray {
 	
 	/** create a UInt16Array filled with zeros */
 	public static UInt16Array make(int count) {
-		throw new UnsupportedOperationException();
+		return new UInt16Array(count);
 	}
 
 	/** create a UInt16Array filled with the indicated data in 'from' */

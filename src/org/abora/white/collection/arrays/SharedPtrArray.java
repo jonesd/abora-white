@@ -35,7 +35,7 @@ public class SharedPtrArray extends PtrArray {
 	// Static Factory Methods
 
 	/** create a PtrArray filled with NULLs */
-	public static SharedPtrArray make(int count) {
+	public static PtrArray make(int count) {
 		return new SharedPtrArray(count);
 	}
 

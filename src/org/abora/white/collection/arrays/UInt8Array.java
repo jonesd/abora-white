@@ -110,7 +110,7 @@ public class UInt8Array extends PrimIntArray {
 	}
 
 	public PrimSpec spec() {
-		return PrimSpec.int8();
+		return PrimSpec.uInt8();
 	}
 
 	public int bitCount() {

@@ -269,37 +269,40 @@ public class PrimIntegerSpec extends PrimSpec {
 	//////////////////////////////////////////////
 	// Array Factory Methods
 
-	/**
-	 * Make an array initialized to zero values
-	 */
-	public PrimArray array(int count) {
-		if (this == PrimSpec.uInt32()) {
-			return UInt32Array.make(count);
-		}
-		if (this == PrimSpec.uInt8()) {
-			return UInt8Array.make(count);
-		}
-		if (this == PrimSpec.int32()) {
-			return Int32Array.make(count);
-		}
-		if (this == PrimSpec.integerVar()) {
-			return IntegerVarArray.zeros(count);
-		}
-		throw new IllegalStateException("BadPrimSpec");
-		/*
-		udanax-top.st:34539:PrimIntegerSpec methodsFor: 'making'!
-		{PrimArray} array: count {Int32 default: Int32Zero}
-			"Make an array initialized to zero values"
-			
-			[self == (PrimSpec uInt32 basicCast: Heaper star) ifTrue: [^UInt32Array make: count].
-			self == (PrimSpec uInt8 basicCast: Heaper star) ifTrue: [^UInt8Array make: count].
-			self == (PrimSpec int32 basicCast: Heaper star) ifTrue: [^Int32Array make: count].
-			self == (PrimSpec integerVar basicCast: Heaper star) ifTrue: [^IntegerVarArray zeros: count].
-			Heaper BLAST: #BadPrimSpec] translateOnly.
-			[^myClass create: count] smalltalkOnly.
-			^ NULL "compiler fodder"!
-		*/
-	}
+//	/**
+//	 * Make an array initialized to zero values
+//	 */
+//	public PrimArray array(int count) {
+//		if (this == PrimSpec.int8()) {
+//			return UInt32Array.make(count);
+//		}
+//		if (this == PrimSpec.uInt32()) {
+//			return UInt32Array.make(count);
+//		}
+//		if (this == PrimSpec.uInt8()) {
+//			return UInt8Array.make(count);
+//		}
+//		if (this == PrimSpec.int32()) {
+//			return Int32Array.make(count);
+//		}
+//		if (this == PrimSpec.integerVar()) {
+//			return IntegerVarArray.zeros(count);
+//		}
+//		throw new IllegalStateException("BadPrimSpec");
+//		/*
+//		udanax-top.st:34539:PrimIntegerSpec methodsFor: 'making'!
+//		{PrimArray} array: count {Int32 default: Int32Zero}
+//			"Make an array initialized to zero values"
+//			
+//			[self == (PrimSpec uInt32 basicCast: Heaper star) ifTrue: [^UInt32Array make: count].
+//			self == (PrimSpec uInt8 basicCast: Heaper star) ifTrue: [^UInt8Array make: count].
+//			self == (PrimSpec int32 basicCast: Heaper star) ifTrue: [^Int32Array make: count].
+//			self == (PrimSpec integerVar basicCast: Heaper star) ifTrue: [^IntegerVarArray zeros: count].
+//			Heaper BLAST: #BadPrimSpec] translateOnly.
+//			[^myClass create: count] smalltalkOnly.
+//			^ NULL "compiler fodder"!
+//		*/
+//	}
 
 	/**
 	 * Make an array with the values at the given address

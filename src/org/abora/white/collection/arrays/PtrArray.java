@@ -44,7 +44,7 @@ public class PtrArray extends PrimArray {
 	// Static Factory Methods
 
 	/** create a PtrArray filled with NULLs */
-	public static PtrArray nulls(int count) {
+	public static PtrArray make(int count) {
 		return new PtrArray(count);
 	}
 
@@ -73,7 +73,7 @@ public class PtrArray extends PrimArray {
 	/** create a zero size PtrArray */
 	public static PtrArray empty() {
 		//TODO cache empty array
-		return nulls(0);
+		return make(0);
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {

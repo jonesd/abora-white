@@ -10,6 +10,8 @@
  */
 package org.abora.white.value.tests;
 
+import org.abora.white.collection.arrays.PrimArray;
+import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimSpec;
 
@@ -151,6 +153,106 @@ public class PrimSpecTest extends TestCase {
 		assertSame(PrimSpec.int64(), PrimSpec.toHold(IntegerValue.make(-2147483649L)));
 		assertSame(PrimSpec.int64(), PrimSpec.toHold(IntegerValue.make(-9223372036854775808L)));
 		//TODO IntegerValue once it uses BigInteger 
-
 	}
+	
+	public void testArrayEmpty() {
+		PrimArray array = PrimSpec.int8().array();
+		assertSame(PrimSpec.int8(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.int16().array();
+		assertSame(PrimSpec.int16(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.int32().array();
+		assertSame(PrimSpec.int32(), array.spec());
+		assertEquals(0, array.count());
+		
+		array = PrimSpec.int64().array();
+		assertSame(PrimSpec.int64(), array.spec());
+		assertEquals(0, array.count());
+		
+		array = PrimSpec.uInt8().array();
+		assertSame(PrimSpec.uInt8(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.uInt16().array();
+		assertSame(PrimSpec.uInt16(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.uInt32().array();
+		assertSame(PrimSpec.uInt32(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.iEEE32().array();
+		assertSame(PrimSpec.iEEE32(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.iEEE64().array();
+		assertSame(PrimSpec.iEEE64(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.pointer().array();
+		assertSame(PrimSpec.pointer(), array.spec());
+		assertEquals(0, array.count());
+
+		array = PrimSpec.sharedPointer().array();
+		assertSame(PrimSpec.sharedPointer(), array.spec());
+		assertEquals(0, array.count());
+	}
+	
+	public void testArrayWith() {
+		PrimArray array = PrimSpec.int8().arrayWith(IntegerValue.make(64));
+		assertEquals(1, array.count());
+		IntegerValue integerValue = (IntegerValue)array.fetchValue(0);
+		assertEquals(64, integerValue.intValue());
+
+		array = PrimSpec.iEEE32().arrayWith(IEEE32Value.make(1.1f));
+		assertEquals(1, array.count());
+		IEEE32Value floatValue = (IEEE32Value)array.fetchValue(0);
+		assertEquals(1.1f, floatValue.asIEEE32(), 0.0f);
+		
+		//TODO try pointer spec as well
+	}
+	
+	public void testArrayWithTwo() {
+		PrimArray array = PrimSpec.int8().arrayWithTwo(IntegerValue.make(64), IntegerValue.make(32));
+		assertEquals(2, array.count());
+		IntegerValue integerValue = (IntegerValue)array.fetchValue(0);
+		assertEquals(64, integerValue.intValue());
+		integerValue = (IntegerValue)array.fetchValue(1);
+		assertEquals(32, integerValue.intValue());
+
+		array = PrimSpec.iEEE32().arrayWithTwo(IEEE32Value.make(1.1f), IEEE32Value.make(2.2f));
+		assertEquals(2, array.count());
+		IEEE32Value floatValue = (IEEE32Value)array.fetchValue(0);
+		assertEquals(1.1f, floatValue.asIEEE32(), 0.0f);
+		floatValue = (IEEE32Value)array.fetchValue(1);
+		assertEquals(2.2f, floatValue.asIEEE32(), 0.0f);
+		
+		//TODO try pointer spec as well
+	}
+
+	public void testArrayWithThree() {
+		PrimArray array = PrimSpec.int8().arrayWithThree(IntegerValue.make(64), IntegerValue.make(32), IntegerValue.make(16));
+		assertEquals(3, array.count());
+		IntegerValue integerValue = (IntegerValue)array.fetchValue(0);
+		assertEquals(64, integerValue.intValue());
+		integerValue = (IntegerValue)array.fetchValue(1);
+		assertEquals(32, integerValue.intValue());
+		integerValue = (IntegerValue)array.fetchValue(2);
+		assertEquals(16, integerValue.intValue());
+
+		array = PrimSpec.iEEE32().arrayWithThree(IEEE32Value.make(1.1f), IEEE32Value.make(2.2f), IEEE32Value.make(3.3f));
+		assertEquals(3, array.count());
+		IEEE32Value floatValue = (IEEE32Value)array.fetchValue(0);
+		assertEquals(1.1f, floatValue.asIEEE32(), 0.0f);
+		floatValue = (IEEE32Value)array.fetchValue(1);
+		assertEquals(2.2f, floatValue.asIEEE32(), 0.0f);
+		floatValue = (IEEE32Value)array.fetchValue(2);
+		assertEquals(3.3f, floatValue.asIEEE32(), 0.0f);
+		
+		//TODO try pointer spec as well
+	}
+
 }

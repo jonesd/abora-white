@@ -43,7 +43,7 @@ public class UInt32Array extends PrimIntArray {
 	
 	/** create a UInt32Array filled with zeros */
 	public static UInt32Array make(int count) {
-		throw new UnsupportedOperationException();
+		return new UInt32Array(count);
 	}
 
 	/** create a UInt32Array filled with the indicated data in 'from' */

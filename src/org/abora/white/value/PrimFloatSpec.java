@@ -144,30 +144,30 @@ public class PrimFloatSpec extends PrimSpec {
 		*/
 	}
 
-	/**
-	 * Make an array initialized to zero values
-	 */
-	public PrimArray array(int count) {
-		// TODO Eric Add case for generic floating point--essentially PtrArray of PrimFloat */
-		if (this == PrimSpec.iEEE64()) {
-			return IEEE64Array.make(count);
-		}
-		if (this == PrimSpec.iEEE32()) {
-			return IEEE32Array.make(count);
-		}
-		throw new IllegalStateException("BadPrimSpec");
-		/*
-		udanax-top.st:34384:PrimFloatSpec methodsFor: 'making'!
-		{PrimArray} array: count {Int32 default: Int32Zero}
-			"Make an array initialized to zero values"
-			[Eric thingToDo. "Add case for generic floating point--essentially PtrArray of PrimFloat"
-			self == (PrimSpec iEEE64 basicCast: Heaper star) ifTrue: [^IEEE64Array make: count].
-			self == (PrimSpec iEEE32 basicCast: Heaper star) ifTrue: [^IEEE32Array make: count].
-			Heaper BLAST: #BadPrimSpec] translateOnly.
-			[^myClass create: count] smalltalkOnly.
-			^ NULL "compiler fodder"!
-		*/
-	}
+//	/**
+//	 * Make an array initialized to zero values
+//	 */
+//	public PrimArray array(int count) {
+//		// TODO Eric Add case for generic floating point--essentially PtrArray of PrimFloat */
+//		if (this == PrimSpec.iEEE64()) {
+//			return IEEE64Array.make(count);
+//		}
+//		if (this == PrimSpec.iEEE32()) {
+//			return IEEE32Array.make(count);
+//		}
+//		throw new IllegalStateException("BadPrimSpec");
+//		/*
+//		udanax-top.st:34384:PrimFloatSpec methodsFor: 'making'!
+//		{PrimArray} array: count {Int32 default: Int32Zero}
+//			"Make an array initialized to zero values"
+//			[Eric thingToDo. "Add case for generic floating point--essentially PtrArray of PrimFloat"
+//			self == (PrimSpec iEEE64 basicCast: Heaper star) ifTrue: [^IEEE64Array make: count].
+//			self == (PrimSpec iEEE32 basicCast: Heaper star) ifTrue: [^IEEE32Array make: count].
+//			Heaper BLAST: #BadPrimSpec] translateOnly.
+//			[^myClass create: count] smalltalkOnly.
+//			^ NULL "compiler fodder"!
+//		*/
+//	}
 
 	/**
 	 * Make an array with the values at the given address

@@ -10,6 +10,9 @@
  */
 package org.abora.white.value;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.abora.white.collection.arrays.IEEE32Array;
 import org.abora.white.collection.arrays.IEEE64Array;
 import org.abora.white.collection.arrays.Int16Array;
@@ -315,17 +318,36 @@ public abstract class PrimSpec extends Heaper {
 	// Array Factory Methods
 	
 	/**
-	 * Make an array initialized to some reasonable zero value
+	 * Return an array suitable for holding the specified <code>count</code>
+	 * number of elements that match <code>this</code> specification. Elements
+	 * should be initialized to some reasonable zero/null value.
+	 * 
+	 * @param count number of elements this will be able to hold
+	 * @return the array 
 	 */
-	public abstract PrimArray array(int count);
-	/*
-	udanax-top.st:34129:PrimSpec methodsFor: 'making'!
-	{PrimArray} array: count {Int32 default: Int32Zero}
-		"Make an array initialized to some reasonable zero value"
-		
-		self subclassResponsibility!
-	*/
+	public PrimArray array(int count) {
+		//TODO Udanax-Gold has subclasses overriding an abstract array(count)
+		// and then a switch on the spec instance to know how to construct
+		// the array. Is this ok in comparison? Performance?
+		try {
+			Method method = arrayClass.getDeclaredMethod("make", new Class[] { Integer.TYPE });
+			return (PrimArray) method.invoke(null, new Object[]{new Integer(count)});
+		} catch (NoSuchMethodException e) {
+			//TODO what should be the strategy for catching these kinds
+			// of (probably code) problems?
+			throw new IllegalStateException(e.toString());
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException(e.toString());
+		} catch (InvocationTargetException e) {
+			throw new IllegalStateException(e.toString());
+		}
+	}
 
+	/**
+	 * Return an empty array suitable for holding elements that match <code>this</code> specification.
+	 * 
+	 * @return the array 
+	 */
 	public PrimArray array() {
 		return array(0);
 	}
@@ -342,7 +364,11 @@ public abstract class PrimSpec extends Heaper {
 	*/
 	
 	/**
-	 * Make a single element array containing the given value
+	 * Return an array holding the single element containing the
+	 * given <code>value</code>. 
+	 * 
+	 * @param heaper value to store in array
+	 * @return the array 
 	 */
 	public PrimArray arrayWith(Heaper value) {
 		PrimArray result = array(1);
@@ -359,9 +385,41 @@ public abstract class PrimSpec extends Heaper {
 			^result!
 		*/
 	}
+
+	/**
+	 * Return an array holding two elements containing the
+	 * given values in the same order. 
+	 * 
+	 * @param value first value to store in array.
+	 * @param other second value to store in array.
+	 * @return the array 
+	 */
+	public PrimArray arrayWithTwo(Heaper value, Heaper other) {
+		PrimArray result = array(2);
+		result.storeValue(0, value);
+		result.storeValue(1, other);
+		return result;
+		/*
+		udanax-top.st:34157:PrimSpec methodsFor: 'making'!
+		{PrimArray} arrayWithTwo: value {Heaper} with: other {Heaper}
+			"Make a two element array containing the given values"
+			
+			| result {PrimArray} |
+			result _ self array: 2.
+			result at: Int32Zero storeValue: value.
+			result at: 1 storeValue: other.
+			^ result.!
+		*/
+	}
 	
 	/**
-	 * Make a two element array containing the given values
+	 * Return an array holding three elements containing the
+	 * given values in the same order. 
+	 * 
+	 * @param value first value to store in array.
+	 * @param other second value to store in array.
+	 * @param another third value to store in array.
+	 * @return the array 
 	 */
 	public PrimArray arrayWithThree(Heaper value, Heaper other, Heaper another) {
 		PrimArray result = array(3);
@@ -383,27 +441,7 @@ public abstract class PrimSpec extends Heaper {
 		*/
 	}
 	
-	/**
-	 * Make a two element array containing the given values
-	 */
-	public PrimArray arrayWithTwo(Heaper value, Heaper other) {
-		PrimArray result = array(2);
-		result.storeValue(0, value);
-		result.storeValue(1, other);
-		return result;
-		/*
-		udanax-top.st:34157:PrimSpec methodsFor: 'making'!
-		{PrimArray} arrayWithTwo: value {Heaper} with: other {Heaper}
-			"Make a two element array containing the given values"
-			
-			| result {PrimArray} |
-			result _ self array: 2.
-			result at: Int32Zero storeValue: value.
-			result at: 1 storeValue: other.
-			^ result.!
-		*/
-	}
-	
+		
 	//////////////////////////////////////////////
 	// Copying
 	
