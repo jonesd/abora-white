@@ -46,6 +46,10 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 		return new IntegerValue(value);
 	}
 
+
+	//////////////////////////////////////////////
+	// Comparing and Hashing
+
 	public boolean isEqual(Heaper other) {
 		if (other instanceof IntegerValue) {
 			IntegerValue o = (IntegerValue) other;
@@ -59,6 +63,17 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 		{BooleanVar} isEqual: other {Heaper}
 			^(other isKindOf: PrimIntValue) and: [(other cast: PrimIntValue) asIntegerVar = myValue]!
 		*/
+	}
+
+	public int compareTo(Object other) {
+		IntegerValue o = (IntegerValue) other;
+		if (value < o.value) {
+			return -1;
+		} else if (value > o.value) {
+			return +1;
+		} else {
+			return 0;
+		}
 	}
 
 
@@ -110,17 +125,35 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 		*/
 	}
 
-	public int compareTo(Object other) {
-		IntegerValue o = (IntegerValue) other;
-		if (value < o.value) {
-			return -1;
-		} else if (value > o.value) {
-			return +1;
-		} else {
-			return 0;
-		}
+	/**
+	 * The value as a 32 bit unsigned integer
+	 */
+	public int asUInt32() {
+		throw new UnsupportedOperationException();
+//		return myValue.DOTasUInt32();
+		/*
+		udanax-top.st:35099:PrimIntValue methodsFor: 'accessing'!
+		{UInt32 INLINE} asUInt32
+			"The value as a 32 bit unsigned integer"
+		
+			^myValue DOTasUInt32!
+		*/
 	}
 
+	/**
+	 * The value as a 8 bit unsigned integer
+	 */
+	public byte asUInt8() {
+		throw new UnsupportedOperationException();
+//		return myValue.DOTasUInt32();
+		/*
+		udanax-top.st:35104:PrimIntValue methodsFor: 'accessing'!
+		{UInt8 INLINE} asUInt8
+			"The value as a 8 bit unsigned integer"
+		
+			^myValue DOTasUInt32!
+		*/
+	}
 
 
 	//////////////////////////////////////////////
@@ -324,36 +357,6 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 //			^myValue!
 //		*/
 //	}
-
-	/**
-	 * The value as a 32 bit unsigned integer
-	 */
-	public int asUInt32() {
-		throw new UnsupportedOperationException();
-//		return myValue.DOTasUInt32();
-		/*
-		udanax-top.st:35099:PrimIntValue methodsFor: 'accessing'!
-		{UInt32 INLINE} asUInt32
-			"The value as a 32 bit unsigned integer"
-		
-			^myValue DOTasUInt32!
-		*/
-	}
-
-	/**
-	 * The value as a 8 bit unsigned integer
-	 */
-	public byte asUInt8() {
-		throw new UnsupportedOperationException();
-//		return myValue.DOTasUInt32();
-		/*
-		udanax-top.st:35104:PrimIntValue methodsFor: 'accessing'!
-		{UInt8 INLINE} asUInt8
-			"The value as a 8 bit unsigned integer"
-		
-			^myValue DOTasUInt32!
-		*/
-	}
 
 	/**
 	 * What precision is it, in terms of the number of bits used to represent it.  In the
