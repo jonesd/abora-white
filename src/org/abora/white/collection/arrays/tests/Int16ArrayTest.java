@@ -888,6 +888,11 @@ public class Int16ArrayTest extends TestCase {
 		array2 = AssertArrays.makeInt16Array12345();
 		assertEquals(-1, array1.compare(array2, 10));
 
+		// compare near minimum held value
+		array1 = Int16Array.make(new short[] { Short.MIN_VALUE});
+		array2 = Int16Array.make(new short[] { Short.MAX_VALUE});
+		assertEquals(-1, array1.compare(array2));
+
 		// different array types
 		array1 = AssertArrays.makeInt16Array12345();
 		Int32Array array2Int32 = AssertArrays.makeInt32Array12345();

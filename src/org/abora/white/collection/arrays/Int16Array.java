@@ -86,7 +86,7 @@ public class Int16Array extends PrimIntArray {
 
 	/** Store an 16 bit signed integer value */
 	public void storeInt16(int index, short value) {
-		storage[index] = (short)value;
+		storage[index] = (short) value;
 	}
 
 	/** Get an 16 bit signed actual integer value */
@@ -109,7 +109,7 @@ public class Int16Array extends PrimIntArray {
 		if (value == null) {
 			throw new NullPointerException();
 		}
-		storeInteger(index, (IntegerValue)value);
+		storeInteger(index, (IntegerValue) value);
 	}
 
 	public Heaper fetchValue(int index) {
@@ -125,9 +125,6 @@ public class Int16Array extends PrimIntArray {
 	}
 
 	public int bitCount() {
-		/* Return the maximum bit/entry that can be stored in this array.
-		   The number will be negative for signed arrays. */
-
 		return -16;
 	}
 
@@ -196,7 +193,7 @@ public class Int16Array extends PrimIntArray {
 			Int16Array o = (Int16Array) other;
 			for (int i = 0; i < count; i += 1) {
 				int resultant = int16At(i + start) + o.int16At(i + otherStart);
-				storeInt16(i + start, (short)resultant);
+				storeInt16(i + start, (short) resultant);
 			}
 		} else {
 			super.addData(start, other, otherStart, count);
@@ -208,7 +205,7 @@ public class Int16Array extends PrimIntArray {
 			Int16Array o = (Int16Array) other;
 			for (int i = 0; i < count; i += 1) {
 				int resultant = int16At(i + start) - o.int16At(i + otherStart);
-				storeInt16(i + start, (short)resultant);
+				storeInt16(i + start, (short) resultant);
 			}
 		} else {
 			super.subtractData(start, other, otherStart, count);

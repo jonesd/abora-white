@@ -20,6 +20,9 @@ import org.abora.white.collection.arrays.Int64Array;
 import org.abora.white.collection.arrays.Int8Array;
 import org.abora.white.collection.arrays.PrimFloatArray;
 import org.abora.white.collection.arrays.PrimIntegerArray;
+import org.abora.white.collection.arrays.UInt16Array;
+import org.abora.white.collection.arrays.UInt32Array;
+import org.abora.white.collection.arrays.UInt8Array;
 import org.abora.white.value.IntegerValue;
 
 public class AssertArrays extends Assert {
@@ -116,6 +119,57 @@ public class AssertArrays extends Assert {
 	}
 	protected static Int64Array makeInt64Array12321() {
 		return Int64Array.make(new long[] { 1, 2, 3, 2, 1 });
+	}
+
+	//////////////////////////////////////////////
+	// UInt8
+	
+	protected static UInt8Array makeUInt8ArrayEmpty() {
+		return UInt8Array.make(new short[] {
+		});
+	}
+	protected static UInt8Array makeUInt8Array1() {
+		return UInt8Array.make(new short[] { 1 });
+	}
+	protected static UInt8Array makeUInt8Array12345() {
+		return UInt8Array.make(new short[] { 1, 2, 3, 4, 5 });
+	}
+	protected static UInt8Array makeUInt8Array12321() {
+		return UInt8Array.make(new short[] { 1, 2, 3, 2, 1 });
+	}
+
+	//////////////////////////////////////////////
+	// UInt16
+	
+	protected static UInt16Array makeUInt16ArrayEmpty() {
+		return UInt16Array.make(new char[] {
+		});
+	}
+	protected static UInt16Array makeUInt16Array1() {
+		return UInt16Array.make(new char[] { 1 });
+	}
+	protected static UInt16Array makeUInt16Array12345() {
+		return UInt16Array.make(new char[] { 1, 2, 3, 4, 5 });
+	}
+	protected static UInt16Array makeUInt16Array12321() {
+		return UInt16Array.make(new char[] { 1, 2, 3, 2, 1 });
+	}
+
+	//////////////////////////////////////////////
+	// UInt32
+	
+	protected static UInt32Array makeUInt32ArrayEmpty() {
+		return UInt32Array.make(new long[] {
+		});
+	}
+	protected static UInt32Array makeUInt32Array1() {
+		return UInt32Array.make(new long[] { 1 });
+	}
+	protected static UInt32Array makeUInt32Array12345() {
+		return UInt32Array.make(new long[] { 1, 2, 3, 4, 5 });
+	}
+	protected static UInt32Array makeUInt32Array12321() {
+		return UInt32Array.make(new long[] { 1, 2, 3, 2, 1 });
 	}
 
 	//////////////////////////////////////////////

@@ -793,6 +793,12 @@ public class IEEE32ArrayTest extends TestCase {
 		array1 = makeIEEE32Array12321();
 		array2 = makeIEEE32Array12345();
 		assertEquals(-1, array1.compare(array2, 10));
+		
+		// compare near minimum held value
+		array1 = IEEE32Array.make(new float[] { Float.MIN_VALUE});
+		array2 = IEEE32Array.make(new float[] { Float.MAX_VALUE});
+		assertEquals(-1, array1.compare(array2));
+		
 	}
 	
 	public void testCopyGrow() {

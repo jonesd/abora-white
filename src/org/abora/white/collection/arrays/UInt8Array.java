@@ -30,18 +30,35 @@ public class UInt8Array extends PrimIntArray {
 	}
 
 	protected UInt8Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		this(size);
+		int n = count;
+		if (count == -1) {
+			n = from.count() - sourceOffset;
+		}
+		copyElements(destOffset, from, sourceOffset, n);
 	}
 
 	protected UInt8Array(short[] buffer) {
 		this(buffer.length);
-		System.arraycopy(buffer, 0, storage, 0, buffer.length);
+		for (int i = 0; i < buffer.length; i++) {
+			short s = buffer[i];
+			storage[i] = toSignedByte(s);
+		}
 	}
+	
 
-	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+	////////////////////////////////////////////////////////////////////////////
+	// Unsigned Util
+	
+	private short toUnsignedByte(byte b) {
+		return (short)(b & 0xff);
 	}
-
+	
+	private byte toSignedByte(short s) {
+		return (byte)(s & 0xff);
+	}
+	
+	
 	//////////////////////////////////////////////
 	// Static Factory Methods
 
@@ -52,7 +69,7 @@ public class UInt8Array extends PrimIntArray {
 
 	/** create a UInt8Array filled with the indicated data in 'from' */
 	public static UInt8Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		return new UInt8Array(size, from, sourceOffset, count, destOffset);
 	}
 
 	public static UInt8Array make(int size, PrimArray from, int sourceOffset, int count) {
@@ -78,6 +95,10 @@ public class UInt8Array extends PrimIntArray {
 	 */
 	public static UInt8Array string(String string) {
 		throw new UnsupportedOperationException();
+	}
+
+	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
+		return make(size, (PrimIntegerArray) source, sourceOffset, count, destOffset);
 	}
 
 
@@ -113,9 +134,6 @@ public class UInt8Array extends PrimIntArray {
 	}
 
 	public int bitCount() {
-		/* Return the maximum bits/entry that can be stored in this array.
-		   The number will be negative for signed arrays. */
-
 		return 8;
 	}
 

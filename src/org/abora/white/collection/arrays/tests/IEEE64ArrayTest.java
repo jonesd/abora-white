@@ -791,6 +791,11 @@ public class IEEE64ArrayTest extends TestCase {
 		array1 = makeIEEE64Array12321();
 		array2 = makeIEEE64Array12345();
 		assertEquals(-1, array1.compare(array2, 10));
+		
+		// compare near minimum held value
+		array1 = IEEE64Array.make(new double[] { Double.MIN_VALUE});
+		array2 = IEEE64Array.make(new double[] { Double.MAX_VALUE});
+		assertEquals(-1, array1.compare(array2));		
 	}
 	
 	public void testCopyGrow() {

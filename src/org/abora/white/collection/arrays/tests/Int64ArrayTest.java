@@ -892,6 +892,11 @@ public class Int64ArrayTest extends TestCase {
 		array2 = AssertArrays.makeInt64Array12345();
 		assertEquals(-1, array1.compare(array2, 10));
 
+		// compare near minimum held value
+		array1 = Int64Array.make(new long[] { Long.MIN_VALUE});
+		array2 = Int64Array.make(new long[] { Long.MAX_VALUE});
+		assertEquals(-1, array1.compare(array2));
+
 		// different array types
 		array1 = AssertArrays.makeInt64Array12345();
 		Int64Array array2Int32 = AssertArrays.makeInt64Array12345();

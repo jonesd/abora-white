@@ -98,24 +98,11 @@ public class Int8Array extends PrimIntArray {
 		if (!((PrimIntegerSpec) spec()).canHold(value)) {
 			throw new IllegalArgumentException("ValueOutOfRange");
 		}
-		storeInt8(index, value.asInt8()); //TODO was asLong() - why?
-		//		void Int32Array::storeInteger (Int32 index, IntegerVar value){
-		//			/* Store an integer value */
-		//
-		//			if (!CAST(PrimIntegerSpec,this->spec())->canHold (value)) {
-		//			BLAST(ValueOutOfRange);
-		//			}
-		//			this->storeInt(index, value.asLong());
-		//		}
+		storeInt8(index, value.asInt8());
 	}
 
 	public IntegerValue integerAt(int index) {
 		return IntegerValue.make(int8At(index));
-		//		IntegerVar Int32Array::integerAt (Int32 index){
-		//			/* Get an actual integer value */
-		//			IntegerVar rv = this->intAt(index);
-		//			return rv;
-		//		}
 	}
 
 	public void storeValue(int index, Heaper value) {
@@ -128,9 +115,6 @@ public class Int8Array extends PrimIntArray {
 
 	public Heaper fetchValue(int index) {
 		return IntegerValue.make(int8At(index));
-		//		RPTR(Heaper) OR(NULL) Int32Array::fetchValue (Int32 index) {
-		//			return PrimIntValue::make(this->intAt(index));
-		//		}
 	}
 
 	public int count() {
@@ -142,9 +126,6 @@ public class Int8Array extends PrimIntArray {
 	}
 
 	public int bitCount() {
-		/* Return the maximum bit/entry that can be stored in this array.
-		   The number will be negative for signed arrays. */
-
 		return -8;
 	}
 
@@ -213,7 +194,7 @@ public class Int8Array extends PrimIntArray {
 			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
 				int resultant = int8At(i + start) + o.int8At(i + otherStart);
-				storeInt8(i + start, (byte)resultant);
+				storeInt8(i + start, (byte) resultant);
 			}
 		} else {
 			super.addData(start, other, otherStart, count);
@@ -225,7 +206,7 @@ public class Int8Array extends PrimIntArray {
 			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
 				int resultant = int8At(i + start) - o.int8At(i + otherStart);
-				storeInt8(i + start, (byte)resultant);
+				storeInt8(i + start, (byte) resultant);
 			}
 		} else {
 			super.subtractData(start, other, otherStart, count);

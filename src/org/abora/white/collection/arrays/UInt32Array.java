@@ -32,7 +32,7 @@ public class UInt32Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	protected UInt32Array(int[] buffer) {
+	protected UInt32Array(long[] buffer) {
 		this(buffer.length);
 		throw new UnsupportedOperationException();
 	}
@@ -64,7 +64,7 @@ public class UInt32Array extends PrimIntArray {
 	}
 
 	/** create a UInt32Array filled with the data at 'buffer' */
-	public static UInt32Array make(int[] buffer) {
+	public static UInt32Array make(long[] buffer) {
 		throw new UnsupportedOperationException();
 	}
 

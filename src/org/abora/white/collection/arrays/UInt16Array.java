@@ -10,45 +10,49 @@
  */
 package org.abora.white.collection.arrays;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimIntegerSpec;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class UInt16Array extends PrimIntArray {
 	private char[] storage;
 
-
 	//////////////////////////////////////////////
 	// Constructors
 
 	protected UInt16Array(int count) {
 		super();
-		this.storage = new char[count];
+		storage = new char[count];
 	}
-	
+
 	protected UInt16Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		this(size);
+		int n = count;
+		if (count == -1) {
+			n = from.count() - sourceOffset;
+		}
+		copyElements(destOffset, from, sourceOffset, n);
 	}
 
 	protected UInt16Array(char[] buffer) {
 		this(buffer.length);
-		throw new UnsupportedOperationException();
+		System.arraycopy(buffer, 0, storage, 0, buffer.length);
 	}
-
 
 	//////////////////////////////////////////////
 	// Static Factory Methods
-	
-	/** create a UInt16Array filled with zeros */
+
+	/** create an UInt16Array filled with zeros */
 	public static UInt16Array make(int count) {
 		return new UInt16Array(count);
 	}
 
-	/** create a UInt16Array filled with the indicated data in 'from' */
+	/** create an Int16Array filled with the indicated data in 'from' */
 	public static UInt16Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		return new UInt16Array(size, from, sourceOffset, count, destOffset);
 	}
 
 	public static UInt16Array make(int size, PrimArray from, int sourceOffset, int count) {
@@ -63,43 +67,48 @@ public class UInt16Array extends PrimIntArray {
 		return make(size, from, 0);
 	}
 
-	/** create a UInt16Array filled with the data at 'buffer' */
-	public static UInt16Array make(int[] buffer) {
-		throw new UnsupportedOperationException();
+	/** create an UInt16Array filled with the data at 'buffer' */
+	public static UInt16Array make(char[] buffer) {
+		return new UInt16Array(buffer);
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		return make(size, (PrimIntegerArray) source, sourceOffset, count, destOffset);
 	}
-
 
 	//////////////////////////////////////////////
 	// Accessing
 
-	/** Store a 16 bit unsigned integer value */
-	public void storeUInt(int index, char value) {
-		throw new UnsupportedOperationException();
+	/** Store an 16 bit unsigned integer value */
+	public void storeUInt16(int index, char value) {
+		storage[index] = value;
 	}
 
-	/** Get a 16 bit unsigned actual integer value */
-	public char uIntAt(int index) {
-		throw new UnsupportedOperationException();
+	/** Get an 16 bit signed actual integer value */
+	public char uInt16At(int index) {
+		return storage[index];
 	}
 
 	public void storeInteger(int index, IntegerValue value) {
-		throw new UnsupportedOperationException();
+		if (!((PrimIntegerSpec) spec()).canHold(value)) {
+			throw new IllegalArgumentException("ValueOutOfRange");
+		}
+		storeUInt16(index, value.asUInt16());
 	}
 
 	public IntegerValue integerAt(int index) {
-		throw new UnsupportedOperationException();
+		return IntegerValue.make(uInt16At(index));
 	}
 
 	public void storeValue(int index, Heaper value) {
-		throw new UnsupportedOperationException();
+		if (value == null) {
+			throw new NullPointerException();
+		}
+		storeInteger(index, (IntegerValue)value);
 	}
 
 	public Heaper fetchValue(int index) {
-		throw new UnsupportedOperationException();
+		return IntegerValue.make(uInt16At(index));
 	}
 
 	public int count() {
@@ -111,49 +120,98 @@ public class UInt16Array extends PrimIntArray {
 	}
 
 	public int bitCount() {
-		/* Return the maximum bits/entry that can be stored in this array.
-		   The number will be negative for signed arrays. */
-
 		return 16;
 	}
 
+	//////////////////////////////////////////////
+	// Bulk Storage
+
+	/** 
+	 * Copy a consequitive range of elements from the receiver into the
+	 * supplied buffer.
+	 *  
+	 * @param buffer array to fill with receveirs elements
+	 * @param count number of consequentive elements in range or all
+	 * 			elements from start if -1. Silently truncate if count is
+	 * 			larger than available elements in the receiver
+	 * @param start index of first element in range
+	 */
+	public void copyToBuffer(char[] buffer, int count, int start) {
+		int n;
+		if (count >= 0) {
+			n = count;
+		} else {
+			n = count() - start;
+		}
+		if (n > buffer.length) {
+			n = buffer.length;
+		}
+		System.arraycopy(storage, start, buffer, 0, n);
+	}
 
 	//////////////////////////////////////////////
-	// Bulk Storing
-	
-	public void copyToBuffer(char[] buffer, int size, int count, int start) {
-		throw new UnsupportedOperationException();
+	// Comparing and Hashing
+
+	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt16Array) {
+			UInt16Array o = (UInt16Array) other;
+			for (int i = 0; i < count; i += 1) {
+				char a = uInt16At(i + start);
+				char b = o.uInt16At(i + otherStart);
+				if (a < b) {
+					return -1;
+				} else if (a > b) {
+					return 1;
+				}
+			}
+			return 0;
+		} else {
+			return super.compareData(start, other, otherStart, count);
+		}
 	}
 
-
-	//////////////////////////////////////////////
-	// Comparison and Hashing
-	
-	protected int compareData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected int signOfNonZeroAfter(int index) {
+		for (int i = index; i < count(); i += 1) {
+			char val = uInt16At(i);
+			if (val > 0) {
+				return +1;
+			}
+		}
+		return 0;
 	}
-
-	protected int signOfNonZeroAfter(int start) {
-		throw new UnsupportedOperationException();
-	}
-
 
 	//////////////////////////////////////////////
 	// Arithmetic Operations
 
-	protected void addData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt16Array) {
+			UInt16Array o = (UInt16Array) other;
+			for (int i = 0; i < count; i += 1) {
+				int resultant = uInt16At(i + start) + o.uInt16At(i + otherStart);
+				storeUInt16(i + start, (char)resultant);
+			}
+		} else {
+			super.addData(start, other, otherStart, count);
+		}
 	}
 
-	protected void subtractData(int myStart, PrimArithmeticArray other, int otherStart, int count) {
-		throw new UnsupportedOperationException();
+	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
+		if (other instanceof UInt16Array) {
+			UInt16Array o = (UInt16Array) other;
+			for (int i = 0; i < count; i += 1) {
+				int resultant = uInt16At(i + start) - o.uInt16At(i + otherStart);
+				storeUInt16(i + start, (char)resultant);
+			}
+		} else {
+			super.subtractData(start, other, otherStart, count);
+		}
 	}
-
 
 	//////////////////////////////////////////////
 	// Printing
 
-	protected void printElementOn(int index, PrintStream oo) {
-		throw new UnsupportedOperationException();
+	protected void printElementOn(int index, PrintWriter oo) {
+		//TODO should this print out in String format instead?
+		oo.print((int)uInt16At(index));
 	}
 }

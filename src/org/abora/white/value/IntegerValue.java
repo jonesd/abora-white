@@ -152,43 +152,33 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	 */
 	public boolean asBooleanVar() {
 		return value.compareTo(BigInteger.ZERO) != 0;
-		/*
-		udanax-top.st:35084:PrimIntValue methodsFor: 'accessing'!
-		{BooleanVar INLINE} asBooleanVar
-			"The value as a BooleanVar."
-		
-			^myValue ~~ IntegerVarZero!
-		*/
 	}
 
 	/**
-	 * The value as a 32 bit unsigned integer
+	 * Return the value as a 32 bit unsigned integer.
+	 * 
+	 * @return value as a 32 bit unsigned integer.
 	 */
-	public int asUInt32() {
-		throw new UnsupportedOperationException();
-//		return myValue.DOTasUInt32();
-		/*
-		udanax-top.st:35099:PrimIntValue methodsFor: 'accessing'!
-		{UInt32 INLINE} asUInt32
-			"The value as a 32 bit unsigned integer"
-		
-			^myValue DOTasUInt32!
-		*/
+	public long asUInt32() {
+		return value.longValue() & 0xffffffffL;
 	}
 
 	/**
-	 * The value as a 8 bit unsigned integer
+	 * Return the value as a 16 bit unsigned integer.
+	 * 
+	 * @return value as a 16 bit unsigned integer.
 	 */
-	public byte asUInt8() {
-		throw new UnsupportedOperationException();
-//		return myValue.DOTasUInt32();
-		/*
-		udanax-top.st:35104:PrimIntValue methodsFor: 'accessing'!
-		{UInt8 INLINE} asUInt8
-			"The value as a 8 bit unsigned integer"
-		
-			^myValue DOTasUInt32!
-		*/
+	public char asUInt16() {
+		return (char)(value.intValue() & 0xffff);
+	}
+
+	/**
+	 * Return the value as an 8 bit unsigned integer.
+	 * 
+	 * @return value as an 8 bit unsigned integer.
+	 */
+	public short asUInt8() {
+		return (short)(value.intValue() & 0xff);
 	}
 
 

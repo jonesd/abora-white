@@ -86,12 +86,7 @@ public class Int64Array extends PrimIntArray {
 
 	/** Store an 64 bit signed integer value */
 	public void storeInt64(int index, long value) {
-		//TODO probably need to do a hold() check here
 		storage[index] = value;
-//		INLINE void Int32Array::storeInt (Int32 index, Int32 value){
-//			/* Store a 32 bit signed integer value */
-//			((Int32*)this->storage())[this->rangeCheck (index)] = value;
-//		}
 	}
 
 	/** Get an 64 bit signed actual integer value */
@@ -103,38 +98,22 @@ public class Int64Array extends PrimIntArray {
 		if (!((PrimIntegerSpec) spec()).canHold(value)) {
 			throw new IllegalArgumentException("ValueOutOfRange");
 		}
-		storeInt64(index, value.asInt64()); //TODO was asLong() - why?
-		//		void Int32Array::storeInteger (Int32 index, IntegerVar value){
-		//			/* Store an integer value */
-		//
-		//			if (!CAST(PrimIntegerSpec,this->spec())->canHold (value)) {
-		//			BLAST(ValueOutOfRange);
-		//			}
-		//			this->storeInt(index, value.asLong());
-		//		}
+		storeInt64(index, value.asInt64());
 	}
 
 	public IntegerValue integerAt(int index) {
 		return IntegerValue.make(int64At(index));
-		//		IntegerVar Int32Array::integerAt (Int32 index){
-		//			/* Get an actual integer value */
-		//			IntegerVar rv = this->intAt(index);
-		//			return rv;
-		//		}
 	}
 
 	public void storeValue(int index, Heaper value) {
 		if (value == null) {
 			throw new NullPointerException();
 		}
-		storeInteger(index, (IntegerValue)value);
+		storeInteger(index, (IntegerValue) value);
 	}
 
 	public Heaper fetchValue(int index) {
 		return IntegerValue.make(int64At(index));
-		//		RPTR(Heaper) OR(NULL) Int32Array::fetchValue (Int32 index) {
-		//			return PrimIntValue::make(this->intAt(index));
-		//		}
 	}
 
 	public int count() {
@@ -146,9 +125,6 @@ public class Int64Array extends PrimIntArray {
 	}
 
 	public int bitCount() {
-		/* Return the maximum bit/entry that can be stored in this array.
-		   The number will be negative for signed arrays. */
-
 		return -64;
 	}
 
@@ -176,26 +152,6 @@ public class Int64Array extends PrimIntArray {
 			n = buffer.length;
 		}
 		System.arraycopy(storage, start, buffer, 0, n);
-		//		void Int32Array::copyToBuffer (void * buffer,
-		//						   Int32 size,
-		//						   Int32 count /*= -1*/,
-		//						   Int32 start /* = Int32Zero*/)
-		//		{
-		//			Int32 bufSize;
-		//			Int32 n;
-		//
-		//			bufSize = size / sizeof(Int32);
-		//			if (count >= 0) {
-		//			n = count;
-		//			} else {
-		//			n = this->count() - start;
-		//			}
-		//			if (n > bufSize) {
-		//			n = bufSize;
-		//			}
-		//			MEMMOVE (buffer, (Int32*)this->storage() + start,
-		//				 (int)(n * sizeof(Int32)));
-		//		}
 	}
 
 	//////////////////////////////////////////////
@@ -205,37 +161,18 @@ public class Int64Array extends PrimIntArray {
 		if (other instanceof Int64Array) {
 			Int64Array o = (Int64Array) other;
 			for (int i = 0; i < count; i += 1) {
-				long cmp = int64At(i + start) - o.int64At(i + otherStart);
-				if (cmp != 0) {
-					return cmp < 0 ? -1 : 1;
+				long cmp1 = int64At(i + start);
+				long cmp2 = o.int64At(i + otherStart);
+				if (cmp1 < cmp2) {
+					return -1;
+				} else if (cmp1 > cmp2) {
+					return +1;
 				}
 			}
 			return 0;
 		} else {
 			return super.compareData(start, other, otherStart, count);
 		}
-		//		Int32 Int32Array::compareData (Int32 start, 
-		//						   APTR(PrimDataArray) other,
-		//						   Int32 otherStart,
-		//						   Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(Int32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				Int32 cmp;
-		//				cmp = this->intAt(i + start) - o->intAt(i + otherStart);
-		//				if (cmp != 0) {
-		//					return cmp < 0 ? -1 : 1;
-		//				}
-		//				}
-		//				return 0;
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				return this->PrimIntegerArray::compareData (start, other, 
-		//									otherStart, count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//			return 0;
 	}
 
 	protected int signOfNonZeroAfter(int index) {
@@ -249,19 +186,6 @@ public class Int64Array extends PrimIntArray {
 			}
 		}
 		return 0;
-		//		Int32 Int32Array::signOfNonZeroAfter (Int32 index) {
-		//			for (Int32 i = index; i < this->count(); i += 1) {
-		//			Int32 val;
-		//	
-		//			if ((val = this->intAt(i)) < 0) {
-		//				return -1;
-		//			}
-		//			if (val > 0) {
-		//				return +1;
-		//			}
-		//			}
-		//			return 0;
-		//		}
 	}
 
 	//////////////////////////////////////////////
@@ -277,24 +201,6 @@ public class Int64Array extends PrimIntArray {
 		} else {
 			super.addData(start, other, otherStart, count);
 		}
-		//		void Int32Array::addData (Int32 start, 
-		//					  APTR(PrimDataArray) other,
-		//					  Int32 otherStart,
-		//					  Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(Int32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeInt (i + start,
-		//						this->intAt(i + start) 
-		//						+ o->intAt(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimIntegerArray::addData (start, other, otherStart, count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 
 	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
@@ -307,25 +213,6 @@ public class Int64Array extends PrimIntArray {
 		} else {
 			super.subtractData(start, other, otherStart, count);
 		}
-		//		void Int32Array::subtractData (Int32 start, 
-		//						APTR(PrimDataArray) other,
-		//						Int32 otherStart,
-		//						Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(Int32Array,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeInt (i + start,
-		//						this->intAt(i + start) 
-		//						- o->intAt(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimIntegerArray::subtractData (start, other, otherStart,
-		//								  count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 
 	//////////////////////////////////////////////

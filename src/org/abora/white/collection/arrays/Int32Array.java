@@ -104,7 +104,7 @@ public class Int32Array extends PrimIntArray {
 		if (value == null) {
 			throw new NullPointerException();
 		}
-		storeInteger(index, (IntegerValue)value);
+		storeInteger(index, (IntegerValue) value);
 	}
 
 	public Heaper fetchValue(int index) {
@@ -120,9 +120,6 @@ public class Int32Array extends PrimIntArray {
 	}
 
 	public int bitCount() {
-		/* Return the maximum bit/entry that can be stored in this array.
-		   The number will be negative for signed arrays. */
-
 		return -32;
 	}
 
@@ -159,9 +156,12 @@ public class Int32Array extends PrimIntArray {
 		if (other instanceof Int32Array) {
 			Int32Array o = (Int32Array) other;
 			for (int i = 0; i < count; i += 1) {
-				int cmp = int32At(i + start) - o.int32At(i + otherStart);
-				if (cmp != 0) {
-					return cmp < 0 ? -1 : 1;
+				int cmp1 = int32At(i + start);
+				int cmp2 = o.int32At(i + otherStart);
+				if (cmp1 < cmp2) {
+					return -1;
+				} else if (cmp1 > cmp2) {
+					return +1;
 				}
 			}
 			return 0;
