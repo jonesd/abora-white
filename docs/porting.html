@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+
+  <html>
+
+    <head>
+      <meta	http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	  <title>Porting Udanax-Gold</title>
+    </head>
+
+    <body>
+<!-- abora:header -->
+
+<h1>Porting from Udanax-Gold</h1>
+
+		<p>In porting Udanax-Gold from Smalltalk to the Java based
+		Abora-White a number of issues have come up. For example Smalltalk
+			integers are efficiently encoded as object references within 30
+			bits or so of size and will transparently expand to large
+			integer objects beyond that size, whereas Java int's will not
+			expand beyond their max values, and BigIntegers are second-class
+			citizens at the syntax level. So what should the Java conversion
+			do? The purpose of this page is to document these problems and
+			the final outcome I have chosen for Abora-White.</p>
+
+<h3>IntegerVar and BooleanVar</h3>
+
+<h3>Java Primitive Data Types</h3>
+
+<h3>Exceptions</h3>
+
+<h3>Potential Bugs</h3>
+
+		<p>During the course of porting from Udanax-Gold a number of
+		potential bugs have been found. This happened by either close
+		reading of the code or by creating JUnit tests for the code. I
+		felt it was useful to list my discoveries here; to help me later
+		when I might run into problems with code relying on this, help
+		others who may attempt a port of Udanax-Gold to other systems, and
+		for the active readers amongst you to double check my claims and
+		hopefully show me that I was wrong.</p>
+
+		<p>I have listed these items as <i>potential</i> bugs as I could
+		well be mistaken about the original purpose of the code,
+		overlooking details of the Smalltalk/X++ low level implementation
+		or quite possible gross user incompetence on my side.</p>
+
+		<p>As a closing statement, I hope nobody takes offence at
+		producing such a list, I clearly have great respect for
+		Udanax-Gold to even consider spending this amount of time on it,
+		and we all know that no reasonable application can be defect
+		free.</p>
+
+		<ul>
+			<li>PrimIntegerArray:indexPastInteger - when nth is < 0, wont
+				find match on index=0 (should have result >= 0)</li>
+		</ul>
+
+<!-- abora:footer -->
+    </body>
+  </html>
