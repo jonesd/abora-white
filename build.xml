@@ -4,6 +4,8 @@
     </description>
 
   <!-- set global properties for this build -->
+  <property environment="env"/>
+  
   <property name="name" value="abora-white"/>
   <property name="Name" value="Abora-White"/>
   <property name="src" location="src"/>
@@ -13,12 +15,23 @@
     
    <property name="junit.dir" location="${build}/docs/junit"/>
    <property name="javadoc.dir" location="${build}/docs/api"/>
+   <property name="clover.dir" location="${build}/docs/clover"/>
+   
    
   <target name="init">
     <tstamp/>
     <mkdir dir="${build}"/>
     <mkdir dir="${build}/bin"/>
     <mkdir dir="${build}/docs"/>    
+
+	<!-- TODO make this optional in case you dont have clover installed -->
+	<property name="clover.home" value="${env.CLOVER_HOME}"/>
+	<path id="clover.classpath">
+		<pathelement path="${clover.home}/lib/clover.jar"/>
+  		<pathelement path="${clover.home}/lib/velocity.jar"/>
+	</path>
+	<property name="clover.initstring" location="${build}/clover_coverage.db"/>
+	<property name="clover.excludes" value="**/tests/**"/>
   </target>
 
   <target name="compile" depends="init"
@@ -26,7 +39,7 @@
     <javac srcdir="${src}" destdir="${build}/bin" extdirs="${lib.dir}" />
   </target>
 
-  <target name="dist" depends="clean, compile, docs"
+  <target name="dist" depends="with.clover, clean, init, compile, docs"
         description="generate the distribution" >
     <mkdir dir="${dist}/lib"/>
     <jar jarfile="${dist}/lib/${name}-${DSTAMP}.jar" basedir="${build}/bin"/>
@@ -63,6 +76,7 @@
   		<classpath>
   			<pathelement path="${build}/bin"/>
   		</classpath>
+		   <classpath refid="clover.classpath"/>	
   	</junit>
   </target>
   
@@ -102,11 +116,24 @@
 	</target>
 
 	<target name="docs" depends="init">
+	
 		<copy todir="${build}/docs">
     		<fileset dir="docs"/>
 		</copy>
 	  <antcall target="test.report"/>
 	  <antcall target="javadoc"/>
+	  <antcall target="clover.report"/>
 	</target>
 
+	<target name="with.clover">
+		<property name="build.compiler"
+            value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+	</target>
+	
+	<target name="clover.report" depends="init">
+  <java classname="com.cortexeb.tools.clover.reporters.html.HtmlReporter" fork="true">
+   <arg line="--outputdir ${clover.dir} --showSrc --initstring ${clover.initstring} --title '${Name}'"/>
+   <classpath refid="clover.classpath"/>
+  </java>
+</target>
 </project>
