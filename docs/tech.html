@@ -21,34 +21,81 @@
 <h3>Infrastructure</h3>
 
 
-		<p>The core of the software is a generic server that supports documents/data structures, sharing of and linking between, versioning, notification of various changes, access control, and communication with other servers.</p>
+		<p>The core of the software is a generic server that supports
+		documents/data structures, sharing of and linking between,
+		versioning, notification of various changes, access control, and
+		communication with other servers.</p>
 
-		<p>The server provides a service at a relatively low level and generic level. There is an expectation that it will be very rare for developers to have to modify the server.</p>
+		<p>The server provides a service at a relatively low level and
+		generic level. There is an expectation that it will be very rare
+		for developers to have to modify the server.</p>
 
-		<p>The server is hopefully going to be based on a translated version of the open-source Udanax-Gold code converted into Java by a combination of one-off automated-translation followed by hand tweaking. If this doesn't prove feasible then a coded from scratch implementation will be considered as an extension of my earlier dolphin prototype work, though this will have to have a severely reduced set of features compared with Udanax-Gold. The java version may be hosted in JBoss for transaction/persistence support though that is open to change.</p>
+		<p>The server is hopefully going to be based on a translated
+		version of the open-source Udanax-Gold code converted into Java by
+		a combination of one-off automated-translation followed by hand
+		tweaking. If this doesn't prove feasible then a coded from scratch
+		implementation will be considered as an extension of my earlier
+		dolphin prototype work, though this will have to have a severely
+		reduced set of features compared with Udanax-Gold. The java
+		version may be hosted in JBoss for transaction/persistence support
+		though that is open to change.</p>
 
-		<p>A network of servers should eventually be supported. A client would typically communicate with a single server, and that server in turn would communicate with other servers to retrieve external documents. A user could run a server on their own machine to support working while disconnected from the server network.</p>
+		<p>A network of servers should eventually be supported. A client
+		would typically communicate with a single server, and that server
+		in turn would communicate with other servers to retrieve external
+		documents. A user could run a server on their own machine to
+		support working while disconnected from the server network.</p>
 
 		<p>Beyond the server are a number of front-end/client applications. </p>
 
-		<p>Front-Ends communicate with the server using a platform and language neutral client API. This can be local or network access. Messages can be in a compact binary format for runtime performance, or an XML version for debugging and more open access.</p>
+		<p>Front-Ends communicate with the server using a platform and
+		language neutral client API. This can be local or network access.
+		Messages can be in a compact binary format for runtime
+		performance, or an XML version for debugging and more open
+		access.</p>
 
-		<p>The client API appears to be pretty complicated and most naturally supported by OOP languages, though at a low-level the existing functionality appears to fall back to a single list of C like function calls.</p>
+		<p>The client API appears to be pretty complicated and most
+		naturally supported by OOP languages, though at a low-level the
+		existing functionality appears to fall back to a single list of C
+		like function calls.</p>
 
-		<p>One type of front-end could be a webserver gateway. This would enable a website to use the abora back-end to present HTML pages. A basic version of this could support viewing and simple editing. Application developers could then build on this to provide application specific features, formatting, etc.</p>
+		<p>One type of front-end could be a webserver gateway. This would
+		enable a website to use the abora back-end to present HTML pages.
+		A basic version of this could support viewing and simple editing.
+		Application developers could then build on this to provide
+		application specific features, formatting, etc.</p>
 
-	<p>Thick client would enable more sophisticated editing, and could enable existing stand-alone applications to use the server by supporting the client API. A basic version could be supplied that supports all the raw features and perhaps support for notes/web links/diary/etc. Custom versions could extend from this.</p>
+		<p>Thick client would enable more sophisticated editing, and could
+		enable existing stand-alone applications to use the server by
+		supporting the client API. A basic version could be supplied that
+		supports all the raw features and perhaps support for notes/web
+		links/diary/etc. Custom versions could extend from this.</p>
 
-		<p>Simple command-line driven front-ends could provide some straight forward access for automated manipulation and weak integration with existing applications. This might support importing of entire documents, retrieving entire documents at a content level, and perhaps back-up support. </p>
+		<p>Simple command-line driven front-ends could provide some
+		straight forward access for automated manipulation and weak
+		integration with existing applications. This might support
+		importing of entire documents, retrieving entire documents at a
+		content level, and perhaps back-up support. </p>
 
-	<p>Indexing of words/terms such as Google provides is not part of the core server. Even with the sophisticated linking supported by the server, indexing will be a critical feature. Indexing front-ends would be used to trawl the server documents in a similar way to HTML indexing. I don't know if these index structures would be stored in turn in the server, and if access to them could be direct or via the indexer front-end.</p>
+		<p>Indexing of words/terms such as Google provides is not part of
+		the core server. Even with the sophisticated linking supported by
+		the server, indexing will be a critical feature. Indexing
+		front-ends would be used to trawl the server documents in a
+		similar way to HTML indexing. I don't know if these index
+		structures would be stored in turn in the server, and if access to
+		them could be direct or via the indexer front-end.</p>
 
 
 <h3>Building with Ant</h3>
 
-
+		<p>The application uses the Ant open-source make-like tool to
+			script the compile, tests, javadoc, metrics generation and other
+			tasks.</p>
 
 <h3>Developing with Eclipse</h3>
+
+		<p>The author is developing the project code using the Eclipse
+			open-source IDE.</p>
 
 	<p>TODO: .project resources, templates to ease writing.</p>
 
@@ -56,24 +103,23 @@
 
 <h4>Object Creation</h4>
 
-		<p>Object creation is requested using static factory
-			methods rather than directly calling constructors. This
-			is an often used pattern that has a few benefits; factory
-			methods can have names, they gain flexibility by being able to
-			return subclasses of the declared type and also they can re-use
-			existing objects if required.</p>
+		<p>Object creation is requested using static factory methods
+		rather than directly calling constructors. This is an often used
+		pattern that has a few benefits; factory methods can have names,
+		they gain flexibility by being able to return subclasses of the
+		declared type and also they can re-use existing objects if
+		required.</p>
 
 		<p>The default name for the factory methods is <tt>make</tt>
-			though there are some more descriptively named cases as
-			well.</p>
+		though there are some more descriptively named cases as well.</p>
 
 		<p>Some simple examples of its usage:<br>
 <pre>	IntegerValue nine = IntegerValue.make(9);
 	IntegerValue zero = IntegerValue.zero();</pre></p>
 
 		<p>Constructors are obviously still used under the covers, and are
-			often marked as <tt>protected</tt> to discourage their direct
-			calling.</p>
+		often marked as <tt>protected</tt> to discourage their direct
+		calling.</p>
 
 		<p>TODO: References, why the name make, are there any idoms for
 		naming these factories beyond make, problems with return
