@@ -237,8 +237,8 @@ public class ActualArray extends MuArray {
 	}
 
 	public Heaper intFetch(IntegerValue index) {
-		int idx;
-		if ((idx = index.asInt32()) >= tally || (index.isLT(IntegerValue.zero()))) {
+		int idx = index.asInt32();
+		if (idx >= tally || (index.isLT(IntegerValue.zero()))) {
 			return null;
 		} else {
 			return elements.fetch(idx);
@@ -259,8 +259,7 @@ public class ActualArray extends MuArray {
 	 * *Ignore* the request if it is any element not in the table.
 	 */
 	public boolean intWipe(IntegerValue index) {
-		int reali;
-		reali = index.asInt32();
+		int reali = index.asInt32();
 		if (reali == (tally - 1)) {
 			elements.store(reali, null);
 			tally = tally - 1;
@@ -323,12 +322,12 @@ public class ActualArray extends MuArray {
 
 	public ScruTable subTableBetween(IntegerValue start, IntegerValue stop) {
 		IntegerValue begin;
-		IntegerValue end;
 		if (start.isLT(IntegerValue.zero())) {
 			begin = IntegerValue.zero();
 		} else {
 			begin = start;
 		}
+		IntegerValue end;
 		if (stop.isGT(count())) {
 			end = count();
 		} else {
@@ -347,7 +346,7 @@ public class ActualArray extends MuArray {
 			stepper.destroy();
 		}
 		if (begin.isGT(IntegerValue.zero())) {
-			return OffsetScruArray.make(newArray, (IntegerMapping.make(begin)));
+			return OffsetScruArray.make(newArray, IntegerMapping.make(begin));
 		} else {
 			return newArray;
 		}
@@ -374,7 +373,7 @@ public class ActualArray extends MuArray {
 	// Creation
 
 	public ScruTable copy() {
-		return new ActualArray(((PtrArray) elements.copy()), tally);
+		return new ActualArray((PtrArray) elements.copy(), tally);
 		/*
 		udanax-top.st:49433:ActualArray methodsFor: 'creation'!
 		{ScruTable} copy
@@ -481,11 +480,9 @@ public class ActualArray extends MuArray {
 	 * Enlarge the receiver to contain more slots filled with nil.
 	 */
 	public void enlarge() {
-		PtrArray newElements;
-		PtrArray oldElements;
-		newElements = (PtrArray) (elements.copyGrow(elements.count()));
+		PtrArray newElements = (PtrArray) elements.copyGrow(elements.count());
 		/* Just for the hell of it, I make this robust for asynchronous readers... */
-		oldElements = elements;
+		PtrArray oldElements = elements;
 		elements = newElements;
 		oldElements.destroy();
 		/*

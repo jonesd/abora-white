@@ -67,8 +67,8 @@ public abstract class IntegerTable extends MuTable {
 	*/
 
 	public void atIntIntroduce(IntegerValue key, Heaper value) {
-		Heaper old;
-		if ((old = atIntStore(key, value)) != null) {
+		Heaper old = atIntStore(key, value);
+		if (old != null) {
 			atIntStore(key, old);
 			/* restore prior condition */
 			throw new AboraRuntimeException(AboraRuntimeException.ALREADY_IN_TABLE);

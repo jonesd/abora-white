@@ -105,8 +105,7 @@ public class OffsetScruArray extends ScruTable {
 	}
 
 	public ScruTable subTable(XnRegion encl) {
-		IntegerRegion lr;
-		lr = (IntegerRegion) encl;
+		IntegerRegion lr = (IntegerRegion) encl;
 		return myArray.subTableBetween((myDsp.inverseOfInt(lr.start())), (myDsp.inverseOfInt(lr.stop())));
 		/*
 		udanax-top.st:50395:OffsetScruArray methodsFor: 'accessing'!

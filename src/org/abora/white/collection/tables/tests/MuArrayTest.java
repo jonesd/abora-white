@@ -1,3 +1,4 @@
+
 /*
  * Abora-White
  * Part of the Abora hypertext project: http://www.abora.org
@@ -92,4 +93,13 @@ public class MuArrayTest extends TestCase {
 		ScruTable offsetTable = MuArray.offsetScruArray(array, IntegerMapping.make(IntegerValue.make(-2)));
 		assertEquals(IntegerValue.make(97), offsetTable.intGet(IntegerValue.zero()));
 	}
+	
+//TODO
+//	public void testOffsetSubTableBetween() {
+//		MuArray array = MuArray.array(IntegerValue.make(99), IntegerValue.make(98), IntegerValue.make(97), IntegerValue.make(96));
+//		ScruTable subtable = array.offsetSubTableBetween(IntegerValue.one(), IntegerValue.make(3), IntegerValue.make(0));
+//		assertEquals(IntegerValue.make(2), subtable.count());
+//		assertEquals(IntegerValue.make(98), subtable.intGet(IntegerValue.zero()));
+//		assertEquals(IntegerValue.make(97), subtable.intGet(IntegerValue.one()));		
+//	}
 }

@@ -50,7 +50,10 @@ public class AscendingIntegerStepper extends Stepper {
 		attributes: ((Set new) add: #CONCRETE; add: #NOT.A.TYPE; yourself)!
 	*/
 
-	public AscendingIntegerStepper(IntegerVarArray edges, int count) {
+	/////////////////////////////////////////////
+	// Constructors
+
+	protected AscendingIntegerStepper(IntegerVarArray edges, int count) {
 		super();
 		myEdges = edges;
 		myIndex = 1;
@@ -73,7 +76,7 @@ public class AscendingIntegerStepper extends Stepper {
 		*/
 	}
 
-	public AscendingIntegerStepper(IntegerVarArray edges, int index, int count, IntegerValue position) {
+	protected AscendingIntegerStepper(IntegerVarArray edges, int index, int count, IntegerValue position) {
 		super();
 		myEdges = edges;
 		myIndex = index;
@@ -89,6 +92,32 @@ public class AscendingIntegerStepper extends Stepper {
 			myPosition _ position!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+
+	public static AscendingIntegerStepper make(IntegerVarArray edges, int count) {
+		Heaper result = SomeSteppers.fetch();
+		if (result == null) {
+			return new AscendingIntegerStepper(edges, count);
+		} else {
+			//TODO review new
+			return new AscendingIntegerStepper(edges, count);
+		}
+		/*
+		udanax-top.st:53023:AscendingIntegerStepper class methodsFor: 'creation'!
+		{Stepper} make: edges {IntegerVarArray} with: count {UInt32}
+			| result {Heaper} |
+			result := SomeSteppers fetch.
+			result == NULL
+				ifTrue: [^ self create: edges with: count]
+				ifFalse: [^ (self new.Become: result) create: edges with: count]!
+		*/
+	}
+
+
+	/////////////////////////////////////////////
+	// Cretion
 
 	public Stepper copy() {
 		Heaper result;
@@ -121,6 +150,9 @@ public class AscendingIntegerStepper extends Stepper {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Accessing
+
 	public Heaper fetch() {
 		if (hasValue()) {
 			return myPosition.integer();
@@ -145,7 +177,7 @@ public class AscendingIntegerStepper extends Stepper {
 
 	public void step() {
 		myPosition = myPosition.plus(IntegerValue.one());
-		if (myIndex < myCount && (myPosition == (myEdges.integerVarAt(myIndex)))) {
+		if (myIndex < myCount && (myPosition.isEqual(myEdges.integerVarAt(myIndex)))) {
 			myIndex = myIndex + 2;
 			if (myIndex <= myCount) {
 				myPosition = myEdges.integerVarAt(myIndex - 1);
@@ -179,23 +211,4 @@ public class AscendingIntegerStepper extends Stepper {
 //			SomeSteppers := NULL!
 //		*/
 //	}
-
-	public static AscendingIntegerStepper make(IntegerVarArray edges, int count) {
-		Heaper result = SomeSteppers.fetch();
-		if (result == null) {
-			return new AscendingIntegerStepper(edges, count);
-		} else {
-			//TODO review new
-			return new AscendingIntegerStepper(edges, count);
-		}
-		/*
-		udanax-top.st:53023:AscendingIntegerStepper class methodsFor: 'creation'!
-		{Stepper} make: edges {IntegerVarArray} with: count {UInt32}
-			| result {Heaper} |
-			result := SomeSteppers fetch.
-			result == NULL
-				ifTrue: [^ self create: edges with: count]
-				ifFalse: [^ (self new.Become: result) create: edges with: count]!
-		*/
-	}
 }

@@ -23,6 +23,7 @@ public class AllTests {
 		suite.addTest(org.abora.white.collection.sets.tests.AllTests.suite());
 		suite.addTest(org.abora.white.collection.tables.tests.AllTests.suite());
 		suite.addTest(org.abora.white.hash.tests.AllTests.suite());
+		suite.addTest(org.abora.white.spaces.integers.tests.AllTests.suite());
 		suite.addTest(org.abora.white.value.tests.AllTests.suite());
 
 		//$JUnit-BEGIN$

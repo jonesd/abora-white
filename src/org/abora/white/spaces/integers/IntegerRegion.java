@@ -75,6 +75,19 @@ public class IntegerRegion extends XnRegion {
 	protected static IntegerValue LastRight;
 	protected static IntegerValue LastSingleton;
 	protected static IntegerRegion LastSingletonRegion;
+	
+	static {
+		IntegerVarArray empty = IntegerVarArray.make(1);
+		/* temp used to get around problem with static members and INIT macro - heh 10 January 1992 */
+		AllIntegers = new IntegerRegion(true, 0, empty);
+		EmptyIntegerRegion = new IntegerRegion(false, 0, empty);
+		/* call the pseudo constructors with arguments that are known to flush the caches */
+		IntegerRegion.after(IntegerValue.zero());
+		IntegerRegion.before(IntegerValue.zero());
+		IntegerRegion.make(IntegerValue.zero());
+		IntegerRegion.make(IntegerValue.zero(), IntegerValue.make(2));
+	}
+	
 	/*
 	udanax-top.st:68420:
 	XnRegion subclass: #IntegerRegion
@@ -161,6 +174,295 @@ public class IntegerRegion extends XnRegion {
 	';
 		attributes: ((Set new) add: #CONCRETE; add: #ON.CLIENT; add: #COPY; yourself)!
 	*/
+
+	/////////////////////////////////////////////
+	// Constructors
+
+	public IntegerRegion(boolean startsInside, int count, IntegerVarArray transitions) {
+		super();
+		myStartsInside = startsInside;
+		myTransitionCount = count;
+		myTransitions = transitions;
+		/*
+		udanax-top.st:68606:IntegerRegion methodsFor: 'unprotected creation'!
+		create: startsInside {BooleanVar} with: count {UInt32} with: transitions {IntegerVarArray}
+			super create.
+			myStartsInside _ startsInside.
+			myTransitionCount _ count.
+			myTransitions _ transitions.!
+		*/
+	}
+
+	protected IntegerRegion(Rcvr receiver) {
+		super(receiver);
+		myStartsInside = receiver.receiveBooleanVar();
+		myTransitionCount = receiver.receiveUInt32();
+		myTransitions = (IntegerVarArray) receiver.receiveHeaper();
+		/*
+		udanax-top.st:69089:IntegerRegion methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			myStartsInside _ receiver receiveBooleanVar.
+			myTransitionCount _ receiver receiveUInt32.
+			myTransitions _ receiver receiveHeaper.!
+		*/
+	}
+	
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static IntegerRegion usingx(boolean startsInside, int transitionCount, IntegerVarArray transitions) {
+		return new IntegerRegion(startsInside, transitionCount, transitions);
+		/*
+		udanax-top.st:69249:IntegerRegion class methodsFor: 'private: pseudo constructors'!
+		{IntegerRegion} usingx: startsInside {BooleanVar}
+			with: transitionCount {Int32}
+			with: transitions {IntegerVarArray}
+			^self create: startsInside with: transitionCount with: transitions!
+		*/
+	}
+
+	/**
+	 * Essential. Make a region that contains all integers greater than (or equal if inclusive is
+	 * true) to start.
+	 */
+	public static IntegerRegion above(IntegerValue start, boolean inclusive) {
+		IntegerValue after = start;
+		if (!inclusive) {
+			after = after.plus(IntegerValue.one());
+		}
+		return IntegerRegion.after(after);
+		/*
+		udanax-top.st:69117:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion} above: start {IntegerVar} with: inclusive {BooleanVar}
+			"Essential. Make a region that contains all integers greater than (or equal if inclusive is true) to start."
+			| after {IntegerVar} |
+			after _ start.
+			inclusive ifFalse: [after _ after + 1].
+			^IntegerRegion after: after!
+		*/
+	}
+
+	/**
+	 * The region containing all position greater than or equal to start
+	 */
+	public static IntegerRegion after(IntegerValue start) {
+		IntegerVarArray table;
+		IntegerRegion tir;
+		if (LastAfterStart == start) {
+			return LastAfterRegion;
+		}
+		LastAfterStart = start;
+		table = IntegerVarArray.make(1);
+		table.storeIntegerVar(0, start);
+		/* temp used to get around static member problem in INIT macro - heh 10 January 1992 */
+		tir = new IntegerRegion(false, 1, table);
+		LastAfterRegion = tir;
+		return LastAfterRegion;
+		/*
+		udanax-top.st:69124:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion} after: start {IntegerVar}
+			"The region containing all position greater than or equal to start"
+			| table {IntegerVarArray} tir {IntegerRegion} |
+			LastAfterStart = start ifTrue:
+				[^LastAfterRegion].
+			LastAfterStart _ start.
+			table _ IntegerVarArray zeros: 1.
+			table at: Int32Zero storeIntegerVar: start.
+			"temp used to get around static member problem in INIT macro - heh 10 January 1992"
+			tir _ IntegerRegion create: false with: 1 with: table.
+			LastAfterRegion _ tir.
+			^LastAfterRegion.!
+		*/
+	}
+
+	/**
+	 * The full region of this space
+	 */
+	public static IntegerRegion allIntegers() {
+		return AllIntegers;
+		/*
+		udanax-top.st:69138:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion INLINE} allIntegers
+			"The full region of this space"
+			
+			^AllIntegers!
+		*/
+	}
+
+	/**
+	 * The region of all integers less than end.  Does not include end.
+	 */
+	public static IntegerRegion before(IntegerValue end) {
+		IntegerVarArray table;
+		IntegerRegion tir;
+		if (LastBeforeEnd == end) {
+			return LastBeforeRegion;
+		}
+		LastBeforeEnd = end;
+		table = IntegerVarArray.make(1);
+		table.storeIntegerVar(0, end);
+		/* temp used to get around problem with static members & INIT macro - heh 10 January 1992 */
+		tir = new IntegerRegion(true, 1, table);
+		LastBeforeRegion = tir;
+		return LastBeforeRegion;
+		/*
+		udanax-top.st:69143:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion} before: end {IntegerVar}
+			"The region of all integers less than end.  Does not include end."
+			
+			| table {IntegerVarArray} tir {IntegerRegion} |
+			LastBeforeEnd = end ifTrue:
+				[^LastBeforeRegion].
+			LastBeforeEnd _ end.
+			table _ IntegerVarArray zeros: 1.
+			table at: Int32Zero storeIntegerVar: end.
+			"temp used to get around problem with static members & INIT macro - heh 10 January 1992"
+			tir _ IntegerRegion create: true with: 1 with: table.
+			LastBeforeRegion _ tir.
+			^LastBeforeRegion!
+		*/
+	}
+
+	/**
+	 * Make a region that contains all integers less than (or equal if inclusive is true) to
+	 * stop.
+	 */
+	public static IntegerRegion below(IntegerValue stop, boolean inclusive) {
+		IntegerValue after = stop;
+		if (inclusive) {
+			after = after.plus(IntegerValue.one());
+		}
+		return IntegerRegion.after(after);
+		/*
+		udanax-top.st:69157:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion} below: stop {IntegerVar} with: inclusive {BooleanVar}
+			"Make a region that contains all integers less than (or equal if inclusive is true) to stop."
+			| after {IntegerVar} |
+			after _ stop.
+			inclusive ifTrue: [after _ after + 1].
+			^IntegerRegion after: after!
+		*/
+	}
+
+	/**
+	 * The region of all integers which are >= start and < start + n
+	 */
+	public static IntegerRegion integerExtent(IntegerValue start, IntegerValue n) {
+		return make(start, start.plus(n));
+		/*
+		udanax-top.st:69164:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion} integerExtent: start {IntegerVar} with: n {IntegerVar}
+			"The region of all integers which are >= start and < start + n"
+			
+			^self make: start with: start + n!
+		*/
+	}
+
+	/**
+	 * The region of all integers which are >= left and < right
+	 */
+	public static IntegerRegion interval(IntegerValue left, IntegerValue right) {
+		if (left.isGE(right)) {
+			return EmptyIntegerRegion;
+		}
+		IntegerVarArray ivArray = IntegerVarArray.make(2);
+		ivArray.storeIntegerVar(0, left);
+		ivArray.storeIntegerVar(1, right);
+		return new IntegerRegion(false, 2, ivArray);
+		/*
+		udanax-top.st:69169:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion} interval: left {IntegerVar} with: right {IntegerVar}
+			"The region of all integers which are >= left and < right"
+			
+			| ivArray {IntegerVarArray} |
+			left >= right ifTrue: [^EmptyIntegerRegion].
+			ivArray _ IntegerVarArray zeros: 2.
+			ivArray at: Int32Zero storeIntegerVar: left.
+			ivArray at: 1 storeIntegerVar: right.
+			^IntegerRegion create: false with: 2 with: ivArray!
+		*/
+	}
+
+	/**
+	 * No integers, the empty region
+	 */
+	public static IntegerRegion make() {
+		return EmptyIntegerRegion;
+		/*
+		udanax-top.st:69179:IntegerRegion class methodsFor: 'pseudo constructors'!
+		{IntegerRegion INLINE} make
+			"No integers, the empty region"
+			
+			^EmptyIntegerRegion!
+		*/
+	}
+
+	/**
+	 * The region with just this one position.  Equivalent to using a converter
+	 * to convert this position to a region.
+	 */
+	public static IntegerRegion make(IntegerValue singleton) {
+		IntegerVarArray table;
+		IntegerRegion tir;
+		if (singleton == LastSingleton) {
+			return LastSingletonRegion;
+		}
+		LastSingleton = singleton;
+		table = IntegerVarArray.make(2);
+		table.storeIntegerVar(0, singleton);
+		table.storeIntegerVar(1, singleton.plus(IntegerValue.one()));
+		/* temp used to get around problem with static members and INIT macro - heh 10 January 1992 */
+		tir = new IntegerRegion(false, 2, table);
+		LastSingletonRegion = tir;
+		return LastSingletonRegion;
+		/*
+		udanax-top.st:69184:IntegerRegion class methodsFor: 'pseudo constructors'!
+		make: singleton {IntegerVar}
+			"The region with just this one position.  Equivalent to using a converter 
+			to convert this position to a region."
+			
+			| table {IntegerVarArray} tir {IntegerRegion} |
+			singleton = LastSingleton ifTrue:
+				[^LastSingletonRegion].
+			LastSingleton _ singleton.
+			table _ IntegerVarArray zeros: 2.
+			table at: Int32Zero storeIntegerVar: singleton.
+			table at: 1 storeIntegerVar: singleton + 1.
+			"temp used to get around problem with static members and INIT macro - heh 10 January 1992"
+			tir _ IntegerRegion create: false with: 2 with: table.
+			LastSingletonRegion _ tir.
+			^LastSingletonRegion!
+		*/
+	}
+
+	/**
+	 * The region of all integers which are >= left and < right
+	 */
+	public static IntegerRegion make(IntegerValue left, IntegerValue right) {
+		if (left.isGE(right)) {
+			return EmptyIntegerRegion;
+		}
+		IntegerVarArray ivArray = IntegerVarArray.make(2);
+		ivArray.storeIntegerVar(0, left);
+		ivArray.storeIntegerVar(1, right);
+		return new IntegerRegion(false, 2, ivArray);
+		/*
+		udanax-top.st:69200:IntegerRegion class methodsFor: 'pseudo constructors'!
+		make: left {IntegerVar} with: right {IntegerVar}
+			"The region of all integers which are >= left and < right"
+			
+			| ivArray {IntegerVarArray} |
+			left >= right ifTrue: [^EmptyIntegerRegion].
+			ivArray _ IntegerVarArray zeros: 2.
+			ivArray at: Int32Zero storeIntegerVar: left.
+			ivArray at: 1 storeIntegerVar: right.
+			^IntegerRegion create: false with: 2 with: ivArray!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Accessing
 
 	/**
 	 * Will always return the smallest simple region which contains all my positions
@@ -373,9 +675,8 @@ public class IntegerRegion extends XnRegion {
 	 * particular region (a table domain, for example).
 	 */
 	public IntegerValue nearestIntHole(IntegerValue index) {
-		IntegerEdgeStepper edges;
 		boolean test;
-		edges = edgeStepper();
+		IntegerEdgeStepper edges = edgeStepper();
 		while (edges.hasValue()) {
 			if (index.isLT(edges.edge())) {
 				if (edges.isEntering()) {
@@ -490,27 +791,15 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
-	public IntegerRegion(boolean startsInside, int count, IntegerVarArray transitions) {
-		super();
-		myStartsInside = startsInside;
-		myTransitionCount = count;
-		myTransitions = transitions;
-		/*
-		udanax-top.st:68606:IntegerRegion methodsFor: 'unprotected creation'!
-		create: startsInside {BooleanVar} with: count {UInt32} with: transitions {IntegerVarArray}
-			super create.
-			myStartsInside _ startsInside.
-			myTransitionCount _ count.
-			myTransitions _ transitions.!
-		*/
-	}
-
 	public void destroy() {
 		/*
 		udanax-top.st:68614:IntegerRegion methodsFor: 'destroy'!
 		{void} destroy!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Printing
 
 	public void printOn(PrintWriter oo) {
 		if (isEmpty()) {
@@ -567,6 +856,9 @@ public class IntegerRegion extends XnRegion {
 				edges destroy]!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		return (myTransitions.elementsHash(myTransitionCount)) ^ ((myStartsInside ? 9617 : 518293) ^ (myTransitionCount * 17));
@@ -1029,6 +1321,9 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Operations
+
 	public XnRegion complement() {
 		return new IntegerRegion(!myStartsInside, myTransitionCount, myTransitions);
 		/*
@@ -1339,6 +1634,9 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Defaults
+
 	public Stepper intervals() {
 		return intervals(null);
 		/*
@@ -1347,6 +1645,9 @@ public class IntegerRegion extends XnRegion {
 			^self intervals: NULL!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Enumerating
 
 	public IntegerValue count() {
 		if (!isFinite()) {
@@ -1426,6 +1727,9 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Breaking Up
+
 	public ScruSet distinctions() {
 		IntegerRegion intReg;
 		if (!isSimple()) {
@@ -1496,10 +1800,13 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Private
+
 	/**
 	 * The actuall array. DO NOT MODIFY
 	 */
-	public IntegerVarArray secretTransitions() {
+	protected IntegerVarArray secretTransitions() {
 		return myTransitions;
 		/*
 		udanax-top.st:69034:IntegerRegion methodsFor: 'private:'!
@@ -1513,7 +1820,7 @@ public class IntegerRegion extends XnRegion {
 	/**
 	 * the simple region at the given index in the transition array
 	 */
-	public IntegerRegion simpleRegionAtIndex(int i) {
+	protected IntegerRegion simpleRegionAtIndex(int i) {
 		if (i < myTransitionCount) {throw new IllegalArgumentException();
 		}
 		if (((i & 1) == 0) == myStartsInside) {
@@ -1543,7 +1850,7 @@ public class IntegerRegion extends XnRegion {
 	 * Do not send from outside the module. This should not be exported
 	 * outside the module, but to not export it in this case is some trouble.
 	 */
-	public IntegerEdgeStepper edgeStepper() {
+	protected IntegerEdgeStepper edgeStepper() {
 		return IntegerEdgeStepper.make(!myStartsInside, myTransitionCount, myTransitions);
 		/*
 		udanax-top.st:69051:IntegerRegion methodsFor: 'private: has friends'!
@@ -1562,7 +1869,7 @@ public class IntegerRegion extends XnRegion {
 	 * outside the module, but to not export it in this case is some trouble.
 	 * It is used for an efficiency hack in PointRegion.
 	 */
-	public int transitionCount() {
+	protected int transitionCount() {
 		return myTransitionCount;
 		/*
 		udanax-top.st:69060:IntegerRegion methodsFor: 'private: has friends'!
@@ -1618,21 +1925,6 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
-	public IntegerRegion(Rcvr receiver) {
-		super(receiver);
-		myStartsInside = receiver.receiveBooleanVar();
-		myTransitionCount = receiver.receiveUInt32();
-		myTransitions = (IntegerVarArray) receiver.receiveHeaper();
-		/*
-		udanax-top.st:69089:IntegerRegion methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			myStartsInside _ receiver receiveBooleanVar.
-			myTransitionCount _ receiver receiveUInt32.
-			myTransitions _ receiver receiveHeaper.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		xmtr.sendBooleanVar(myStartsInside);
@@ -1648,308 +1940,69 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
-	/**
-	 * Essential. Make a region that contains all integers greater than (or equal if inclusive is
-	 * true) to start.
-	 */
-	public static IntegerRegion above(IntegerValue start, boolean inclusive) {
-		IntegerValue after = start;
-		if (!inclusive) {
-			after = after.plus(IntegerValue.one());
-		}
-		return IntegerRegion.after(after);
-		/*
-		udanax-top.st:69117:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion} above: start {IntegerVar} with: inclusive {BooleanVar}
-			"Essential. Make a region that contains all integers greater than (or equal if inclusive is true) to start."
-			| after {IntegerVar} |
-			after _ start.
-			inclusive ifFalse: [after _ after + 1].
-			^IntegerRegion after: after!
-		*/
-	}
+//	public static void initTimeNonInherited() {
+//		IntegerVarArray empty;
+//		IntegerRegion tir;
+////		REQUIRES(IntegerVarArray.getCategory());
+//		empty = IntegerVarArray.make(1);
+//		/* temp used to get around problem with static members and INIT macro - heh 10 January 1992 */
+//		tir = new IntegerRegion(true, 0, empty);
+//		AllIntegers = tir;
+//		tir = new IntegerRegion(false, 0, empty);
+//		EmptyIntegerRegion = tir;
+//		/* call the pseudo constructors with arguments that are known to flush the caches */
+//		IntegerRegion.after(IntegerValue.zero());
+//		IntegerRegion.before(IntegerValue.zero());
+//		IntegerRegion.make(IntegerValue.zero());
+//		IntegerRegion.make(IntegerValue.zero(), IntegerValue.make(2));
+//		/*
+//		udanax-top.st:69212:IntegerRegion class methodsFor: 'smalltalk: initialization'!
+//		initTimeNonInherited
+//			| empty {IntegerVarArray} tir {IntegerRegion} |
+//			self REQUIRES: IntegerVarArray.
+//			empty _ IntegerVarArray zeros: 1.
+//			
+//			"temp used to get around problem with static members and INIT macro - heh 10 January 1992"
+//			tir _ IntegerRegion create: true with: Int32Zero with: empty.
+//			AllIntegers _ tir.
+//			tir _ IntegerRegion create: false with: Int32Zero with: empty.
+//			EmptyIntegerRegion _ tir.
+//			"call the pseudo constructors with arguments that are known to flush the caches"
+//			IntegerRegion after: IntegerVar0.
+//			IntegerRegion before: IntegerVar0.
+//			IntegerRegion make: IntegerVar0.
+//			IntegerRegion make: IntegerVar0 with: 2!
+//		*/
+//	}
 
-	/**
-	 * The region containing all position greater than or equal to start
-	 */
-	public static IntegerRegion after(IntegerValue start) {
-		IntegerVarArray table;
-		IntegerRegion tir;
-		if (LastAfterStart == start) {
-			return LastAfterRegion;
-		}
-		LastAfterStart = start;
-		table = IntegerVarArray.make(1);
-		table.storeIntegerVar(0, start);
-		/* temp used to get around static member problem in INIT macro - heh 10 January 1992 */
-		tir = new IntegerRegion(false, 1, table);
-		LastAfterRegion = tir;
-		return LastAfterRegion;
-		/*
-		udanax-top.st:69124:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion} after: start {IntegerVar}
-			"The region containing all position greater than or equal to start"
-			| table {IntegerVarArray} tir {IntegerRegion} |
-			LastAfterStart = start ifTrue:
-				[^LastAfterRegion].
-			LastAfterStart _ start.
-			table _ IntegerVarArray zeros: 1.
-			table at: Int32Zero storeIntegerVar: start.
-			"temp used to get around static member problem in INIT macro - heh 10 January 1992"
-			tir _ IntegerRegion create: false with: 1 with: table.
-			LastAfterRegion _ tir.
-			^LastAfterRegion.!
-		*/
-	}
-
-	/**
-	 * The full region of this space
-	 */
-	public static IntegerRegion allIntegers() {
-		return AllIntegers;
-		/*
-		udanax-top.st:69138:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion INLINE} allIntegers
-			"The full region of this space"
-			
-			^AllIntegers!
-		*/
-	}
-
-	/**
-	 * The region of all integers less than end.  Does not include end.
-	 */
-	public static IntegerRegion before(IntegerValue end) {
-		IntegerVarArray table;
-		IntegerRegion tir;
-		if (LastBeforeEnd == end) {
-			return LastBeforeRegion;
-		}
-		LastBeforeEnd = end;
-		table = IntegerVarArray.make(1);
-		table.storeIntegerVar(0, end);
-		/* temp used to get around problem with static members & INIT macro - heh 10 January 1992 */
-		tir = new IntegerRegion(true, 1, table);
-		LastBeforeRegion = tir;
-		return LastBeforeRegion;
-		/*
-		udanax-top.st:69143:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion} before: end {IntegerVar}
-			"The region of all integers less than end.  Does not include end."
-			
-			| table {IntegerVarArray} tir {IntegerRegion} |
-			LastBeforeEnd = end ifTrue:
-				[^LastBeforeRegion].
-			LastBeforeEnd _ end.
-			table _ IntegerVarArray zeros: 1.
-			table at: Int32Zero storeIntegerVar: end.
-			"temp used to get around problem with static members & INIT macro - heh 10 January 1992"
-			tir _ IntegerRegion create: true with: 1 with: table.
-			LastBeforeRegion _ tir.
-			^LastBeforeRegion!
-		*/
-	}
-
-	/**
-	 * Make a region that contains all integers less than (or equal if inclusive is true) to
-	 * stop.
-	 */
-	public static IntegerRegion below(IntegerValue stop, boolean inclusive) {
-		IntegerValue after = stop;
-		if (inclusive) {
-			after = after.plus(IntegerValue.one());
-		}
-		return IntegerRegion.after(after);
-		/*
-		udanax-top.st:69157:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion} below: stop {IntegerVar} with: inclusive {BooleanVar}
-			"Make a region that contains all integers less than (or equal if inclusive is true) to stop."
-			| after {IntegerVar} |
-			after _ stop.
-			inclusive ifTrue: [after _ after + 1].
-			^IntegerRegion after: after!
-		*/
-	}
-
-	/**
-	 * The region of all integers which are >= start and < start + n
-	 */
-	public static IntegerRegion integerExtent(IntegerValue start, IntegerValue n) {
-		return make(start, start.plus(n));
-		/*
-		udanax-top.st:69164:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion} integerExtent: start {IntegerVar} with: n {IntegerVar}
-			"The region of all integers which are >= start and < start + n"
-			
-			^self make: start with: start + n!
-		*/
-	}
-
-	/**
-	 * The region of all integers which are >= left and < right
-	 */
-	public static IntegerRegion interval(IntegerValue left, IntegerValue right) {
-		if (left.isGE(right)) {
-			return EmptyIntegerRegion;
-		}
-		IntegerVarArray ivArray = IntegerVarArray.make(2);
-		ivArray.storeIntegerVar(0, left);
-		ivArray.storeIntegerVar(1, right);
-		return new IntegerRegion(false, 2, ivArray);
-		/*
-		udanax-top.st:69169:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion} interval: left {IntegerVar} with: right {IntegerVar}
-			"The region of all integers which are >= left and < right"
-			
-			| ivArray {IntegerVarArray} |
-			left >= right ifTrue: [^EmptyIntegerRegion].
-			ivArray _ IntegerVarArray zeros: 2.
-			ivArray at: Int32Zero storeIntegerVar: left.
-			ivArray at: 1 storeIntegerVar: right.
-			^IntegerRegion create: false with: 2 with: ivArray!
-		*/
-	}
-
-	/**
-	 * No integers, the empty region
-	 */
-	public static IntegerRegion make() {
-		return EmptyIntegerRegion;
-		/*
-		udanax-top.st:69179:IntegerRegion class methodsFor: 'pseudo constructors'!
-		{IntegerRegion INLINE} make
-			"No integers, the empty region"
-			
-			^EmptyIntegerRegion!
-		*/
-	}
-
-	/**
-	 * The region with just this one position.  Equivalent to using a converter
-	 * to convert this position to a region.
-	 */
-	public static IntegerRegion make(IntegerValue singleton) {
-		IntegerVarArray table;
-		IntegerRegion tir;
-		if (singleton == LastSingleton) {
-			return LastSingletonRegion;
-		}
-		LastSingleton = singleton;
-		table = IntegerVarArray.make(2);
-		table.storeIntegerVar(0, singleton);
-		table.storeIntegerVar(1, singleton.plus(IntegerValue.one()));
-		/* temp used to get around problem with static members and INIT macro - heh 10 January 1992 */
-		tir = new IntegerRegion(false, 2, table);
-		LastSingletonRegion = tir;
-		return LastSingletonRegion;
-		/*
-		udanax-top.st:69184:IntegerRegion class methodsFor: 'pseudo constructors'!
-		make: singleton {IntegerVar}
-			"The region with just this one position.  Equivalent to using a converter 
-			to convert this position to a region."
-			
-			| table {IntegerVarArray} tir {IntegerRegion} |
-			singleton = LastSingleton ifTrue:
-				[^LastSingletonRegion].
-			LastSingleton _ singleton.
-			table _ IntegerVarArray zeros: 2.
-			table at: Int32Zero storeIntegerVar: singleton.
-			table at: 1 storeIntegerVar: singleton + 1.
-			"temp used to get around problem with static members and INIT macro - heh 10 January 1992"
-			tir _ IntegerRegion create: false with: 2 with: table.
-			LastSingletonRegion _ tir.
-			^LastSingletonRegion!
-		*/
-	}
-
-	/**
-	 * The region of all integers which are >= left and < right
-	 */
-	public static IntegerRegion make(IntegerValue left, IntegerValue right) {
-		if (left.isGE(right)) {
-			return EmptyIntegerRegion;
-		}
-		IntegerVarArray ivArray = IntegerVarArray.make(2);
-		ivArray.storeIntegerVar(0, left);
-		ivArray.storeIntegerVar(1, right);
-		return new IntegerRegion(false, 2, ivArray);
-		/*
-		udanax-top.st:69200:IntegerRegion class methodsFor: 'pseudo constructors'!
-		make: left {IntegerVar} with: right {IntegerVar}
-			"The region of all integers which are >= left and < right"
-			
-			| ivArray {IntegerVarArray} |
-			left >= right ifTrue: [^EmptyIntegerRegion].
-			ivArray _ IntegerVarArray zeros: 2.
-			ivArray at: Int32Zero storeIntegerVar: left.
-			ivArray at: 1 storeIntegerVar: right.
-			^IntegerRegion create: false with: 2 with: ivArray!
-		*/
-	}
-
-	public static void initTimeNonInherited() {
-		IntegerVarArray empty;
-		IntegerRegion tir;
-//		REQUIRES(IntegerVarArray.getCategory());
-		empty = IntegerVarArray.make(1);
-		/* temp used to get around problem with static members and INIT macro - heh 10 January 1992 */
-		tir = new IntegerRegion(true, 0, empty);
-		AllIntegers = tir;
-		tir = new IntegerRegion(false, 0, empty);
-		EmptyIntegerRegion = tir;
-		/* call the pseudo constructors with arguments that are known to flush the caches */
-		IntegerRegion.after(IntegerValue.zero());
-		IntegerRegion.before(IntegerValue.zero());
-		IntegerRegion.make(IntegerValue.zero());
-		IntegerRegion.make(IntegerValue.zero(), IntegerValue.make(2));
-		/*
-		udanax-top.st:69212:IntegerRegion class methodsFor: 'smalltalk: initialization'!
-		initTimeNonInherited
-			| empty {IntegerVarArray} tir {IntegerRegion} |
-			self REQUIRES: IntegerVarArray.
-			empty _ IntegerVarArray zeros: 1.
-			
-			"temp used to get around problem with static members and INIT macro - heh 10 January 1992"
-			tir _ IntegerRegion create: true with: Int32Zero with: empty.
-			AllIntegers _ tir.
-			tir _ IntegerRegion create: false with: Int32Zero with: empty.
-			EmptyIntegerRegion _ tir.
-			"call the pseudo constructors with arguments that are known to flush the caches"
-			IntegerRegion after: IntegerVar0.
-			IntegerRegion before: IntegerVar0.
-			IntegerRegion make: IntegerVar0.
-			IntegerRegion make: IntegerVar0 with: 2!
-		*/
-	}
-
-	public static void linkTimeNonInherited() {
-		AllIntegers = null;
-		EmptyIntegerRegion = null;
-		LastAfterRegion = null;
-		LastAfterStart = IntegerValue.make(13);
-		LastBeforeEnd = IntegerValue.make(13);
-		LastBeforeRegion = null;
-		LastInterval = null;
-		LastLeft = IntegerValue.make(13);
-		LastRight = IntegerValue.make(13);
-		LastSingleton = IntegerValue.make(13);
-		LastSingletonRegion = null;
-		/*
-		udanax-top.st:69228:IntegerRegion class methodsFor: 'smalltalk: initialization'!
-		linkTimeNonInherited
-			AllIntegers _ NULL.
-			EmptyIntegerRegion _ NULL.
-			LastAfterRegion _ NULL.
-			LastAfterStart _ 13.
-			LastBeforeEnd _ 13.
-			LastBeforeRegion _ NULL.
-			LastInterval _ NULL.
-			LastLeft _ 13.
-			LastRight _ 13.
-			LastSingleton _ 13.
-			LastSingletonRegion _ NULL.!
-		*/
-	}
+//	public static void linkTimeNonInherited() {
+//		AllIntegers = null;
+//		EmptyIntegerRegion = null;
+//		LastAfterRegion = null;
+//		LastAfterStart = IntegerValue.make(13);
+//		LastBeforeEnd = IntegerValue.make(13);
+//		LastBeforeRegion = null;
+//		LastInterval = null;
+//		LastLeft = IntegerValue.make(13);
+//		LastRight = IntegerValue.make(13);
+//		LastSingleton = IntegerValue.make(13);
+//		LastSingletonRegion = null;
+//		/*
+//		udanax-top.st:69228:IntegerRegion class methodsFor: 'smalltalk: initialization'!
+//		linkTimeNonInherited
+//			AllIntegers _ NULL.
+//			EmptyIntegerRegion _ NULL.
+//			LastAfterRegion _ NULL.
+//			LastAfterStart _ 13.
+//			LastBeforeEnd _ 13.
+//			LastBeforeRegion _ NULL.
+//			LastInterval _ NULL.
+//			LastLeft _ 13.
+//			LastRight _ 13.
+//			LastSingleton _ 13.
+//			LastSingletonRegion _ NULL.!
+//		*/
+//	}
 
 	/**
 	 * used for an efficiency hack in PointRegion.  Don't use.
@@ -1964,36 +2017,25 @@ public class IntegerRegion extends XnRegion {
 		*/
 	}
 
-	public static IntegerRegion usingx(boolean startsInside, int transitionCount, IntegerVarArray transitions) {
-		return new IntegerRegion(startsInside, transitionCount, transitions);
-		/*
-		udanax-top.st:69249:IntegerRegion class methodsFor: 'private: pseudo constructors'!
-		{IntegerRegion} usingx: startsInside {BooleanVar}
-			with: transitionCount {Int32}
-			with: transitions {IntegerVarArray}
-			^self create: startsInside with: transitionCount with: transitions!
-		*/
-	}
-
-	/**
-	 * {Stepper CLIENT of: RealRegion} intervals: order {OrderSpec default: NULL}
-	 * {BooleanVar CLIENT} isBoundedAbove
-	 * {BooleanVar CLIENT} isBoundedBelow
-	 * {BooleanVar CLIENT} isInterval
-	 * {IntegerVar CLIENT} start
-	 * {IntegerVar CLIENT} stop
-	 */
-	public static void info() {
-		/*
-		udanax-top.st:69257:IntegerRegion class methodsFor: 'smalltalk: system'!
-		info.stProtocol
-		"{Stepper CLIENT of: RealRegion} intervals: order {OrderSpec default: NULL}
-		{BooleanVar CLIENT} isBoundedAbove
-		{BooleanVar CLIENT} isBoundedBelow
-		{BooleanVar CLIENT} isInterval
-		{IntegerVar CLIENT} start
-		{IntegerVar CLIENT} stop
-		"!
-		*/
-	}
+//	/**
+//	 * {Stepper CLIENT of: RealRegion} intervals: order {OrderSpec default: NULL}
+//	 * {BooleanVar CLIENT} isBoundedAbove
+//	 * {BooleanVar CLIENT} isBoundedBelow
+//	 * {BooleanVar CLIENT} isInterval
+//	 * {IntegerVar CLIENT} start
+//	 * {IntegerVar CLIENT} stop
+//	 */
+//	public static void info() {
+//		/*
+//		udanax-top.st:69257:IntegerRegion class methodsFor: 'smalltalk: system'!
+//		info.stProtocol
+//		"{Stepper CLIENT of: RealRegion} intervals: order {OrderSpec default: NULL}
+//		{BooleanVar CLIENT} isBoundedAbove
+//		{BooleanVar CLIENT} isBoundedBelow
+//		{BooleanVar CLIENT} isInterval
+//		{IntegerVar CLIENT} start
+//		{IntegerVar CLIENT} stop
+//		"!
+//		*/
+//	}
 }
