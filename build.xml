@@ -11,20 +11,25 @@
   <property name="dist"  location="dist"/>
   <property name="lib.dir" location="lib"/>
     
+   <property name="junit.dir" location="${build}/docs/junit"/>
+   <property name="javadoc.dir" location="${build}/docs/api"/>
+   
   <target name="init">
     <tstamp/>
     <mkdir dir="${build}"/>
+    <mkdir dir="${build}/bin"/>
+    <mkdir dir="${build}/docs"/>    
   </target>
 
   <target name="compile" depends="init"
         description="compile the source " >
-    <javac srcdir="${src}" destdir="${build}" extdirs="${lib.dir}" />
+    <javac srcdir="${src}" destdir="${build}/bin" extdirs="${lib.dir}" />
   </target>
 
-  <target name="dist" depends="compile"
+  <target name="dist" depends="clean, compile, docs"
         description="generate the distribution" >
     <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${dist}/lib/${name}-${DSTAMP}.jar" basedir="${build}"/>
+    <jar jarfile="${dist}/lib/${name}-${DSTAMP}.jar" basedir="${build}/bin"/>
   </target>
 
   <target name="clean"
@@ -35,30 +40,35 @@
   
 
   <target name="test" depends="compile">
-  	<mkdir dir="docs/junit/report"/>
+  	<mkdir dir="${junit.dir}/report"/>
   	<junit printsummary="true">
   		 <formatter type="xml"/>
-  		<test name="org.abora.white.tests.AllTests" todir="./docs/junit/report"/>
+  		  <batchtest fork="yes" todir="${junit.dir}/report">
+    <fileset dir="${src}">
+      <include name="**/*Test*.java"/>
+      <exclude name="**/AllTests.java"/>
+    </fileset>
+  </batchtest>
   		<classpath>
-  			<pathelement path="${build}"/>
+  			<pathelement path="${build}/bin"/>
   		</classpath>
   	</junit>
   </target>
   
   <target name="test.report" depends="test">
-  	<mkdir dir="docs/junit/html"/>
-	  <junitreport todir="./docs/junit/report">
-		  <fileset dir="./docs/junit/report">
+  	<mkdir dir="${junit.dir}/html"/>
+	  <junitreport todir="${junit.dir}/report">
+		  <fileset dir="${junit.dir}/report">
 		    <include name="TEST-*.xml"/>
 		  </fileset>
-		  <report format="frames" todir="./docs/junit/html"/>
+		  <report format="frames" todir="${junit.dir}/html"/>
 	</junitreport>
   </target>
 
 	<target name="javadoc" depends="compile">
-	<mkdir dir="docs/api"/>
-	<delete dir="docs/api"/>
-		<javadoc destdir="docs/api"
+	<mkdir dir="${javadoc.dir}"/>
+	<delete dir="${javadoc.dir}"/>
+		<javadoc destdir="${javadoc.dir}"
            author="true"
            version="true"
            use="true"
@@ -76,7 +86,15 @@
 <!--    <group title="Group 2 Packages" packages="com.dummy.test.b*:com.dummy.test.c*"/> -->
 <!--    <link offline="true" href="http://java.sun.com/products/jdk/1.2/docs/api/" packagelistLoc="C:\tmp"/> -->
 <!--    <link href="http://developer.java.sun.com/developer/products/xml/docs/api/"/> -->
-  </javadoc>
+		</javadoc>
+	</target>
+
+	<target name="docs" depends="init">
+		<copy todir="${build}">
+    		<fileset dir="docs"/>
+		</copy>
+	  <antcall target="test.report"/>
+	  <antcall target="javadoc"/>
 	</target>
 
 </project>
