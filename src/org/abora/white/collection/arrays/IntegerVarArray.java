@@ -11,7 +11,7 @@
 package org.abora.white.collection.arrays;
 
 import java.io.PrintWriter;
-
+import java.util.Arrays;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
@@ -26,6 +26,7 @@ public class IntegerVarArray extends PrimIntegerArray {
 	protected IntegerVarArray(int count) {
 		super();
 		storage = new IntegerValue[count];
+		zeroElements();
 	}
 
 	protected IntegerVarArray(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
@@ -34,11 +35,14 @@ public class IntegerVarArray extends PrimIntegerArray {
 		if (count == -1) {
 			n = from.count() - sourceOffset;
 		}
+		//ALREADY zeroElements (0, destOffset);
 		copyElements(destOffset, from, sourceOffset, n);
+		//ALREADY zeroElements (destOffset + count, size - destOffset - count);
 	}
 
 	protected IntegerVarArray(IntegerValue[] source) {
 		this(source.length);
+		//TODO inefficiency of zeroing array here
 		System.arraycopy(source, 0, storage, 0, source.length);
 	}
 
@@ -46,7 +50,7 @@ public class IntegerVarArray extends PrimIntegerArray {
 	// Static Factory Methods
 
 	/** create an IntegerVarArray filled with zeros */
-	public static IntegerVarArray zeros(int count) {
+	public static IntegerVarArray make(int count) {
 		return new IntegerVarArray(count);
 	}
 
@@ -188,38 +192,6 @@ public class IntegerVarArray extends PrimIntegerArray {
 		//			IntegerVar * source = (IntegerVar*)this->storage();
 		//			for (Int32 i = 0; i < n; i += 1) {
 		//			((IntegerVar*)buffer)[i] = source[i + start];
-		//			}
-		//		}
-	}
-
-	public void zeroElements(int from, int count) {
-		int n = count;
-		if (n < 0) {
-			n = count();
-		}
-		if (n + from > count()) {
-			throw new IllegalArgumentException("TooManyZeros");
-		}
-		if (from < 0) {
-			throw new IndexOutOfBoundsException("BogusStartIndex");
-		}
-		for (int i = 0; i < n; i += 1) {
-			storeIntegerVar(from + i, IntegerValue.zero());
-		}
-		//		void IntegerVarArray::zeroElements (Int32 from, Int32 count)
-		//		{
-		//			Int32 n = count;
-		//			if (n < 0) {
-		//			n = this->count();
-		//			}
-		//			if (n+from > this->count()) {
-		//			BLAST(TOO_MANY_ZEROS);
-		//			}
-		//			if (from < 0) {
-		//			BLAST(BogusStartIndex);
-		//			}
-		//			for (Int32 i = 0; i < n; i += 1) {
-		//			this->storeIntegerVar (from + i, IntegerVarZero);
 		//			}
 		//		}
 	}

@@ -1008,4 +1008,52 @@ public class Int64ArrayTest extends TestCase {
 		assertEquals("[empty]", AssertArrays.makeInt64ArrayEmpty().toString());
 		assertEquals("[1 2 3 4 5]", AssertArrays.makeInt64Array12345().toString());
 	}
+
+	public void testZeroElements() {
+		Int64Array array = Int64Array.make(0);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int64Array.make(0), array);
+		
+		// zero all elements
+		array = Int64Array.make(1);
+		array.storeInt64(0, 1);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int64Array.make(new long[] {0}), array);
+
+		array = AssertArrays.makeInt64Array12345();
+		array.zeroElements();
+		AssertArrays.assertEquals(Int64Array.make(new long[] {0, 0, 0, 0, 0}), array);
+		
+		array = AssertArrays.makeInt64Array12345();
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int64Array.make(new long[] {0, 0, 0, 0, 0}), array);
+
+		// zero subset of elements
+		array = AssertArrays.makeInt64Array12345();
+		array.zeroElements(1, -1);
+		AssertArrays.assertEquals(Int64Array.make(new long[] {1, 0, 0, 0, 0}), array);
+
+		array = AssertArrays.makeInt64Array12345();
+		array.zeroElements(1, 2);
+		AssertArrays.assertEquals(Int64Array.make(new long[] {1, 0, 0, 4, 5}), array);
+
+		array = AssertArrays.makeInt64Array12345();
+		array.zeroElements(4, 1);
+		AssertArrays.assertEquals(Int64Array.make(new long[] {1, 2, 3, 4, 0}), array);
+
+		// silently truncate from
+		array = AssertArrays.makeInt64Array12345();
+		//TODO should this actually throw an exception?
+		array.zeroElements(5, -1);
+		AssertArrays.assertEquals(AssertArrays.makeInt64Array12345(), array);
+
+		// extend count outside range
+		array = AssertArrays.makeInt64Array12345();
+		try {
+			array.zeroElements(4, 2);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
 }

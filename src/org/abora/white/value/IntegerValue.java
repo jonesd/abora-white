@@ -407,6 +407,10 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 			oo << self getCategory name << '(' << myValue << ')'!
 		*/
 	}
+	
+	public String toString() {
+		return value.toString();
+	}
 
 //	public int precision() {
 //		passe()

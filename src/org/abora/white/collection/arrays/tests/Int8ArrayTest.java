@@ -1004,4 +1004,52 @@ public class Int8ArrayTest extends TestCase {
 		assertEquals("[empty]", AssertArrays.makeInt8ArrayEmpty().toString());
 		assertEquals("[1 2 3 4 5]", AssertArrays.makeInt8Array12345().toString());
 	}
+
+	public void testZeroElements() {
+		Int8Array array = Int8Array.make(0);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int8Array.make(0), array);
+		
+		// zero all elements
+		array = Int8Array.make(1);
+		array.storeInt8(0, (byte)1);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int8Array.make(new byte[] {0}), array);
+
+		array = AssertArrays.makeInt8Array12345();
+		array.zeroElements();
+		AssertArrays.assertEquals(Int8Array.make(new byte[] {0, 0, 0, 0, 0}), array);
+		
+		array = AssertArrays.makeInt8Array12345();
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int8Array.make(new byte[] {0, 0, 0, 0, 0}), array);
+
+		// zero subset of elements
+		array = AssertArrays.makeInt8Array12345();
+		array.zeroElements(1, -1);
+		AssertArrays.assertEquals(Int8Array.make(new byte[] {1, 0, 0, 0, 0}), array);
+
+		array = AssertArrays.makeInt8Array12345();
+		array.zeroElements(1, 2);
+		AssertArrays.assertEquals(Int8Array.make(new byte[] {1, 0, 0, 4, 5}), array);
+
+		array = AssertArrays.makeInt8Array12345();
+		array.zeroElements(4, 1);
+		AssertArrays.assertEquals(Int8Array.make(new byte[] {1, 2, 3, 4, 0}), array);
+
+		// silently truncate from
+		array = AssertArrays.makeInt8Array12345();
+		//TODO should this actually throw an exception?
+		array.zeroElements(5, -1);
+		AssertArrays.assertEquals(AssertArrays.makeInt8Array12345(), array);
+
+		// extend count outside range
+		array = AssertArrays.makeInt8Array12345();
+		try {
+			array.zeroElements(4, 2);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
 }

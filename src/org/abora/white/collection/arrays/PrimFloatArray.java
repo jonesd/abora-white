@@ -196,8 +196,8 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 	//////////////////////////////////////////////
 	// Bulk Storage
 	
-	public void zeroElements(int from, int count) {
-		storeAll(IEEE64Value.make(0.0), count, from);
+	protected Heaper zeroElement() {
+		return IEEE64Value.zero();
 	}
 
 	//////////////////////////////////////////////

@@ -1016,4 +1016,51 @@ public class UInt16ArrayTest extends TestCase {
 		assertEquals("a \u0424\t", array.asString());
 	}
 
+	public void testZeroElements() {
+		UInt16Array array = UInt16Array.make(0);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(UInt16Array.make(0), array);
+		
+		// zero all elements
+		array = UInt16Array.make(1);
+		array.storeUInt16(0, (char)1);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(UInt16Array.make(new char[] {0}), array);
+
+		array = AssertArrays.makeUInt16Array12345();
+		array.zeroElements();
+		AssertArrays.assertEquals(UInt16Array.make(new char[] {0, 0, 0, 0, 0}), array);
+		
+		array = AssertArrays.makeUInt16Array12345();
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(UInt16Array.make(new char[] {0, 0, 0, 0, 0}), array);
+
+		// zero subset of elements
+		array = AssertArrays.makeUInt16Array12345();
+		array.zeroElements(1, -1);
+		AssertArrays.assertEquals(UInt16Array.make(new char[] {1, 0, 0, 0, 0}), array);
+
+		array = AssertArrays.makeUInt16Array12345();
+		array.zeroElements(1, 2);
+		AssertArrays.assertEquals(UInt16Array.make(new char[] {1, 0, 0, 4, 5}), array);
+
+		array = AssertArrays.makeUInt16Array12345();
+		array.zeroElements(4, 1);
+		AssertArrays.assertEquals(UInt16Array.make(new char[] {1, 2, 3, 4, 0}), array);
+
+		// silently truncate from
+		array = AssertArrays.makeUInt16Array12345();
+		//TODO should this actually throw an exception?
+		array.zeroElements(5, -1);
+		AssertArrays.assertEquals(AssertArrays.makeUInt16Array12345(), array);
+
+		// extend count outside range
+		array = AssertArrays.makeUInt16Array12345();
+		try {
+			array.zeroElements(4, 2);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
 }

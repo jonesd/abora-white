@@ -976,7 +976,6 @@ public class IEEE32ArrayTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 			// expected
 		}
-
 	}
 }
 

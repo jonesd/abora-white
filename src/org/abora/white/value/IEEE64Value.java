@@ -10,11 +10,14 @@
  */
 package org.abora.white.value;
 
+
 /**
  * Boxed Java double or IEEE64 value. 
  */
 public class IEEE64Value extends PrimFloatValue {
-	private double value;
+	private final double value;
+	
+	private static final IEEE64Value ZERO = IEEE64Value.make(0.0);
 	
 	//////////////////////////////////////////////
 	// Constructors
@@ -32,6 +35,9 @@ public class IEEE64Value extends PrimFloatValue {
 		return new IEEE64Value(value);
 	}
 
+	public static IEEE64Value zero() {
+		return ZERO;
+	}
 
 	//////////////////////////////////////////////
 	// Conversions

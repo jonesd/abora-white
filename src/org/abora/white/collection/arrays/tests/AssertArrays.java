@@ -18,6 +18,7 @@ import org.abora.white.collection.arrays.Int16Array;
 import org.abora.white.collection.arrays.Int32Array;
 import org.abora.white.collection.arrays.Int64Array;
 import org.abora.white.collection.arrays.Int8Array;
+import org.abora.white.collection.arrays.IntegerVarArray;
 import org.abora.white.collection.arrays.PrimFloatArray;
 import org.abora.white.collection.arrays.PrimIntegerArray;
 import org.abora.white.collection.arrays.UInt16Array;
@@ -170,6 +171,23 @@ public class AssertArrays extends Assert {
 	}
 	protected static UInt32Array makeUInt32Array12321() {
 		return UInt32Array.make(new long[] { 1, 2, 3, 2, 1 });
+	}
+
+	//////////////////////////////////////////////
+	// IntegerValue
+	
+	protected static IntegerVarArray makeIntegerVarArrayEmpty() {
+		return IntegerVarArray.make(new IntegerValue[] {
+		});
+	}
+	protected static IntegerVarArray makeIntegerVarArray1() {
+		return IntegerVarArray.make(new IntegerValue[] { IntegerValue.make(1) });
+	}
+	protected static IntegerVarArray makeIntegerVarArray12345() {
+		return IntegerVarArray.make(new IntegerValue[] { IntegerValue.make(1), IntegerValue.make(2), IntegerValue.make(3), IntegerValue.make(4), IntegerValue.make(5) });
+	}
+	protected static IntegerVarArray makeIntegerVarArray12321() {
+		return IntegerVarArray.make(new IntegerValue[] { IntegerValue.make(1), IntegerValue.make(2), IntegerValue.make(3), IntegerValue.make(2), IntegerValue.make(1) });
 	}
 
 	//////////////////////////////////////////////

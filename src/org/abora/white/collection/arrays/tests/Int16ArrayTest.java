@@ -1004,4 +1004,52 @@ public class Int16ArrayTest extends TestCase {
 		assertEquals("[empty]", AssertArrays.makeInt16ArrayEmpty().toString());
 		assertEquals("[1 2 3 4 5]", AssertArrays.makeInt16Array12345().toString());
 	}
+
+	public void testZeroElements() {
+		Int16Array array = Int16Array.make(0);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int16Array.make(0), array);
+		
+		// zero all elements
+		array = Int16Array.make(1);
+		array.storeInt16(0, (short)1);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int16Array.make(new short[] {0}), array);
+
+		array = AssertArrays.makeInt16Array12345();
+		array.zeroElements();
+		AssertArrays.assertEquals(Int16Array.make(new short[] {0, 0, 0, 0, 0}), array);
+		
+		array = AssertArrays.makeInt16Array12345();
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(Int16Array.make(new short[] {0, 0, 0, 0, 0}), array);
+
+		// zero subset of elements
+		array = AssertArrays.makeInt16Array12345();
+		array.zeroElements(1, -1);
+		AssertArrays.assertEquals(Int16Array.make(new short[] {1, 0, 0, 0, 0}), array);
+
+		array = AssertArrays.makeInt16Array12345();
+		array.zeroElements(1, 2);
+		AssertArrays.assertEquals(Int16Array.make(new short[] {1, 0, 0, 4, 5}), array);
+
+		array = AssertArrays.makeInt16Array12345();
+		array.zeroElements(4, 1);
+		AssertArrays.assertEquals(Int16Array.make(new short[] {1, 2, 3, 4, 0}), array);
+
+		// silently truncate from
+		array = AssertArrays.makeInt16Array12345();
+		//TODO should this actually throw an exception?
+		array.zeroElements(5, -1);
+		AssertArrays.assertEquals(AssertArrays.makeInt16Array12345(), array);
+
+		// extend count outside range
+		array = AssertArrays.makeInt16Array12345();
+		try {
+			array.zeroElements(4, 2);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
 }

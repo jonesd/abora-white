@@ -28,6 +28,7 @@ public class AllTests {
 		suite.addTest(new TestSuite(UInt8ArrayTest.class));
 		suite.addTest(new TestSuite(UInt16ArrayTest.class));
 		suite.addTest(new TestSuite(UInt32ArrayTest.class));
+		suite.addTest(new TestSuite(IntegerVarArrayTest.class));
 		//$JUnit-END$
 		return suite;
 	}

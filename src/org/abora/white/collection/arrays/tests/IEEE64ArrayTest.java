@@ -930,5 +930,49 @@ public class IEEE64ArrayTest extends TestCase {
 		PrimFloatSpec spec = (PrimFloatSpec)AssertArrays.makeIEEE64ArrayEmpty().spec();
 		assertEquals(spec.bitCount(), AssertArrays.makeIEEE64ArrayEmpty().bitCount());		
 	}
+
+	public void testZeroElements() {
+		IEEE64Array array = IEEE64Array.make(0);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(IEEE64Array.make(0), array, DIFF);
+		
+		// zero all elements
+		array = IEEE64Array.make(1);
+		array.storeFloat(0, 1.1);
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(IEEE64Array.make(new double[] {0}), array, DIFF);
+		
+		array = AssertArrays.makeIEEE64Array12345();
+		array.zeroElements(0, -1);
+		AssertArrays.assertEquals(IEEE64Array.make(new double[] {0, 0, 0, 0, 0}), array, DIFF);
+
+		// zero subset of elements
+		array = AssertArrays.makeIEEE64Array12345();
+		array.zeroElements(1, -1);
+		AssertArrays.assertEquals(IEEE64Array.make(new double[] {1.1, 0, 0, 0, 0}), array, DIFF);
+
+		array = AssertArrays.makeIEEE64Array12345();
+		array.zeroElements(1, 2);
+		AssertArrays.assertEquals(IEEE64Array.make(new double[] {1.1, 0, 0, 4.4, 5.5}), array, DIFF);
+
+		array = AssertArrays.makeIEEE64Array12345();
+		array.zeroElements(4, 1);
+		AssertArrays.assertEquals(IEEE64Array.make(new double[] {1.1, 2.2, 3.3, 4.4, 0.0}), array, DIFF);
+
+		// silently truncate from
+		array = AssertArrays.makeIEEE64Array12345();
+		//TODO should this actually throw an exception?
+		array.zeroElements(5, -1);
+		AssertArrays.assertEquals(AssertArrays.makeIEEE64Array12345(), array, DIFF);
+
+		// extend count outside range
+		array = AssertArrays.makeIEEE64Array12345();
+		try {
+			array.zeroElements(4, 2);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
 }
 

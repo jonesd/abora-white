@@ -197,13 +197,6 @@ public abstract class PrimArray extends Heaper {
 		storeAll(value, -1);
 	}
 
-	/** 
-	 * Fill every element of this to null or 0 depending on the type of array.
-	 */
-	public void storeAll() {
-		storeAll(null);
-	}
-
 	/**
 	 * Copy the respective elements of <code>other</code> to <code>this</code> over the specified index range.
 	 * The other array must be of a compatible type. 
@@ -599,8 +592,9 @@ public abstract class PrimArray extends Heaper {
 		return index;
 	}
 
-	protected void zeroElements(int from, int count) {
-		throw new UnsupportedOperationException();
+	public void zeroElements(int from, int count) {
+		Heaper zeroElement = zeroElement();
+		storeAll(zeroElement, count, from);
 		//		int n = count;
 		//
 		//		if (n < 0) {
@@ -615,11 +609,18 @@ public abstract class PrimArray extends Heaper {
 		//		Arrays.fill(myStorage, from, from + n, 0);
 	}
 
-	protected void zeroElements(int from) {
+	public void zeroElements(int from) {
 		zeroElements(from, -1);
 	}
 
-	protected void zeroElements() {
+	public void zeroElements() {
 		zeroElements(0);
 	}
+
+	/**
+	 * Return a suitable immutable zero element for this type of array; either 0 or null.
+	 * 
+	 * @return zero element for this type of array
+	 */	
+	protected abstract Heaper zeroElement();
 }

@@ -452,6 +452,10 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		//		}
 	}
 
+	protected Heaper zeroElement() {
+		return IntegerValue.zero();
+	}
+	
 	//////////////////////////////////////////////
 	// Arithmetic Operations
 

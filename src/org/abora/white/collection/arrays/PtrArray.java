@@ -935,6 +935,10 @@ public class PtrArray extends PrimArray {
 		//		}
 	}
 
+	protected Heaper zeroElement() {
+		return null;
+	}
+
 	//////////////////////////////////////////////
 	// Printing
 
