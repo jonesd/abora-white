@@ -35,12 +35,24 @@
   
 
   <target name="test" depends="compile">
+  	<mkdir dir="docs/junit/report"/>
   	<junit printsummary="true">
-  		<test name="org.abora.white.tests.AllTests"/>
+  		 <formatter type="xml"/>
+  		<test name="org.abora.white.tests.AllTests" todir="./docs/junit/report"/>
   		<classpath>
   			<pathelement path="${build}"/>
   		</classpath>
   	</junit>
+  </target>
+  
+  <target name="test.report" depends="test">
+  	<mkdir dir="docs/junit/html"/>
+	  <junitreport todir="./docs/junit/report">
+		  <fileset dir="./docs/junit/report">
+		    <include name="TEST-*.xml"/>
+		  </fileset>
+		  <report format="frames" todir="./docs/junit/html"/>
+	</junitreport>
   </target>
 
 	<target name="javadoc" depends="compile">
