@@ -27,15 +27,19 @@
 			do? The purpose of this page is to document these problems and
 			the final outcome I have chosen for Abora-White.</p>
 
+		<p class="feedback1 feedback-meta">Dean Tribble kindly emailed in
+				a few comments on the contents of this page. I have included
+				them below in the marked lines. Thanks Dean.</p>
+
 <h3>BooleanVar</h3>
 
-		<p>This was simply replace with the Java <tt>boolean</tt>
+		<p>This was simply replaced with the Java <tt>boolean</tt>
 			primitive data type.</p>
 
 <h3>IntegerVar</h3>
 
 		<p>The Smalltalk native support for Integers is very powerful. For
-			small numbers (< 29(ish) bits) a compact unboxed in-representation form
+			small numbers (&lt; 29(ish) bits) a compact unboxed in-representation form
 			is used to minimise performance overhead. If an integer larger
 			than the initial range is needed then the system automatically
 			changes to a boxed  Integer object format - transparently to the
@@ -44,11 +48,23 @@
 			only weirdness is that there is no operator precedence rules,
 			other than computations start from the left.</p>
 
+		<p class="feedback1">These are intended as 32-bit integers. In the
+		server we were not anticipating using infinite precision
+				Integers.<br>
+
+				Note that the translator to X++ did manage
+			the transition to C++ precedence correctly.</p>
+
 		<p>The X++ version of Udanax-Gold seems to support just 32-bit
 			integers, which is a surprise. I guess this is either a
 			misunderstanding on my part, or perhaps unlimited precision
 			support for a pending feature? C++ allows automatic conversions between int and
 			IntegerVar class representations.</p>
+
+			<p class="feedback1">The 'Var' suffix meant allocated on the stack as opposed to the heap.
+IntegerVar was defined so that we could control alignment, operators,
+additional type checking, etc., but can be thought of as a 32 bit int.
+			</p>
 
 		<p>The Java native support for integers is split between primitive
 			data types of various bit sizes, and the BigInteger class which
@@ -56,6 +72,9 @@
 			promotion from primitives to BigInteger. Additionally arithmetic
 			operators are supported for the primitive data types, but not
 			for BigIntegers.</p>
+
+			<p class="feedback1">I recommend mapping to int in Java.
+			</p>
 
 		<p>Assuming Udanax-Gold IntegerVars are required to support
 			unlimited procession, I have temporarily gone for a wrapped
@@ -73,6 +92,11 @@
 			control between signed and unsigned. This is particularly
 			significant for the UInt32 type which is often used.</p>
 
+			<p class="feedback1">Mostly UInt32 was used for indices, for which negative numbers never
+made sense.  They were also used for hashes.  These could almost all
+be translated as int and it would be fine.
+			</p>
+
 		<p>The second case has to do with Strings; Java string characters
 			are unsigned 16-bit Unicode, default X++ string characters are unsigned 8-bit.</p>
 
@@ -83,6 +107,10 @@
 			the Smalltalk language is used. On the X++ side I think a custom
 			exception mechanism was implemented - possibly done before C++
 			exceptions were added to the C++ specification.</p>
+
+			<p class="feedback1">I'm pretty sure they map easily to instances of type-based exceptions,
+so the mapping to Java should be straightforward.
+			</p>
 
 	<p>Java supports a reasonable class based exception mechanism. A
 			facility beyond the Udanax-Gold exceptions is the support for
@@ -155,6 +183,10 @@
 			stepper.destroy();
 		}</pre>
 
+			<p class="feedback1">As I recall we tried to make sure that it could be translated as a
+for-loop.  That would be a little more readable.
+			</p>
+
 		<p>...and the original Smalltalk source:<br>
 <pre>	(s _ myArray stepper) forEach: [ :e {Heaper} |
 		newArray atInt: (myDsp ofInt: s index) store: e].</pre>
@@ -167,12 +199,21 @@
 			subclass whose signature matches that in a superclass can not
 			change the return type of the super definition.</p>
 
+			<p class="feedback1">Yes.  Exposing the allocation behavior of a class when you want an
+instance of it prevents opportunities for caching, refactoring, etc.
+so we tried to use factory methods consistently.<br>
+Yup, they definitely will need some renaming for Java.</p>
+
 		<p>I have used the Java constructors in place of the create
 			methods. This generally works out, except that Constructors have
 			a number of 'strange' properties in Java. Constructors are not
 			inherited, so often I have had to add intervening constructor
 			definitions which simply call a super constructor. Following the
 			general factor pattern, the constructors are made protected.</p>
+
+			<p class="feedback1">Exactly the right thing.  Part of the reason for the generic naming of
+create methods is that they were supposed to map to constructors.
+			</p>
 
 		<p>Some open issues in this area are with the area of the
 			<tt>new.Become</tt>, and possibly similar methods. Java has not
@@ -184,6 +225,12 @@
 			object referencing object A to now reference object B <b>and</b>
 			for all objects referencing object B to now reference object A.</p>
 
+			<p class="feedback1">We did not use two-way become except to emulate behavior we could
+accomplish in C++ some other way.  We did use one-way become for
+converting stubs into objects during unmarshalling.  In Java, you
+would need to use Proxies and maintain the layer of forwarding, I
+think (or not use lazy unmarshalling).</p>
+
 <h3>Object Death</h3>
 
 		<p>Both Smalltalk and Java have Garbage Collection built in. Java
@@ -191,13 +238,27 @@
 			Newer Smalltalk contain similar features, and it is assumed that
 			the Udanax-Gold Smalltalk included these as well.</p>
 
+			<p class="feedback1">We used the post-mortem finalization support from ObjectWorks.  That's
+where it was invented, after all :-)  For various reasons, WeakArrays
+are much better than individual weak references, but you can still do
+everything with individual weak references.</p>
+
 		<p>C++ doesn't support Garbage Collection in the default
 			implementation, and it is assumed that X++ included some kind of
 			Garbage Collection system.</p>
 
+			<p class="feedback1">Yes.  That code should be available somewhere.  It was a pretty
+impressive GC system.</p>
+
 		<p>To be researched; is destruct/destroyed only relevant to X++ or
 		does it make sense for Smalltalk and Java implementation,
 			distributed and file based garbage collection support.</p>
+
+			<p class="feedback1">My recollection is that it was only for X++.  We might have used the
+				distinction elsewhere, but we tried not to.  One of the last things we
+did was move the X++ GC to use post-mortem finalization (and not
+destructors).
+</p>
 
 <h3>Equality and Hashing</h3>
 
@@ -256,6 +317,10 @@
 			together with alternative client languages, which prompted the
 			creation of the Category class.</p>
 
+			<p class="feedback1">Category was part of Smalltalk.  We stuffed information there that
+would normally be inline in a Java or C++ file (like instance variable
+types).  In java, there should be no need for them.</p>
+
 		<p>For the moment the Java Class objects are being used in place
 			of Categories. In the future the Category class my need to be
 			re-added as more is learnt about its use.</p>
@@ -300,7 +365,11 @@
 			undocumented, mechanism to force Mu/ImmuSet with the same
 			elements to produce different contentHashes.</li>
 
-			<li>IntegerRegion:below was actually a duplicate of the above method.</li>
+			<li>IntegerRegion:below was actually a duplicate of the above
+					method.
+					<br><span class="feedback1">The scary thing is that I remember this bug, so your code may be a
+slightly-earlier-than-final snapshot.
+					</span></li>
 
 		</ul>
 
