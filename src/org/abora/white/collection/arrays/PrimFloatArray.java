@@ -18,6 +18,9 @@ import org.abora.white.xpp.basic.Heaper;
  */
 public abstract class PrimFloatArray extends PrimArithmeticArray {
 
+	//////////////////////////////////////////////
+	// Constructors
+
 	/**
 	 * Construct a new array.
 	 * 
@@ -33,12 +36,20 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		throw new UnsupportedOperationException();
 	}
 
+
+	//////////////////////////////////////////////
+	// Accessing
+	
 	/** Store a floating point value */
 	public abstract void storeFloat(int index, double value);
 
 	/** Get an actual floating point number */
 	public abstract double floatAt(int index);
 
+
+	//////////////////////////////////////////////
+	// Comparing and Hashing
+	
 	public int elementsHash(int count, int start) {
 		/* TODO make this actually do something !!!! */
 		throw new UnsupportedOperationException();
@@ -51,19 +62,11 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		//		}
 	}
 
-	/**
-	 * Return the index of the nth occurrence of the given value at or
-	 * after (before if nth is negative) the given index, or -1 if
-	 * there is none.
-	 * 
-	 * @param value element that is to be matched
-	 * @param start index to start the search. If positive start from that index,
-	 * 			if negative start from relatie to end of array
-	 * @param nth nth occurrence of the matched value at or after the start if
-	 * 			positive, or at or before if negative. A 0 nth immediately fails.
-	 * @return index of element matched or -1 if there is none
-	 */
 	public int indexOf(Heaper value, int start, int nth) {
+		//TODO contents of indexOf && indexPast are the same except
+		// whether the value should, or shoud not, match elements
+		// Refactor out private shared method with exclusive-or check
+		
 		if (count() == 0 || nth == 0) {
 			return -1;
 		}
@@ -77,18 +80,18 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		double x = ((PrimFloatValue) value).asIEEE64();
 
 		if (nth >= 0) {
-			for (int idx = start; idx < count(); idx++) {
+			for (int idx = start; idx < count(); idx += 1) {
 				if (floatAt(idx) == x) {
-					nth--;
+					nth -= 1;
 					if (nth == 0) {
 						return idx;
 					}
 				}
 			}
 		} else {
-			for (int idx = start; idx >= 0; idx--) {
+			for (int idx = start; idx >= 0; idx -= 1) {
 				if (floatAt(idx) == x) {
-					nth++;
+					nth += 1;
 					if (nth == 0) {
 						return idx;
 					}
@@ -96,57 +99,8 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 			}
 		}
 		return -1;
-		//		Int32 PrimFloatArray::indexOf (APTR(Heaper) value, 
-		//						   Int32 start/* = Int32Zero*/,
-		//						   Int32 nth/* = 1*/)
-		//		{
-		//			if (this->count() == 0 || nth == 0) {
-		//			return -1;
-		//			}
-		//			if (start < 0) {
-		//			start = this->count () + start;
-		//			}
-		//			if (start < 0 || start >= this->count ()) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
-		//
-		//			IEEE64 x = CAST(PrimFloatValue,value)->asIEEE64();
-		//
-		//			if (nth >= 0) {
-		//			for (Int32 idx = start; idx < this->count(); idx++) {
-		//				if (this->floatAt(idx) == x) {
-		//				nth--;
-		//				if (nth == 0) {
-		//					return idx;
-		//				}
-		//				}
-		//			}
-		//			} else {
-		//			for (Int32 idx = start; idx >= 0; idx--) {
-		//				if (this->floatAt(idx) == x) {
-		//				nth++;
-		//				if (nth == 0) {
-		//					return idx;
-		//				}
-		//				}
-		//			}
-		//			}
-		//			return -1;
-		//		}
 	}
 
-	/**
-	 * Return the index of the nth occurrence of anything but the given value at or
-	 * after (before if nth is negative) the given index, or -1 if
-	 * there is none.
-	 * 
-	 * @param value anything except this element that is to be matched
-	 * @param start index to start the search. If positive start from that index,
-	 * 			if negative start from relatie to end of array
-	 * @param nth nth occurrence of the matched value at or after the start if
-	 * 			positive, or at or before if negative. A 0 nth immediately fails.
-	 * @return index of element matched or -1 if there is none
-	 */
 	public int indexPast(Heaper value, int start, int nth) {
 		if (count() == 0 || nth == 0) {
 			return -1;
@@ -161,18 +115,18 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		double x = ((PrimFloatValue) value).asIEEE64();
 
 		if (nth >= 0) {
-			for (int idx = start; idx < count(); idx++) {
+			for (int idx = start; idx < count(); idx += 1) {
 				if (floatAt(idx) != x) {
-					nth--;
+					nth -= 1;
 					if (nth == 0) {
 						return idx;
 					}
 				}
 			}
 		} else {
-			for (int idx = start; idx >= 0; idx--) {
+			for (int idx = start; idx >= 0; idx -= 1) {
 				if (floatAt(idx) != x) {
-					nth++;
+					nth += 1;
 					if (nth == 0) {
 						return idx;
 					}
@@ -180,43 +134,6 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 			}
 		}
 		return -1;
-		//		Int32 PrimFloatArray::indexPast (APTR(Heaper) value, 
-		//						 Int32 start/* = Int32Zero*/,
-		//						 Int32 nth/* = 1*/)
-		//		{
-		//			if (this->count() == 0 || nth == 0) {
-		//			return -1;
-		//			}
-		//			if (start < 0) {
-		//			start = this->count () + start;
-		//			}
-		//			if (start < 0 || start >= this->count ()) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
-		//
-		//			IEEE64 x = CAST(PrimFloatValue,value)->asIEEE64();
-		//
-		//			if (nth >= 0) {
-		//			for (Int32 idx = start; idx < this->count(); idx++) {
-		//				if (this->floatAt(idx) != x) {
-		//				nth--;
-		//				if (nth == 0) {
-		//					return idx;
-		//				}
-		//				}
-		//			}
-		//			} else {
-		//			for (Int32 idx = start; idx >= 0; idx--) {
-		//				if (this->floatAt(idx) != x) {
-		//				nth++;
-		//				if (nth == 0) {
-		//					return idx;
-		//				}
-		//				}
-		//			}
-		//			}
-		//			return -1;
-		//		}
 	}
 
 	protected int compareData(int start, PrimArithmeticArray other, int otherStart, int count) {
@@ -232,29 +149,6 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		} else {
 			return super.compareData(start, other, otherStart, count);
 		}
-		//		Int32 PrimFloatArray::compareData (Int32 start, 
-		//						   APTR(PrimDataArray) other,
-		//						   Int32 otherStart,
-		//						   Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(PrimFloatArray,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				IEEE64 cmp;
-		//				cmp = this->floatAt(i + start) - o->floatAt(i + otherStart);
-		//				if (cmp != 0.0) {
-		//					return ((Int32) cmp) < 0 ? -1 : 1;
-		//				}
-		//				}
-		//				return 0;
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				return this->PrimDataArray::compareData (start, other, otherStart,
-		//									 count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//			return 0;
-		//		}
 	}
 
 	protected void addData(int start, PrimArithmeticArray other, int otherStart, int count) {
@@ -266,24 +160,6 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		} else {
 			super.addData(start, other, otherStart, count);
 		}
-		//		void PrimFloatArray::addData (Int32 start, 
-		//						  APTR(PrimDataArray) other,
-		//						  Int32 otherStart,
-		//						  Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(PrimFloatArray,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeFloat (i + start,
-		//						  this->floatAt(i + start) 
-		//						   + o->floatAt(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimDataArray::addData (start, other, otherStart, count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 
 	protected void subtractData(int start, PrimArithmeticArray other, int otherStart, int count) {
@@ -295,24 +171,5 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		} else {
 			super.subtractData(start, other, otherStart, count);
 		}
-		//		void PrimFloatArray::subtractData (Int32 start, 
-		//						   APTR(PrimDataArray) other,
-		//						   Int32 otherStart,
-		//						   Int32 count)
-		//		{
-		//			BEGIN_CHOOSE(other) {
-		//			BEGIN_KIND(PrimFloatArray,o) {
-		//				for (Int32 i = 0; i < count; i += 1) {
-		//				this->storeFloat (i + start,
-		//						  this->floatAt(i + start) 
-		//						  - o->floatAt(i + otherStart));
-		//				}
-		//			} END_KIND;
-		//			BEGIN_OTHERS {
-		//				this->PrimDataArray::subtractData (start, other, otherStart,
-		//								   count);
-		//			} END_OTHERS;
-		//			} END_CHOOSE;
-		//		}
 	}
 }

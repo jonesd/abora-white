@@ -37,22 +37,16 @@ public class IEEE64Array extends PrimFloatArray {
 		storage = new double[count];
 	}
 
-	protected IEEE64Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
-	}
-
-	protected IEEE64Array(int count, int[] buffer) {
-		throw new UnsupportedOperationException();
-	}
-
 	/** create an IEEE64 array filled with zeros */
 	public static IEEE64Array make(int count) {
-		throw new UnsupportedOperationException();
+		return new IEEE64Array(count);
 	}
 
 	/** create an IEEE64Array filled with the indicated data in 'from' */
 	public static IEEE64Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		IEEE64Array array = new IEEE64Array(size);
+		array.addData(destOffset, (PrimArithmeticArray) from, sourceOffset, count);
+		return array;
 	}
 
 	public static IEEE64Array make(int size, PrimArray from, int sourceOffset, int count) {
@@ -69,8 +63,22 @@ public class IEEE64Array extends PrimFloatArray {
 
 	/** create an IEEE64Array filled with the data at 'buffer' */
 	public static IEEE64Array make(int count, double[] buffer) {
-		throw new UnsupportedOperationException();
+		//TODO take into account count
+		IEEE64Array array = make(buffer.length);
+		//TODO should we copy data or use it?
+		for (int i = 0; i < buffer.length; i++) {
+			array.storeIEEE64(i, buffer[i]);
+		}
+		return array;
 	}
+
+	/** create an IEEE64Array filled with the data at 'buffer' */
+	public static IEEE64Array make(double[] buffer) {
+		return IEEE64Array.make(buffer.length, buffer);
+	}
+
+	//////////////////////////////////////////////
+	// accessing
 
 	/** Store an actual floating point value */
 	public void storeIEEE64(int index, double value) {

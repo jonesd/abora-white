@@ -33,7 +33,9 @@ import org.abora.white.xpp.basic.Heaper;
 public abstract class PrimArray extends Heaper {
 	//TODO Implement Collection?
 
-//	protected static int OurGutsCount = 0;
+	//////////////////////////////////////////////
+	// Constructors
+
 	/**
 	 * Construct a new array.
 	 * 
@@ -44,28 +46,24 @@ public abstract class PrimArray extends Heaper {
 		super();
 	}
 
-//	/**
-//	 * we get the datum size all the way up here so that the caller does not
-//	 * have to repeat whatever calculation went into newCount
-//	 */
-//	protected PrimArray(int count, int datumSize) {
-//		super();
-//		//assert(PrimArray::OurGutsCount == 0);// zzz reg for allowing the debugger to do guts of
-//		myCount = count;
-////		if (myCount != 0) {
-////			mySize = alignUp(count * datumSize) / 4 /*sizeof(int)*/;
-////			myStorage = Heap.getStorage(mySize, this);
-////		} else {
-////			mySize = 0;
-////			myStorage = null;
-////		}
-//	}
+	protected abstract PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset);
+
 
 	/**
 	 * Return the number of elements the array can hold.
 	 */
 	public abstract int count();
 
+//	/** 
+//	 * A description of the kinds of things which can be stored 
+//	 * in  this array
+//	 */
+//	public abstract PrimSpec spec();
+
+
+	//////////////////////////////////////////////
+	// Accessing
+	
 	/**
 	 * Store a value; may be a Heaper, null, or a PrimValue as appropriate
 	 * to PrimArray subclass.
@@ -86,9 +84,6 @@ public abstract class PrimArray extends Heaper {
 	 */
 	public abstract Heaper fetchValue(int index);
 
-	/**
-	 * Same fetchValue except it will BLAST if value is NULL 
-	 */
 	/** 
 	 * Fetch a value; may be a Heaper or a PrimValue as appropriate
 	 * to PrimArray subclass, or throw an exception if value is null.
@@ -106,12 +101,20 @@ public abstract class PrimArray extends Heaper {
 		}
 		return result;
 	}
+	
 
-//	/** 
-//	 * A description of the kinds of things which can be stored 
-//	 * in  this array
-//	 */
-//	public abstract PrimSpec spec();
+	//////////////////////////////////////////////
+	// comparison and hash
+
+	//TODO made up
+	public boolean isEqual(Heaper other) {
+		if (other instanceof PrimArray) {
+			PrimArray o = (PrimArray) other;
+			return contentsEqual(o);
+		} else {
+			return false;
+		}
+	}
 
 	/** 
 	 * Whether the two ranges contain semantically the same 
@@ -131,9 +134,68 @@ public abstract class PrimArray extends Heaper {
 	}
 
 	/**
-	 * Copy n elements from the other array into this one. The other  array must
-	 * be of a compatible type.
+	 * Whether the two ranges contain the same values, using the criteria
+	 * defined in contentsEqual
 	 */
+	public abstract boolean elementsEqual(int here, PrimArray other, int there, int n);
+
+	public boolean elementsEqual(int here, PrimArray other, int there) {
+		return elementsEqual(here, other, there, -1);
+	}
+
+	public boolean elementsEqual(int here, PrimArray other) {
+		return elementsEqual(here, other, 0);
+	}
+
+	/**
+	 * A hash of the range of values out of the array. If two ranges are
+	 * elementsEqual, they will have the same hash. For data values, additional
+	 * zeros on the end make no difference to the hash.
+	 */
+	public abstract int elementsHash(int count, int start);
+
+	public int elementsHash(int count) {
+		return elementsHash(count, 0);
+	}
+
+	public int elementsHash() {
+		return elementsHash(-1);
+	}
+
+
+	//////////////////////////////////////////////
+	// Bulk storing
+
+	/** 
+	 * Set a range of elements to have the same value
+	 */
+	//TODO possibly rename to fill(...) to better match Java terminology
+	public abstract void storeAll(Heaper value, int count, int start);
+
+	public void storeAll(Heaper value, int count) {
+		storeAll(value, count, 0);
+	}
+
+	public void storeAll(Heaper value) {
+		storeAll(value, -1);
+	}
+
+	public void storeAll() {
+		storeAll(null);
+	}
+
+	
+	/**
+	 * Copy the respective elements of other to this over the specified index range.
+	 * The other array must be of a compatible type. 
+	 * 
+	 * @param to first index of receiver to be included in the receivers range..
+	 * @param other other elements to be copied into this.
+	 * @param count number of elements from the other array included in range, or -1 for
+	 * 			all others elements starting at from. Fail if count is
+	 * 			greater than number of available elements.
+	 * @param from first index of the other array to be included in the range.
+	 */ 
 	public void storeMany(int to, PrimArray other, int count, int from) {
 		int n;
 
@@ -165,14 +227,20 @@ public abstract class PrimArray extends Heaper {
 	}
 
 	/**
-	 * Make a copy of a piece of this array.  With no arguments,  copy the
-	 * entire array.  With one argument copy count elements  from the beginning
-	 * of the array.  With two arguments, copy 'count'  elements starting from
-	 * start.  The third and fourth arguments both  default to 0	and
-	 * represent the number of null/0 elements to put in  the result
-	 * before/after the copied elements.  If after = 10, for  instance, the
-	 * resulting array would be 10 larger than count, and  the copied elements
-	 * would start at index 10.
+	 * Return a copy of this including just the elements specified by
+	 * the index range prepended by before, and postpended by after
+	 * number of null or 0 elements.
+	 * <p>
+	 * If before = 10, then the the resulting array with be 10 elements
+	 * larger and the copied elements would start at index 10.
+	 * 
+	 * @param count number of elements to copy, or -1 for all from and after start
+	 * @param start index of first element to copy from
+	 * @param before number of leading null or 0 elements to include before the copied
+	 * 	elements in the returned array.
+	 * @param after number of trailing null or 0 elements to include after the copied
+	 * 	elements in the returned array.
+	 * @return PrimArray a copy of this.
 	 */
 	public PrimArray copy(int count, int start, int before, int after) {
 		int copyCount;
@@ -186,48 +254,151 @@ public abstract class PrimArray extends Heaper {
 			}
 		}
 		return makeNew(copyCount + before + after, this, start, copyCount, before);
-
 	}
 
+	/**
+	 * Return a copy of this including just the elements specified by
+	 * the index range prepended by before number of null or 0 elements.
+	 * <p>
+	 * If before = 10, then the the resulting array with be 10 elements
+	 * larger and the copied elements would start at index 10.
+	 * 
+	 * @param count number of elements to copy, or -1 for all from and after start
+	 * @param start index of first element to copy from
+	 * @param before number of leading null or 0 elements in include before the copied
+	 * 	elements in the returned array.
+	 * @return PrimArray a copy of this.
+	 */
 	public PrimArray copy(int count, int start, int before) {
 		return copy(count, start, before, 0);
 	}
 
+	/**
+	 * Return a copy of this including just the elements specified by
+	 * the index range.
+	 * 
+	 * @param count number of elements to copy, or -1 for all from and after start
+	 * @param start index of first element to copy from
+	 * @return PrimArray a copy of this
+	 */
 	public PrimArray copy(int count, int start) {
 		return copy(count, start, 0);
 	}
 
+	/**
+	 * Return a copy of this including just the first count elements.
+	 * 
+	 * @param count
+	 * @return PrimArray a copy of this.
+	 */
 	public PrimArray copy(int count) {
 		return copy(count, 0);
 	}
 
+	/**
+	 * Return a copy of this.
+	 * 
+	 * @return a copy of this.
+	 */
 	public PrimArray copy() {
 		return copy(-1);
 	}
 
 	/**
 	 *  Make a copy of the array into a larger array.  The array has
-	 * 'after'  slots after the copied elements.
+	 * 'after' slots after the copied elements.
+	 * 
+	 * @param after number of trailing null or 0 elements to include after the copied
+	 * 	elements in the returned array.
 	 */
 	public PrimArray copyGrow(int after) {
 		return copy(count(), 0, 0, after);
 	}
 
-	/**
-	 * The index of the nth occurrence of the given value at or   after (before
-	 * if n is negative) the given index, or -1 if   there is none.
-	 */
-	public int indexOf(Heaper value, int start, int n) {
-		throw new UnsupportedOperationException();
-	}
 
+	//////////////////////////////////////////////
+	// Searching/Finding
+
+	/**
+	 * Return the index of the nth occurrence of the given value at or
+	 * after (before if nth is negative) the given index, or -1 if
+	 * there is none.
+	 * 
+	 * @param value element that is to be matched
+	 * @param start index to start the search. If positive start from that index,
+	 * 			if negative start from relatie to end of array
+	 * @param nth nth occurrence of the matched value at or after the start if
+	 * 			positive, or at or before if negative. A 0 nth immediately fails.
+	 * @return index of element matched or -1 if there is none
+	 */
+	public abstract int indexOf(Heaper value, int start, int n);
+
+	/**
+	 * Return the index of the first occurrence of the given value at or
+	 * after (before if nth is negative) the given index, or -1 if
+	 * there is none.
+	 * 
+	 * @param value element that is to be matched
+	 * @param start index to start the search. If positive start from that index,
+	 * 			if negative start from relatie to end of array
+	 * @return index of element matched or -1 if there is none
+	 */
 	public int indexOf(Heaper value, int start) {
 		return indexOf(value, start, 1);
 	}
 
+	/**
+	 * Return the index of the first occurrence of the given value,
+	 *  or -1 if there is none.
+	 * 
+	 * @param value element that is to be matched
+	 * @return index of element matched or -1 if there is none
+	 */
 	public int indexOf(Heaper value) {
 		return indexOf(value, 0);
 	}
+
+	/**
+	 * Return the index of the nth occurrence of anything but the given value at or
+	 * after (before if nth is negative) the given index, or -1 if
+	 * there is none.
+	 * 
+	 * @param value anything except this element that is to be matched
+	 * @param start index to start the search. If positive start from that index,
+	 * 			if negative start from relatie to end of array
+	 * @param nth nth occurrence of the matched value at or after the start if
+	 * 			positive, or at or before if negative. A 0 nth immediately fails.
+	 * @return index of element matched or -1 if there is none
+	 */
+	public abstract int indexPast(Heaper value, int start, int n);
+	//TODO original X++ version had an implementation but it did
+	// not appear to match spec, or inherited versions, so removed
+
+	/**
+	 * Return the index of the first occurrence of anything but the given value at or
+	 * after (before if nth is negative) the given index, or -1 if
+	 * there is none.
+	 * 
+	 * @param value anything except this element that is to be matched
+	 * @param start index to start the search. If positive start from that index,
+	 * 			if negative start from relatie to end of array
+	 * @return index of element matched or -1 if there is none
+	 */
+	public int indexPast(Heaper value, int start) {
+		return indexPast(value, start, 1);
+	}
+
+	/**
+	 * Return the index of the first occurrence of anything but the given value,
+	 * or -1 if there is none.
+	 * 
+	 * @param value anything except this element that is to be matched
+	 * @return index of element matched or -1 if there is none
+	 */
+	public int indexPast(Heaper value) {
+		return indexPast(value, 0);
+	}
+
 
 	/**
 	 * The index of the nth occurrence of the given sequence of values at or
@@ -235,7 +406,44 @@ public abstract class PrimArray extends Heaper {
 	 * is none. Negative numbers for start are relative to the end of the array.
 	 */
 	public int indexOfElements(PrimArray other, int valueCount, int valueStart, int start, int nth) {
-		throw new UnsupportedOperationException();
+		if (count() == 0 || nth == 0) {
+			return -1;
+		}
+		int valueN;
+		if (valueCount < 0) {
+			valueN = other.count();
+		} else {
+			if (valueCount > other.count()) {
+				throw new IndexOutOfBoundsException();
+			}
+			valueN = valueCount;
+		}
+		int result;
+		if (start >= 0) {
+			result = start;
+		} else {
+			result = count() + start;
+		}
+		int n = nth < 0 ? -nth : nth; //TODO = Math.abs(nth);
+		boolean forward = nth > 0;
+		for (;;) {
+			{
+				if (forward ? (result > count() - valueN) : result < 0) {
+					return -1;
+				}
+				if (elementsEqual(result, other, valueStart, valueN)) {
+					n -= 1;
+					if (n == 0) {
+						return result;
+					}
+				}
+				if (forward) {
+					result += 1;
+				} else {
+					result -= 1;
+				}
+			}
+		}
 //		int valueN;
 //		int result;
 //		int n;
@@ -294,79 +502,9 @@ public abstract class PrimArray extends Heaper {
 		return indexOfElements(other, -1);
 	}
 
-	/**
-	 * The index of the nth occurrence of anything but the given value at or
-	 * after (before if n is negative) the given index, or -1 if there is none.
-	 */
-	public int indexPast(Heaper value, int start, int n) {
-		int i;
-		int idx;
-		for (idx = start, i = 0; i < n && idx < count(); idx++) {
-			Heaper ptr = fetchValue(idx);
-			if (ptr != null && !ptr.isEqual(value)) {
-				i++;
-			}
-		}
-		return i > 0 ? idx : -1;
-	}
 
-	public int indexPast(Heaper value, int start) {
-		return indexPast(value, start, 1);
-	}
-
-	public int indexPast(Heaper value) {
-		return indexPast(value, 0);
-	}
-
-	/** 
-	 * Set a range of elements to have the same value
-	 */
-	public void storeAll(Heaper value, int count, int start) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void storeAll(Heaper value, int count) {
-		storeAll(value, count, 0);
-	}
-
-	public void storeAll(Heaper value) {
-		storeAll(value, -1);
-	}
-
-	public void storeAll() {
-		storeAll(null);
-	}
-
-	/**
-	 * Whether the two ranges contain the same values, using the criteria
-	 * defined in contentsEqual
-	 */
-	public abstract boolean elementsEqual(int here, PrimArray other, int there, int n);
-
-	public boolean elementsEqual(int here, PrimArray other, int there) {
-		return elementsEqual(here, other, there, -1);
-	}
-
-	public boolean elementsEqual(int here, PrimArray other) {
-		return elementsEqual(here, other, 0);
-	}
-
-	/**
-	 * A hash of the range of values out of the array. If two ranges are
-	 * elementsEqual, they will have the same hash. For data values, additional
-	 * zeros on the end make no difference to the hash.
-	 */
-	public int elementsHash(int count, int start) {
-		throw new UnsupportedOperationException();
-	}
-
-	public int elementsHash(int count) {
-		return elementsHash(count, 0);
-	}
-
-	public int elementsHash() {
-		return elementsHash(-1);
-	}
+	//////////////////////////////////////////////
+	// Debug
 
 	public void printOn(PrintWriter oo) {
 		String before = "[";
@@ -440,24 +578,5 @@ public abstract class PrimArray extends Heaper {
 
 	protected void zeroElements() {
 		zeroElements(0);
-	}
-
-	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
-	}
-
-//	public static void cleanup() {
-//		Heap.cleanup();
-//	}
-
-
-	//TODO made up
-	public boolean isEqual(Heaper other) {
-		if (other instanceof PrimArray) {
-			PrimArray o = (PrimArray) other;
-			return contentsEqual(o);
-		} else {
-			return false;
-		}
 	}
 }

@@ -17,10 +17,15 @@ import org.abora.white.value.IEEE32Value;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
- * Basic array composed of Java float or IEEE32 values.
+ * Array collection which holds IEEE32 values,
+ * which match the Java float primitive type.
  */
 public class IEEE32Array extends PrimFloatArray {
 	private float[] storage = null;
+
+
+	//////////////////////////////////////////////
+	// Constructors
 
 	/** 
 	 * Construct a new array of the specified size with
@@ -29,7 +34,7 @@ public class IEEE32Array extends PrimFloatArray {
 	 * Restrict public access to constructor; use suitable static
 	 * factory method instead.  
 	 * 
-	 * @param count size of array
+	 * @param count number of elements this will be able to hold
 	 */
 	protected IEEE32Array(int count) {
 		super();
@@ -37,23 +42,49 @@ public class IEEE32Array extends PrimFloatArray {
 	}
 
 	protected IEEE32Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		this(size);
+		int n = count;
+		if (count == -1) {
+			n = from.count() - sourceOffset;
+		}
+		copyElements(destOffset, from, sourceOffset, n);
 	}
 
-	protected IEEE32Array(int count, float[] buffer) {
-		throw new UnsupportedOperationException();
+	/** 
+	 * Construct a new array of the same size as the specified source
+	 * and containing a copy of its content. 
+	 *
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 * 
+	 * @param source primitive array to copy
+	 */
+	protected IEEE32Array(float[] source) {
+		this(source.length);
+		System.arraycopy(source, 0, storage, 0, source.length);
 	}
 
-	/** create an IEEE32Array filled with zeros */
+	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
+		return make(size, (PrimFloatArray) source, sourceOffset, count, destOffset);
+	}
+
+
+	//////////////////////////////////////////////
+	// Static Factory Methods
+	
+	/** 
+	 * Return a new IEEE32Array of the specified size suitable for
+	 * holding IEEE32 values, initially filled with zeros.
+	 *  
+	 * @param count number of elements this will be able to hold
+	 */
 	public static IEEE32Array make(int count) {
 		return new IEEE32Array(count);
 	}
 
 	/** create an IEEE32Array filled with the indicated data in 'from' */
 	public static IEEE32Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		IEEE32Array array = new IEEE32Array(size);
-		array.addData(destOffset, (PrimArithmeticArray) from, sourceOffset, count);
-		return array;
+		return new IEEE32Array(size, from, sourceOffset, count, destOffset);
 	}
 
 	public static IEEE32Array make(int size, PrimArray from, int sourceOffset, int count) {
@@ -67,19 +98,15 @@ public class IEEE32Array extends PrimFloatArray {
 	public static IEEE32Array make(int size, PrimArray from) {
 		return make(size, from, 0);
 	}
-
-	//////////////////////////////////////////////
-	// accessing
 	
 	/** create an IEEE32Array filled with the data at 'buffer' */
 	public static IEEE32Array make(float[] buffer) {
-		IEEE32Array array = make(buffer.length);
-		//@todo should we copy data or use it?
-		for (int i = 0; i < buffer.length; i++) {
-			array.storeIEEE32(i, buffer[i]);
-		}
-		return array;
+		return new IEEE32Array(buffer);
 	}
+
+
+	//////////////////////////////////////////////
+	// accessing
 
 	/** Store an actual floating point value */
 	public void storeIEEE32(int index, float value) {
@@ -89,32 +116,14 @@ public class IEEE32Array extends PrimFloatArray {
 	/** Get an actual floating point number */
 	public float iEEE32At(int index) {
 		return storage[index];
-
-		//		INLINE IEEE32 IEEE32Array::iEEE32At (Int32 index){
-		//			/* Get an actual floating point number */
-		//
-		//			return ((IEEE32*)this->storage())[this->rangeCheck (index)];
-		//		}
 	}
 
 	public void storeFloat(int index, double value) {
 		storeIEEE32(index, (float) value);
-
-		//		void IEEE32Array::storeFloat (Int32 index, IEEE64 value){
-		//			/* Store a floating point value */
-		//
-		//			this->storeIEEE32(index, value);
-		//		}
 	}
 
 	public double floatAt(int index) {
 		return (double) iEEE32At(index);
-
-		//		IEEE64 IEEE32Array::floatAt (Int32 index){
-		//			/* Get an actual floating point number */
-		//
-		//			return (IEEE64) this->iEEE32At(index);
-		//		}
 	}
 
 	public void storeValue(int index, Heaper value) {
@@ -122,21 +131,10 @@ public class IEEE32Array extends PrimFloatArray {
 			throw new NullPointerException();
 		}
 		storeIEEE32(index, ((PrimFloatValue) value).asIEEE32());
-
-		//		void IEEE32Array::storeValue (Int32 index, APTR(Heaper) OR(NULL) value){
-		//			if (value == NULL) {
-		//			BLAST(NULL_VALUE);
-		//			}
-		//			this->storeIEEE32(index, CAST(PrimFloatValue,value)->asIEEE32());
-		//		}
 	}
 
 	public Heaper fetchValue(int index) {
 		return IEEE32Value.make(iEEE32At(index));
-
-		//		RPTR(Heaper) OR(NULL) IEEE32Array::fetchValue (Int32 index) {
-		//			return PrimIEEE32::make(this->iEEE32At(index));
-		//		}
 	}
 
 	//	public PrimSpec spec() {
@@ -157,6 +155,10 @@ public class IEEE32Array extends PrimFloatArray {
 	//		//			return 32;
 	//		//		}
 	//	}
+
+
+	//////////////////////////////////////////////
+	// bulk storing
 
 	/** 
 	 * Fill a consequitive range of elements with the supplied value.
@@ -183,30 +185,6 @@ public class IEEE32Array extends PrimFloatArray {
 		for (int i = 0; i < n; i += 1) {
 			storeIEEE32(start + i, f);
 		}
-
-		//		void IEEE32Array::storeAll (APTR(Heaper) value/* = NULL*/, 
-		//						Int32 count/* = -1*/,
-		//						Int32 start/* = Int32Zero*/)
-		//		{
-		//			IEEE64 f;
-		//			Int32 n;
-		//
-		//			n = this->count() - start;
-		//			if (count > n) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
-		//			if (count >= 0) {
-		//			n = count;
-		//			}
-		//			if (value == NULL) {
-		//			f = 0.0;
-		//			} else {
-		//			f = CAST(PrimFloatValue,value)->asIEEE32();
-		//			}
-		//			for (Int32 i = 0; i < n; i += 1) {
-		//			this->storeIEEE32(start + i, f);
-		//			}
-		//		}
 	}
 
 	/** 
@@ -284,25 +262,6 @@ public class IEEE32Array extends PrimFloatArray {
 
 	protected void printElementOn(int index, PrintWriter oo) {
 		oo.print(iEEE32At(index));
-
-		//		void IEEE32Array::printElementOn (Int32 index, ostream& oo)
-		//		{
-		//			oo << this->iEEE32At (index);
-		//		}
-	}
-
-	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		return make(size, (PrimFloatArray) source, sourceOffset, count, destOffset);
-
-		//		RPTR(PrimArray) IEEE32Array::makeNew (Int32 size,
-		//							  APTR(PrimArray) source,
-		//							  Int32 sourceOffset,
-		//							  Int32 count,
-		//							  Int32 destOffset)
-		//		{
-		//			return IEEE32Array::make (size, CAST(PrimFloatArray,source),
-		//						  sourceOffset, count, destOffset);
-		//		}
 	}
 
 	public int count() {

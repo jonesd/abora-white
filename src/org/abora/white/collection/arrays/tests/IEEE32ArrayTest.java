@@ -10,6 +10,8 @@ package org.abora.white.collection.arrays.tests;
 import java.util.Arrays;
 
 import org.abora.white.collection.arrays.IEEE32Array;
+import org.abora.white.collection.arrays.IEEE64Array;
+import org.abora.white.collection.arrays.Int32Array;
 import org.abora.white.collection.arrays.PrimFloatArray;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimFloatValue;
@@ -49,6 +51,15 @@ public class IEEE32ArrayTest extends TestCase {
 			double actualValue = actual.floatAt(i);
 			assertEquals(expectedValue, actualValue, diff);
 		}
+	}
+
+	public void testMakeCount() {
+		IEEE32Array array = IEEE32Array.make(0);
+		assertEquals(0, array.count());
+		
+		array = IEEE32Array.make(1);
+		assertEquals(1, array.count());
+		assertEquals(0.0f, array.iEEE32At(0), DIFF);
 	}
 
 	public void testIEEE32At() {
@@ -301,6 +312,7 @@ public class IEEE32ArrayTest extends TestCase {
 			// expected
 		}
 
+		// Store incompatible type
 		array = makeIEEE32Array12345();
 		try {
 			array.storeAll(IntegerValue.make(9), 1);
@@ -308,7 +320,57 @@ public class IEEE32ArrayTest extends TestCase {
 		} catch (ClassCastException e) {
 			// expected
 		}
+	}
+	
+	public void testStoreMany() {
+		// empty
+		IEEE32Array array = makeIEEE32ArrayEmpty();
+		array.storeMany(0, makeIEEE32ArrayEmpty());
+		assertEquals(makeIEEE32ArrayEmpty(), array, DIFF);
 
+		// simple
+		array = makeIEEE32Array12345();
+		array.storeMany(0, makeIEEE32Array12321());
+		assertEquals(makeIEEE32Array12321(), array, DIFF);
+
+		array = makeIEEE32Array12345();
+		array.storeMany(0, makeIEEE32Array12321());
+		assertEquals(makeIEEE32Array12321(), array, DIFF);
+
+		array = makeIEEE32Array12321();
+		array.storeMany(1, IEEE32Array.make(new float[]{8.8f, 7.7f, 6.6f, 5.5f, 4.4f, 3,3f}), 2, 3);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 5.5f, 4.4f, 2.2f, 1.1f}), array, DIFF);
+
+		// copy different types of array
+		array = makeIEEE32Array12321();
+		array.storeMany(1, IEEE64Array.make(new double[]{8.8, 7.7}));
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 8.8f, 7.7f, 2.2f, 1.1f}), array, DIFF);
+
+		array = makeIEEE32Array12321();
+		try {
+			array.storeMany(1, Int32Array.make(new int[]{8, 7}));
+			fail();
+		} catch (ClassCastException e) {
+			// expected
+		}
+
+		// attempt to copy beyond this extent
+		array = makeIEEE32Array12345();
+		try {
+			array.storeMany(1, makeIEEE32Array12321());
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			//expected
+		}
+
+		// insufficient source elements
+		array = makeIEEE32Array12345();
+		try {
+			array.storeMany(0, makeIEEE32Array12321(), 2, 4);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			//expected
+		}
 	}
 	
 	public void testCopyToBuffer() {
@@ -512,6 +574,14 @@ public class IEEE32ArrayTest extends TestCase {
 		}
 	}
 	
+	public void testIndexOfElements() {
+		IEEE32Array array = makeIEEE32Array12321();
+		IEEE32Array search = IEEE32Array.make(new float[]{1.1f, 2.2f});
+		assertEquals(0, array.indexOfElements(search));
+		
+		//TODO More tests!!!!!!!!!!!!!!!!!!!!!!!!!
+	}
+	
 	public void testAddElements() {
 		IEEE32Array array = makeIEEE32ArrayEmpty();
 		array.addElements(0, makeIEEE32Array12321(), -1, 0);
@@ -649,6 +719,81 @@ public class IEEE32ArrayTest extends TestCase {
 		array1 = makeIEEE32Array12321();
 		array2 = makeIEEE32Array12345();
 		assertEquals(-1, array1.compare(array2, 10));
+	}
+	
+	public void testCopyGrow() {
+		IEEE32Array array = makeIEEE32ArrayEmpty();
+		IEEE32Array copy = (IEEE32Array) array.copyGrow(0);
+		assertEquals(makeIEEE32ArrayEmpty(), copy, DIFF);
+		assertNotSame(array, copy);
+		
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copyGrow(0);
+		assertEquals(makeIEEE32Array12345(), copy, DIFF);
+		assertNotSame(array, copy);
+
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copyGrow(3);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 0.0f, 0.0f, 0.0f}), copy, DIFF);
+		assertNotSame(array, copy);
+	}
+
+	public void testCopy() {
+		// full copy
+		IEEE32Array array = makeIEEE32ArrayEmpty();
+		IEEE32Array copy = (IEEE32Array) array.copy();
+		assertEquals(makeIEEE32ArrayEmpty(), copy, DIFF);
+		assertNotSame(array, copy);
+		
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy();
+		assertEquals(makeIEEE32Array12345(), copy, DIFF);
+		assertEquals(makeIEEE32Array12345(), array, DIFF);
+		assertNotSame(array, copy);
+		
+		// partial copy
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy(2, 1);
+		assertEquals(IEEE32Array.make(new float[]{2.2f, 3.3f}), copy, DIFF);
+		assertNotSame(array, copy);
+
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy(2, 0);
+		assertEquals(IEEE32Array.make(new float[]{1.1f, 2.2f}), copy, DIFF);
+
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy(2, 3);
+		assertEquals(IEEE32Array.make(new float[]{4.4f, 5.5f}), copy, DIFF);
+
+		// partial copy with too large count
+		array = makeIEEE32Array12345();
+		try {
+			array.copy(5, 1);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+
+		// partial copy with trailing space
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy(2, 1);
+		assertEquals(IEEE32Array.make(new float[]{2.2f, 3.3f}), copy, DIFF);
+
+		// partial copy with leading space
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy(2, 1, 1);
+		assertEquals(IEEE32Array.make(new float[]{0.0f, 2.2f, 3.3f}), copy, DIFF);
+
+		// partial copy with leading space
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy(2, 1, 0, 1);
+		assertEquals(IEEE32Array.make(new float[]{2.2f, 3.3f, 0.0f}), copy, DIFF);
+
+		// partial copy with leading and trailing space
+		array = makeIEEE32Array12345();
+		copy = (IEEE32Array) array.copy(2, 1, 2, 1);
+		assertEquals(IEEE32Array.make(new float[]{0.0f, 0.0f, 2.2f, 3.3f, 0.0f}), copy, DIFF);
+		
 	}
 }
 

@@ -18,19 +18,29 @@ import org.abora.white.xpp.basic.Heaper;
 public class Int32Array extends PrimIntArray {
 	private int[] storage;
 
-	//	Int32Array (Int32 count, TCSJ);
-
-	protected Int32Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+	protected Int32Array (int count) {
+		super();
+		storage = new int[count];
 	}
 
-	protected Int32Array(int count, int[] buffer) {
-		throw new UnsupportedOperationException();
+	protected Int32Array(PrimArray from, int sourceOffset, int count, int destOffset) {
+		int n = count;
+		if (count == -1) {
+			n = from.count() - sourceOffset;
+		}
+		//TODO try and allocate storage from one place
+		storage = new int[n];
+		copyElements(destOffset, from, sourceOffset, n);
+	}
+
+	protected Int32Array(int[] buffer) {
+		this(buffer.length);
+		System.arraycopy(buffer, 0, storage, 0, buffer.length);
 	}
 
 	/** create an Int32Array filled with zeros */
 	public static Int32Array make(int count) {
-		throw new UnsupportedOperationException();
+		return new Int32Array(count);
 	}
 
 	/** create an Int32Array filled with the indicated data in 'from' */
@@ -51,10 +61,14 @@ public class Int32Array extends PrimIntArray {
 	}
 
 	/** create an Int32Array filled with the data at 'buffer' */
-	public static Int32Array make(int count, int[] buffer) {
-		throw new UnsupportedOperationException();
+	public static Int32Array make(int[] buffer) {
+		return new Int32Array(buffer);
 	}
 
+
+	//////////////////////////////////////////////
+	// accessing
+	
 	/** Store a 32 bit signed integer value */
 	public void storeInt(int index, int value) {
 		throw new UnsupportedOperationException();
@@ -62,7 +76,7 @@ public class Int32Array extends PrimIntArray {
 
 	/** Get a 32 bit signed actual integer value */
 	public int intAt(int index) {
-		throw new UnsupportedOperationException();
+		return storage[index];
 	}
 
 	public void storeInteger(int index, IntegerValue value) {
@@ -74,11 +88,14 @@ public class Int32Array extends PrimIntArray {
 	}
 
 	public void storeValue(int index, Heaper value) {
-		throw new UnsupportedOperationException();
+		if (value == null) {
+			throw new NullPointerException();
+		}
+		storeInt(index, ((IntegerValue) value).asInt32());
 	}
 
 	public Heaper fetchValue(int index) {
-		throw new UnsupportedOperationException();
+		return IntegerValue.make(intAt(index));
 	}
 
 	//	  public PrimSpec spec() {

@@ -39,5 +39,9 @@ public class IntegerValue extends PrimIntValue {
 	public int intValue() {
 		return value;
 	}
+	
+	public int asInt32() {
+		return value;
+	}
 
 }

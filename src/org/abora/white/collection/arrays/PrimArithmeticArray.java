@@ -227,14 +227,6 @@ public abstract class PrimArithmeticArray extends PrimArray {
 			return false;
 		}
 		return compareData(0, (PrimArithmeticArray) other, 0, count()) == 0;
-		//		BooleanVar PrimDataArray::contentsEqual (PrimArray * other){
-		//			if (this->count() != other->count()) {
-		//			return FALSE;
-		//			}
-		//			return this->compareData (0, CAST(PrimDataArray,other),
-		//						  0, this->count())
-		//					== 0;
-		//		}
 	}
 
 	public boolean elementsEqual(int here, PrimArray other, int there, int count) {
@@ -246,23 +238,6 @@ public abstract class PrimArithmeticArray extends PrimArray {
 			n = count;
 		}
 		return compareData(here, (PrimArithmeticArray) other, there, n) == 0;
-		//		BooleanVar PrimDataArray::elementsEqual (Int32 here,
-		//							 APTR(PrimArray) other,
-		//							 Int32 there/* = Int32Zero*/,
-		//							 Int32 count/* = -1*/)
-		//		{
-		//			Int32 n;
-		//
-		//			n = min(other->count() - there, this->count() - here);
-		//			if (count > n) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
-		//			if (count >= 0) {
-		//			n = count;
-		//			}
-		//			return this->compareData (here, CAST(PrimDataArray,other),
-		//						  there, n) == 0;
-		//		}
 	}
 
 	/**
