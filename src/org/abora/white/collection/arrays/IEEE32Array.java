@@ -127,7 +127,12 @@ public class IEEE32Array extends PrimFloatArray {
 		storage[index] = value;
 	}
 
-	/** Get an actual floating point number */
+	/**
+	 * Return the floating point number at the specified <code>index</code>.
+	 * 
+	 * @param index 0 based index of <code>this</code> to read the number from.
+	 * @return the read floating point number
+	 */
 	public float iEEE32At(int index) {
 		return storage[index];
 	}

@@ -85,17 +85,12 @@ public class Int8Array extends PrimIntArray {
 	// Accessing
 
 	/** Store an 8 bit signed integer value */
-	public void storeInt(int index, int value) {
-		//TODO probably need to do a hold() check here
-		storage[index] = (byte)value;
-//		INLINE void Int32Array::storeInt (Int32 index, Int32 value){
-//			/* Store a 32 bit signed integer value */
-//			((Int32*)this->storage())[this->rangeCheck (index)] = value;
-//		}
+	public void storeInt8(int index, byte value) {
+		storage[index] = value;
 	}
 
 	/** Get an 8 bit signed actual integer value */
-	public int intAt(int index) {
+	public byte int8At(int index) {
 		return storage[index];
 	}
 
@@ -103,7 +98,7 @@ public class Int8Array extends PrimIntArray {
 		if (!((PrimIntegerSpec) spec()).canHold(value)) {
 			throw new IllegalArgumentException("ValueOutOfRange");
 		}
-		storeInt(index, value.asInt32()); //TODO was asLong() - why?
+		storeInt8(index, value.asInt8()); //TODO was asLong() - why?
 		//		void Int32Array::storeInteger (Int32 index, IntegerVar value){
 		//			/* Store an integer value */
 		//
@@ -115,7 +110,7 @@ public class Int8Array extends PrimIntArray {
 	}
 
 	public IntegerValue integerAt(int index) {
-		return IntegerValue.make(intAt(index));
+		return IntegerValue.make(int8At(index));
 		//		IntegerVar Int32Array::integerAt (Int32 index){
 		//			/* Get an actual integer value */
 		//			IntegerVar rv = this->intAt(index);
@@ -127,11 +122,12 @@ public class Int8Array extends PrimIntArray {
 		if (value == null) {
 			throw new NullPointerException();
 		}
-		storeInt(index, ((IntegerValue) value).asInt32());
+		IntegerValue v = (IntegerValue) value;
+		storeInteger(index, v);
 	}
 
 	public Heaper fetchValue(int index) {
-		return IntegerValue.make(intAt(index));
+		return IntegerValue.make(int8At(index));
 		//		RPTR(Heaper) OR(NULL) Int32Array::fetchValue (Int32 index) {
 		//			return PrimIntValue::make(this->intAt(index));
 		//		}
@@ -178,7 +174,7 @@ public class Int8Array extends PrimIntArray {
 		System.arraycopy(storage, start, buffer, 0, n);
 		//		void Int32Array::copyToBuffer (void * buffer,
 		//						   Int32 size,
-		//						   Int32 count /*= -1*/,
+		//						   Int+32 count /*= -1*/,
 		//						   Int32 start /* = Int32Zero*/)
 		//		{
 		//			Int32 bufSize;
@@ -205,7 +201,7 @@ public class Int8Array extends PrimIntArray {
 		if (other instanceof Int8Array) {
 			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
-				int cmp = intAt(i + start) - o.intAt(i + otherStart);
+				int cmp = int8At(i + start) - o.int8At(i + otherStart);
 				if (cmp != 0) {
 					return cmp < 0 ? -1 : 1;
 				}
@@ -240,7 +236,7 @@ public class Int8Array extends PrimIntArray {
 
 	protected int signOfNonZeroAfter(int index) {
 		for (int i = index; i < count(); i += 1) {
-			int val = intAt(i);
+			int val = int8At(i);
 			if (val < 0) {
 				return -1;
 			}
@@ -271,7 +267,7 @@ public class Int8Array extends PrimIntArray {
 		if (other instanceof Int8Array) {
 			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
-				storeInt(i + start, intAt(i + start) + o.intAt(i + otherStart));
+				storeInt8(i + start, (byte)(int8At(i + start) + o.int8At(i + otherStart)));
 			}
 		} else {
 			super.addData(start, other, otherStart, count);
@@ -300,7 +296,7 @@ public class Int8Array extends PrimIntArray {
 		if (other instanceof Int8Array) {
 			Int8Array o = (Int8Array) other;
 			for (int i = 0; i < count; i += 1) {
-				storeInt(i + start, intAt(i + start) - o.intAt(i + otherStart));
+				storeInt8(i + start, (byte)(int8At(i + start) - o.int8At(i + otherStart)));
 			}
 		} else {
 			super.subtractData(start, other, otherStart, count);
@@ -330,6 +326,6 @@ public class Int8Array extends PrimIntArray {
 	// Printing
 
 	protected void printElementOn(int index, PrintWriter oo) {
-		oo.print(intAt(index));
+		oo.print(int8At(index));
 	}
 }

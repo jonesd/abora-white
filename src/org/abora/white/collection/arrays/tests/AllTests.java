@@ -21,6 +21,7 @@ public class AllTests {
 		//$JUnit-BEGIN$
 		suite.addTest(new TestSuite(IEEE32ArrayTest.class));
 		suite.addTest(new TestSuite(IEEE64ArrayTest.class));
+		suite.addTest(new TestSuite(Int8ArrayTest.class));
 		//$JUnit-END$
 		return suite;
 	}

@@ -184,7 +184,7 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 
 		if (nth >= 0) {
 			for (int idx = start; idx < count(); idx += 1) {
-				if (integerAt(idx) == value) {
+				if (integerAt(idx).isEqual(value)) {
 					nth--;
 					if (nth == 0) {
 						return idx;
@@ -193,7 +193,7 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 			}
 		} else {
 			for (int idx = start; idx >= 0; idx -= 1) {
-				if (integerAt(idx) == value) {
+				if (integerAt(idx).isEqual(value)) {
 					nth++;
 					if (nth == 0) {
 						return idx;
@@ -259,6 +259,8 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 	}
 
 	public int indexPastInteger(IntegerValue value, int start, int nth) {
+		//TODO compare contents of this method with PrimFloatArray
+		
 		if (count() == 0 || nth == 0) {
 			return -1;
 		}
@@ -276,7 +278,7 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		if (nth >= 0) {
 			n = nth;
 			do {
-				if (value != integerAt(result)) {
+				if (!value.isEqual(integerAt(result))) {
 					n = n - 1;
 					if (n == 0) {
 						return result;
@@ -288,14 +290,14 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		} else {
 			n = nth;
 			do {
-				if (value != integerAt(result)) {
+				if (!value.isEqual(integerAt(result))) {
 					n = n + 1;
 					if (n == 0) {
 						return result;
 					}
 				}
 				result = result - 1;
-			} while (result > 0);
+			} while (result >= 0);
 			return -1;
 		}
 		//		Int32 PrimIntegerArray::indexPastInteger (IntegerVar value, 

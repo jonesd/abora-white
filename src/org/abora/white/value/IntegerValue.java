@@ -53,7 +53,7 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	public boolean isEqual(Heaper other) {
 		if (other instanceof IntegerValue) {
 			IntegerValue o = (IntegerValue) other;
-			return value == o.intValue();
+			return value == o.value;
 		} else {
 			//TODO what about floats/etc?
 			return false;
@@ -88,6 +88,20 @@ public class IntegerValue extends PrimIntValue implements Comparable {
 	public long longValue() {
 		//TODO only here to fit in with BigInteger. Do we need it?
 		return asInt64();
+	}
+
+	/**
+	 * The value as a 8 bit signed integer
+	 */
+	public byte asInt8() {
+		return (byte)value;
+	}
+
+	/**
+	 * The value as a 16 bit signed integer
+	 */
+	public short asInt16() {
+		return (short)value;
 	}
 
 	/**

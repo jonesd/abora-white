@@ -26,6 +26,16 @@ public abstract class Heaper {
 
 	//////////////////////////////////////////////
 	// Comparison and Hashing
+
+	//TODO review whether we should be  connecting into java
+	public boolean equals(Object other) {
+		if (other instanceof Heaper) {
+			Heaper o = (Heaper) other;
+			return isEqual(o);
+		} else {
+			return super.equals(other);
+		}
+	}
 	
 	/**
 	 * Return true if the two objects are equal.
