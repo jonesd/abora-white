@@ -24,7 +24,7 @@ import org.abora.white.xpp.basic.Heaper;
  * pair which is being used for a particular purpose.  However, sometimes it just seems like
  * too much trouble.  By using Pairs, we import the sins of Lisp.  At least we don''t have
  * RPLACA and RPLACD.  Unlike Lisp's cons cell's "car" and "cdr", we call our two parts the
- * "left" part and the "right" part.  "pair(a,b)->left()" yields a and "pair(a,b)->right()"
+ * "left" part and the "right" part.  "<code>pair(a,b)->left()</code>" yields a and "<code>pair(a,b)->right()</code>"
  * yields b.
  * <p>
  * Give us feedback: Should Pairs be removed?  Do you know of any justification for them
@@ -136,18 +136,18 @@ public class Pair extends Heaper {
 		*/
 	}
 
-//	/**
-//	 * Create a new pair. Either may be NULL in order to support broken old code.
-//	 */
-//	public static Pair pairWithNulls(Heaper left, Heaper right) {
-//		return new Pair(left, right);
-//		/*
-//		udanax-top.st:31328:Pair class methodsFor: 'obsolete: creation'!
-//		{Pair} pairWithNulls: left {Heaper} with: right {Heaper} 
-//			"Create a new pair. Either may be NULL in order to support broken old code."
-//			^self create: left with: right!
-//		*/
-//	}
+	/**
+	 * Create a new pair. Either may be NULL in order to support broken old code.
+	 */
+	public static Pair pairWithNulls(Heaper left, Heaper right) {
+		return new Pair(left, right);
+		/*
+		udanax-top.st:31328:Pair class methodsFor: 'obsolete: creation'!
+		{Pair} pairWithNulls: left {Heaper} with: right {Heaper} 
+			"Create a new pair. Either may be NULL in order to support broken old code."
+			^self create: left with: right!
+		*/
+	}
 
 	/////////////////////////////////////////////
 	// Accessing
@@ -272,13 +272,13 @@ public class Pair extends Heaper {
 			if (leftPart == null) {
 				res = pair.fetchLeft() == null;
 			} else {
-				res = leftPart.isEqual(pair.left());
+				res = leftPart.isEqual(pair.fetchLeft());
 			}
 			if (res) {
 				if (rightPart == null) {
 					return pair.fetchRight() == null;
 				} else {
-					return rightPart.isEqual(pair.right());
+					return rightPart.isEqual(pair.fetchRight());
 				}
 			} else {
 				return false;

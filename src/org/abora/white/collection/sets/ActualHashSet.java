@@ -128,6 +128,61 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
+	protected ActualHashSet(Rcvr receiver) {
+		super(receiver);
+		myTally = receiver.receiveInt32();
+		receiveHashSet(receiver);
+		/*
+		udanax-top.st:46744:ActualHashSet methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			myTally _ receiver receiveInt32.
+			self receiveHashSet: receiver.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static MuSet make() {
+		//TODO totally overloading make: rename to empty or something simial?		
+		return new ActualHashSet(0, (SharedPtrArray)(SharedPtrArray.make(7)));
+		/*
+		udanax-top.st:46788:ActualHashSet class methodsFor: 'pseudo constructors'!
+		make
+			^ActualHashSet create: Int32Zero with: (SharedPtrArray make: 7)!
+		*/
+	}
+
+	public static MuSet make(Heaper something) {
+		//TODO totally overloading make: rename to with or something similar?
+		MuSet set = ActualHashSet.make(IntegerValue.one());
+		set.store(something);
+		return set;
+		/*
+		udanax-top.st:46791:ActualHashSet class methodsFor: 'pseudo constructors'!
+		make.Heaper: something {Heaper}
+			
+			| set {ActualHashSet} |
+			set _ ActualHashSet make.IntegerVar: 1.
+			set store: something.
+			^ set!
+		*/
+	}
+
+	public static MuSet make(IntegerValue someSize) {
+		//TODO totally overloading make: rename to capacity or something more Javaish?
+		//TODO whats the point of an IntegerValue param if arrays only handle 32bit size?
+		int capacity = LPPrimeSizeProvider.make().uInt32PrimeAfter(someSize.asInt32());
+		return new ActualHashSet(0, (SharedPtrArray)(SharedPtrArray.make(capacity)));
+		/*
+		udanax-top.st:46798:ActualHashSet class methodsFor: 'pseudo constructors'!
+		make.IntegerVar: someSize {IntegerVar}
+			^ActualHashSet create: Int32Zero with: (SharedPtrArray make: (LPPrimeSizeProvider make uInt32PrimeAfter: someSize DOTasLong))!
+		*/
+	}
+
+
 	/////////////////////////////////////////////
 	// Testing
 
@@ -151,6 +206,9 @@ public class ActualHashSet extends HashSet {
 			^hashResult!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Accessing
 
 	public IntegerValue count() {
 		return IntegerValue.make(myTally);
@@ -184,6 +242,9 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Creation
+
 	public ScruSet copy() {
 		return new ActualHashSet(myTally, myHashValues, myHashEntries);
 		/*
@@ -203,6 +264,9 @@ public class ActualHashSet extends HashSet {
 			super destruct!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Enumerating
 
 	public Stepper stepper() {
 		//		/* >>> smalltalkOnly */
@@ -238,6 +302,9 @@ public class ActualHashSet extends HashSet {
 			^NULL!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Operations
 
 	/**
 	 * union equivalent
@@ -331,6 +398,9 @@ public class ActualHashSet extends HashSet {
 					myTally _ myTally - 1]]!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Adding-Removing
 
 	public void introduce(Heaper anElement) {
 		//		/* >>> smalltalkOnly */
@@ -430,6 +500,9 @@ public class ActualHashSet extends HashSet {
 				myTally _ myTally - 1]!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Housekeeping
 
 	/**
 	 * If my contents are shared, and I'm about to change them, make a copy of them.
@@ -543,6 +616,9 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Hash Resolution
+
 	/**
 	 * Starting at the item's preferred location and iterating (not recurring!!) around the set's
 	 * storage while the slots we're examining are occupied...
@@ -550,7 +626,7 @@ public class ActualHashSet extends HashSet {
 	 * if the current occupant is closer to it's preferred location, return a miss.
 	 * If we've gone all the way around, return a miss.
 	 */
-	public int hashFind(Heaper item) {
+	private int hashFind(Heaper item) {
 		int current;
 		Heaper currentEntry;
 		int currentHome;
@@ -619,7 +695,7 @@ public class ActualHashSet extends HashSet {
 	 * Iteratively (not recursively!!) move other items up until one is NULL or happier where it
 	 * is.
 	 */
-	public void hashRemove(int from) {
+	private void hashRemove(int from) {
 		int next;
 		int nextValue;
 		Heaper nextEntry;
@@ -663,7 +739,7 @@ public class ActualHashSet extends HashSet {
 	 * with the 'new' one.  Bail out if the current occupant IS the new one.
 	 * Store the currently 'new' item.
 	 */
-	public void hashStore(Heaper item, Int32Array values, PtrArray entries) {
+	private void hashStore(Heaper item, Int32Array values, PtrArray entries) {
 		int tSize;
 		int current;
 		int itemValue;
@@ -765,10 +841,13 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Printing
+
 	/**
 	 * This method is for regression testing.
 	 */
-	public void printInternals(PrintWriter oo) {
+	protected void printInternals(PrintWriter oo) {
 		int tValue;
 		int tSize = myHashValues.count();
 		oo.print("tally == ");
@@ -878,19 +957,6 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
-	public ActualHashSet(Rcvr receiver) {
-		super(receiver);
-		myTally = receiver.receiveInt32();
-		receiveHashSet(receiver);
-		/*
-		udanax-top.st:46744:ActualHashSet methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			myTally _ receiver receiveInt32.
-			self receiveHashSet: receiver.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		xmtr.sendInt32(myTally);
@@ -954,39 +1020,6 @@ public class ActualHashSet extends HashSet {
 	//			StepperCount _ NewSetCount _ SetKillCount _ 0.] smalltalkOnly!
 	//		*/
 	//	}
-
-	public static MuSet make() {
-		return new ActualHashSet(0, (SharedPtrArray)(SharedPtrArray.make(7)));
-		/*
-		udanax-top.st:46788:ActualHashSet class methodsFor: 'pseudo constructors'!
-		make
-			^ActualHashSet create: Int32Zero with: (SharedPtrArray make: 7)!
-		*/
-	}
-
-	public static MuSet make(Heaper something) {
-		MuSet set = ActualHashSet.make(IntegerValue.one());
-		set.store(something);
-		return set;
-		/*
-		udanax-top.st:46791:ActualHashSet class methodsFor: 'pseudo constructors'!
-		make.Heaper: something {Heaper}
-			
-			| set {ActualHashSet} |
-			set _ ActualHashSet make.IntegerVar: 1.
-			set store: something.
-			^ set!
-		*/
-	}
-
-	public static MuSet make(IntegerValue someSize) {
-		return new ActualHashSet(0, (SharedPtrArray)(SharedPtrArray.make((LPPrimeSizeProvider.make().uInt32PrimeAfter(someSize.asInt32())))));
-		/*
-		udanax-top.st:46798:ActualHashSet class methodsFor: 'pseudo constructors'!
-		make.IntegerVar: someSize {IntegerVar}
-			^ActualHashSet create: Int32Zero with: (SharedPtrArray make: (LPPrimeSizeProvider make uInt32PrimeAfter: someSize DOTasLong))!
-		*/
-	}
 
 	//public static String arrayStats(Array array) {
 	//Object oo;

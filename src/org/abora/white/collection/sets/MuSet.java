@@ -71,6 +71,63 @@ public abstract class MuSet extends ScruSet {
 	}
 
 	/////////////////////////////////////////////
+	// Static Factory Methods
+
+	public static MuSet fromStepper(Stepper stepper) {
+		MuSet result = MuSet.make();
+		try {
+			Heaper element;
+			while ((element = (Heaper) stepper.fetch()) != null) {
+				result.store(element);
+				stepper.step();
+			}
+		} finally {
+			stepper.destroy();
+		}
+		return result;
+		/*
+		udanax-top.st:45949:MuSet class methodsFor: 'pseudo constructors'!
+		{MuSet} fromStepper: stepper {Stepper}
+			| result {MuSet} |
+			result _ MuSet make.
+			stepper forEach: [ :element {Heaper} |
+				result store: element].
+			^result!
+		*/
+	}
+
+	public static MuSet make() {
+		return ActualHashSet.make();
+		/*
+		udanax-top.st:45956:MuSet class methodsFor: 'pseudo constructors'!
+		{MuSet} make 
+			^ActualHashSet make!
+		*/
+	}
+
+	public static MuSet make(Heaper item) {
+		return ActualHashSet.make(item);
+		/*
+		udanax-top.st:45959:MuSet class methodsFor: 'pseudo constructors'!
+		{MuSet} make.Heaper: item {Heaper}
+			^ActualHashSet make.Heaper: item!
+		*/
+	}
+
+	/**
+	 * someSize is a non-semantic hint about how big the set might get.
+	 */
+	public static MuSet make(IntegerValue someSize) {
+		return ActualHashSet.make(someSize);
+		/*
+		udanax-top.st:45963:MuSet class methodsFor: 'pseudo constructors'!
+		{MuSet} make.IntegerVar: someSize {IntegerVar}
+			"someSize is a non-semantic hint about how big the set might get."
+			^ActualHashSet make.IntegerVar: someSize!
+		*/
+	}
+
+	/////////////////////////////////////////////
 	// Accessing
 
 	public abstract boolean hasMember(Heaper someone);
@@ -86,6 +143,9 @@ public abstract class MuSet extends ScruSet {
 	{BooleanVar} isEmpty
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Operations
 
 	/**
 	 * Sort of intersect.  Wipe from myself all elements that I don't have in common with other.
@@ -158,6 +218,9 @@ public abstract class MuSet extends ScruSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Adding-Removing
+
 	/**
 	 * Add anElement to my members, but only if it isn't already a member.
 	 * If it is already a member, BLAST
@@ -209,12 +272,18 @@ public abstract class MuSet extends ScruSet {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Creation
+
 	public abstract ScruSet copy();
 	/*
 	udanax-top.st:45893:MuSet methodsFor: 'creation'!
 	{ScruSet} copy
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Conversion
 
 	public ImmuSet asImmuSet() {
 		if (isEmpty()) {
@@ -242,6 +311,9 @@ public abstract class MuSet extends ScruSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Enumerating
+
 	public abstract IntegerValue count();
 	/*
 	udanax-top.st:45908:MuSet methodsFor: 'enumerating'!
@@ -256,12 +328,15 @@ public abstract class MuSet extends ScruSet {
 		self subclassResponsibility!
 	*/
 
-	public abstract Stepper immuStepper();
+	protected abstract Stepper immuStepper();
 	/*
 	udanax-top.st:45916:MuSet methodsFor: 'private: enumerating'!
 	{Stepper} immuStepper
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Comparing and Hashing
 
 	public int actualHashForEqual() {
 		return System.identityHashCode(this);
@@ -304,73 +379,20 @@ public abstract class MuSet extends ScruSet {
 	//		*/
 	//	}
 
-	public static MuSet fromStepper(Stepper stepper) {
-		MuSet result = MuSet.make();
-		try {
-			Heaper element;
-			while ((element = (Heaper) stepper.fetch()) != null) {
-				result.store(element);
-				stepper.step();
-			}
-		} finally {
-			stepper.destroy();
-		}
-		return result;
-		/*
-		udanax-top.st:45949:MuSet class methodsFor: 'pseudo constructors'!
-		{MuSet} fromStepper: stepper {Stepper}
-			| result {MuSet} |
-			result _ MuSet make.
-			stepper forEach: [ :element {Heaper} |
-				result store: element].
-			^result!
-		*/
-	}
 
-	public static MuSet make() {
-		return ActualHashSet.make();
-		/*
-		udanax-top.st:45956:MuSet class methodsFor: 'pseudo constructors'!
-		{MuSet} make 
-			^ActualHashSet make!
-		*/
-	}
-
-	public static MuSet make(Heaper item) {
-		return ActualHashSet.make(item);
-		/*
-		udanax-top.st:45959:MuSet class methodsFor: 'pseudo constructors'!
-		{MuSet} make.Heaper: item {Heaper}
-			^ActualHashSet make.Heaper: item!
-		*/
-	}
-
-	/**
-	 * someSize is a non-semantic hint about how big the set might get.
-	 */
-	public static MuSet make(IntegerValue someSize) {
-		return ActualHashSet.make(someSize);
-		/*
-		udanax-top.st:45963:MuSet class methodsFor: 'pseudo constructors'!
-		{MuSet} make.IntegerVar: someSize {IntegerVar}
-			"someSize is a non-semantic hint about how big the set might get."
-			^ActualHashSet make.IntegerVar: someSize!
-		*/
-	}
-
-	public static MuSet make(Object something) {
-		if (something instanceof Integer) {
-			return make(something);
-		}
-		return make(((XnRegion) something));
-		/*
-		udanax-top.st:45969:MuSet class methodsFor: 'smalltalk: defaults'!
-		make: something
-			(something isKindOf: Integer) ifTrue:
-				[^self make.IntegerVar: something].
-			^self make.Region: (something cast: XnRegion)!
-		*/
-	}
+//	public static MuSet make(Object something) {
+//		if (something instanceof Integer) {
+//			return make(something);
+//		}
+//		return make(((XnRegion) something));
+//		/*
+//		udanax-top.st:45969:MuSet class methodsFor: 'smalltalk: defaults'!
+//		make: something
+//			(something isKindOf: Integer) ifTrue:
+//				[^self make.IntegerVar: something].
+//			^self make.Region: (something cast: XnRegion)!
+//		*/
+//	}
 
 	//	public static void initTimeNonInherited() {
 	//		REQUIRES(ActualHashSet.getCategory());

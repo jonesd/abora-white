@@ -24,18 +24,23 @@ import org.abora.white.xpp.basic.Heaper;
  * are not-necessarily-discrete collections of positions, and are documented in the space
  * module.  Sets and Tables are both discrete and finite, and similar in many ways.  Both
  * originate in a three-way type distinction between:
- * ScruX  --  The protocol for examining one.  I.e., it is *Scru*table
- * ImmuX  --  The contract guarantees that the set or table you''re looking at won''t change
- * (though the things it contains may change)
- * MuX  --  Additional protocol for changing it.
+ * <ul>
+ * <li>ScruX  --  The protocol for examining one.  I.e., it is *Scru*table</li>
+ * <li>ImmuX  --  The contract guarantees that the set or table you''re looking at won't change
+ * (though the things it contains may change)</li>
+ * <li>MuX  --  Additional protocol for changing it.</li>
+ * </ul>
  * Concrete classes may be a subclass of any of the above.  It makes sense to have a concrete
  * subclass of ScruX which isn''t a subclass of either MuX or ImmuX when, for example, it
  * represents a tracking, filtered view of some other set which is itself changing.  All
  * kinds of collection can be iterated over when appropriate using Steppers--our basic
  * iteration abstraction (see Stepper).
- * Immu''s are sort of like Stamps -- they represent a particular state a colection can have.
- * Mu''s are sort of like Berts -- they represent a continuing collection identity which can
+ * <p>
+ * Immu's are sort of like Stamps -- they represent a particular state a colection can have.
+ * <p>
+ * Mu's are sort of like Berts -- they represent a continuing collection identity which can
  * change its current state.
+ * <p>
  * Sets are pure collections--their contents are just a set of Heapers.  Sets (as opposed to
  * tables) do not provide any organization of these contents.
  */
@@ -103,13 +108,17 @@ public abstract class ScruSet extends Heaper {
 		*/
 	}
 
+
+	/////////////////////////////////////////////
+	// Testing
+	
 	/**
 	 * Returns whether the two ScruSets have exactly the same set of elements at the moment.
 	 * 'a->contentsEqual(b)' is equivalent to
 	 * 'a->asImmuSet()->isEqual(b->asImmuSet())'.
 	 */
 	public boolean contentsEqual(ScruSet other) {
-		if (other.count() != count()) {
+		if (!other.count().isEqual(count())) {
 			return false;
 		}
 		Stepper stepper = other.stepper();
@@ -268,6 +277,9 @@ public abstract class ScruSet extends Heaper {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Creation
+
 	/**
 	 * A new one whose initial state is my current state, but that doesn't track
 	 * changes. Note that there is no implication that these can be 'destroy'ed
@@ -283,16 +295,16 @@ public abstract class ScruSet extends Heaper {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Conversion
+
 	/**
 	 * The elements in the set in an array, in some random order
 	 */
 	public PtrArray asArray() {
-		PtrArray result;
-		Stepper mine;
-		//TODOthingToDo();
-		/* make this faster */
-		result = PtrArray.make(count().asInt32());
-		mine = stepper();
+		//TODO thingToDo(); /* make this faster */
+		PtrArray result = PtrArray.make(count().asInt32());
+		Stepper mine = stepper();
 		for (int index = 0; index < result.count(); index++) {
 			result.store(index, mine.fetch());
 			mine.step();
@@ -349,6 +361,9 @@ public abstract class ScruSet extends Heaper {
 		on the current Stamp."
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Printing
 
 	public void printOn(PrintWriter oo) {
 		oo.print(getClass().getName());
@@ -443,6 +458,9 @@ public abstract class ScruSet extends Heaper {
 			oo << close!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Enumerating
 
 	/**
 	 * How many elements are currently in the set.  Being a set, if the same element is put into
@@ -564,6 +582,9 @@ public abstract class ScruSet extends Heaper {
 	//	self stepper forEach: aBlock!
 	//*/
 	//}
+
+	/////////////////////////////////////////////
+	// Exceptions
 
 	public static void problems() {
 		throw new UnsupportedOperationException();

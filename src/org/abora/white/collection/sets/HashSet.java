@@ -22,12 +22,15 @@ import org.abora.white.xpp.basic.Heaper;
  * Heapers.  It uses the hashForEqual member function to get a hash value for the items
  * contained in the set.  The set establishes the equality of objects in the set through the
  * isEqual: function.
+ * <p>
  * The implemention of HashSet is straightforward.  There are primitive tables used to store
  * pointers to the stored items (myHashEntries), and their corresponding hash values
  * (myHashValues).  The HashSet also maintain a current tally of the number of items in the
- * set.
+ * set
+ * <p>.
  * definition: preferred location - the location calculated from item hashForEqual mod
  * tableSize.
+ * <p>
  * The search routine first calculates the preferred location.  This is used as the first
  * location in the myHashEntries table to test for the presence of the item, and the search
  * proceeds forward (in a linear probe) from there.  If there is no object at that position,
@@ -42,10 +45,13 @@ import org.abora.white.xpp.basic.Heaper;
  * and the advantage becomes pronounced as the set fills up.  Ordered hash sets with linear
  * probe beat ordinary hash sets with secondary clustering on misses (the big time eater),
  * yet they preserve linear probe''s easy deletion.)
+ * <p>
  * On insertion to the set, the hash and probe sequence is essentially the same as the
  * search.  The main exception is that on a hash collision, the item bumps down any item that
  * is no farther than its own preferred position.
+ * <p>
  * An example is perhaps in order:
+ * <p>
  * the set contains items a, b, and c in table locations 3, 4, and 5.  Assume that a has
  * location 2 as its preferred location, while b and c both have location 4 as their
  * preferred location.  Now, if we attempt to add an item d to the table, and item d were to
@@ -57,11 +63,13 @@ import org.abora.white.xpp.basic.Heaper;
  * so it pushes it out of location 5, replacing it there.  Item c will end up in location 6.
  * This probe function minimizes the individual displacement of hash misses, while keeping
  * the most items in their preferred locations.
+ * <p>
  * Note that, though the choice of which item to bump is obvious when the distances from home
  * are different, when they are equal we could have given preference to either the new or the
  * old item.  We chose to put the new item closer to its preferred location, on the
  * assumption that things entered recently are more likely to be looked up than things
  * entered long ago.
+ * <p>
  * This algorithm was derived from a short discussion with Michael McClary (probably
  * completely missing his intended design - all mistakes are mine -- heh).
  * (Unfortunately, I wasn''t clear in the discussion.  Since hugh was unavailable when I
@@ -133,6 +141,41 @@ public abstract class HashSet extends MuSet {
 	}
 
 	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static MuSet make() {
+		return ActualHashSet.make();
+		/*
+		udanax-top.st:46366:HashSet class methodsFor: 'pseudo constructors'!
+		make
+			^ActualHashSet make!
+		*/
+	}
+
+	public static MuSet make(Heaper something) {
+		MuSet set = ActualHashSet.make(IntegerValue.one());
+		set.store(something);
+		return set;
+		/*
+		udanax-top.st:46369:HashSet class methodsFor: 'pseudo constructors'!
+		make.Heaper: something {Heaper}
+			| set {ActualHashSet} |
+			set _ ActualHashSet make.IntegerVar: 1.
+			set store: something.
+			^ set!
+		*/
+	}
+
+	public static MuSet make(IntegerValue someSize) {
+		return ActualHashSet.make(someSize);
+		/*
+		udanax-top.st:46375:HashSet class methodsFor: 'pseudo constructors'!
+		make.IntegerVar: someSize {IntegerVar}
+			^ ActualHashSet make.IntegerVar: someSize.!
+		*/
+	}
+
+	/////////////////////////////////////////////
 	// Accessing
 
 	public abstract boolean hasMember(Heaper someone);
@@ -149,12 +192,18 @@ public abstract class HashSet extends MuSet {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Creation
+
 	public abstract ScruSet copy();
 	/*
 	udanax-top.st:46301:HashSet methodsFor: 'creation'!
 	{ScruSet} copy
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Enumerating
 
 	public abstract IntegerValue count();
 	/*
@@ -176,6 +225,9 @@ public abstract class HashSet extends MuSet {
 	{Heaper} theOne
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Adding-Removing
 
 	public abstract void introduce(Heaper anElement);
 	/*
@@ -216,6 +268,9 @@ public abstract class HashSet extends MuSet {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Conversion
+
 	public ImmuSet asImmuSet() {
 		if (isEmpty()) {
 			return ImmuSet.make();
@@ -242,14 +297,14 @@ public abstract class HashSet extends MuSet {
 		*/
 	}
 
-	public abstract void printInternals(PrintWriter oo);
+	protected abstract void printInternals(PrintWriter oo);
 	/*
 	udanax-top.st:46345:HashSet methodsFor: 'private: testing access'!
 	{void} printInternals: oo {ostream reference}
 		self subclassResponsibility!
 	*/
 
-	public Stepper immuStepper() {
+	protected Stepper immuStepper() {
 		throw new UnsupportedOperationException();
 		//unimplemented();
 		//return null;
@@ -258,38 +313,6 @@ public abstract class HashSet extends MuSet {
 		{Stepper} immuStepper
 			self unimplemented.
 			^NULL!
-		*/
-	}
-
-	public static MuSet make() {
-		return ActualHashSet.make();
-		/*
-		udanax-top.st:46366:HashSet class methodsFor: 'pseudo constructors'!
-		make
-			^ActualHashSet make!
-		*/
-	}
-
-	public static MuSet make(Heaper something) {
-		MuSet set = ActualHashSet.make(IntegerValue.one());
-		set.store(something);
-		return set;
-		/*
-		udanax-top.st:46369:HashSet class methodsFor: 'pseudo constructors'!
-		make.Heaper: something {Heaper}
-			| set {ActualHashSet} |
-			set _ ActualHashSet make.IntegerVar: 1.
-			set store: something.
-			^ set!
-		*/
-	}
-
-	public static MuSet make(IntegerValue someSize) {
-		return ActualHashSet.make(someSize);
-		/*
-		udanax-top.st:46375:HashSet class methodsFor: 'pseudo constructors'!
-		make.IntegerVar: someSize {IntegerVar}
-			^ ActualHashSet make.IntegerVar: someSize.!
 		*/
 	}
 }

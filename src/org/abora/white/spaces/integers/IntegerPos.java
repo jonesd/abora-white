@@ -125,7 +125,7 @@ public class IntegerPos extends Position {
 	public boolean isEqual(Heaper other) {
 		if (other instanceof IntegerPos) {
 			IntegerPos xui = (IntegerPos) other;
-			return xui.asIntegerVar() == myValue;
+			return xui.asIntegerVar().isEqual(myValue);
 		} else {
 			return false;
 		}

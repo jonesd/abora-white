@@ -29,20 +29,22 @@ import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
- * Please read class comment for ScruSet first.
+ * Please read class comment for {@link org.abora.white.collection.sets.ScruSet ScruSet} first.
+ * <p>
  * Like Sets, Tables represent collections of Heapers, and provide protocol for storing,
  * retrieving, and iterating over the collection.  However, Tables in addition provide an
  * organization for the Heapers collected together in the range of a Table:  A Table can also
  * be seen as a collection of associations between keys and values.  A particular Table
  * object has a particular domain coordinateSpace, and all keys in that Table are positions
- * in that coordinate space.  For each position in a Table''s coordinate space there is at
+ * in that coordinate space.  For each position in a Table's coordinate space there is at
  * most one value which it maps to.  This value may be any arbitrary Heaper.  The same Heaper
  * may appear as value for several keys.
+ * <p>
  * When iterating over the contents of a Table with a Stepper, the normal elements enumerated
  * by the Stepper are values (i.e., range elements) of the Table.  However,
  * ScruTable::stepper returns a TableStepper (a subclass of Stepper) which provides aditional
- * protocol of accessing the key corresponding to the current value.  (see ScruTable::stepper
- * and TableStepper.)
+ * protocol of accessing the key corresponding to the current value.  (see {@link #stepper ScruTable::stepper}
+ * and {@link org.abora.white.collection.steppers.TableStepper TableStepper}.)
  */
 public abstract class ScruTable extends Heaper {
 	//	protected static Signal NotInTableSignal;

@@ -20,11 +20,12 @@ import org.abora.white.xpp.basic.Heaper;
  * mathematical notion of a finite set of elements, except of course that here the elements
  * can be any valid X++ object.  Just like mathematical sets, two are equal (according to
  * isEqual) iff they have the same elements.  Just because the set cannot change, that
- * doesn''t prevent any of the members from undergoing state change.
+ * doesn't prevent any of the members from undergoing state change.
+ * <p>
  * ImmuSets implement some additional protocol to make new sets out of old ones according to
  * the familiar set theoretic operators (like intersect).  XuRegions are much like ImmuSets
- * of Positions except that they aren''t necessarily finite or even enumerable.  XuRegions
- * implement a similar protocol, but aren''t polymorphic with ImmuSets.
+ * of Positions except that they aren't necessarily finite or even enumerable.  XuRegions
+ * implement a similar protocol, but aren't polymorphic with ImmuSets.
  */
 public abstract class ImmuSet extends ScruSet {
 	protected static ImmuSet EmptySet = new EmptyImmuSet();
@@ -68,6 +69,74 @@ public abstract class ImmuSet extends ScruSet {
 
 	protected ImmuSet(Rcvr rcvr) {
 		super(rcvr);
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	/**
+	 * This is for ImmuSet subclasses to produce results from temporary MuSets.
+	 * The difference between this and ImmuSet make.MuSet: is that this doesn't make a copy
+	 * of the MuSet when making an ImmuSetOnMu.
+	 */
+	public static ImmuSet from(MuSet set) {
+		if (set.isEmpty()) {
+			return EmptySet;
+		}
+		if (set.count().isEqual(IntegerValue.one())) {
+			return TinyImmuSet.make(set.theOne());
+		}
+		return ImmuSetOnMu.make(set);
+		/*
+		udanax-top.st:45474:ImmuSet class methodsFor: 'protected: pseudo constructors'!
+		{ImmuSet} from: set {MuSet}
+			"This is for ImmuSet subclasses to produce results from temporary MuSets.
+			The difference between this and ImmuSet make.MuSet: is that this doesn't make a copy
+			of the MuSet when making an ImmuSetOnMu."
+			set isEmpty ifTrue: [^ EmptySet].
+			set count == 1 ifTrue: [^ TinyImmuSet make: set theOne].
+			^ ImmuSetOnMu make: set!
+		*/
+	}
+
+	public static ImmuSet make() {
+		return EmptySet;
+		/*
+		udanax-top.st:45484:ImmuSet class methodsFor: 'pseudo constructors'!
+		{ImmuSet INLINE} make
+			^EmptySet!
+		*/
+	}
+
+	public static ImmuSet make(MuSet set) {
+		if (set.isEmpty()) {
+			return EmptySet;
+		}
+		if (set.count().isEqual(IntegerValue.one())) {
+			return TinyImmuSet.make(set.theOne());
+		}
+		return ImmuSetOnMu.make(((MuSet) set.copy()));
+		/*
+		udanax-top.st:45487:ImmuSet class methodsFor: 'pseudo constructors'!
+		{ImmuSet} make.MuSet: set {MuSet}
+			set isEmpty ifTrue: [^ EmptySet].
+			set count == 1 ifTrue: [^ TinyImmuSet make: set theOne].
+			^ ImmuSetOnMu make: (set copy cast: MuSet).!
+		*/
+	}
+
+	/**
+	 * A single element ImmuSet
+	 */
+	public static ImmuSet newWith(Heaper value) {
+		return TinyImmuSet.make(value);
+		/*
+		udanax-top.st:45493:ImmuSet class methodsFor: 'pseudo constructors'!
+		{ImmuSet} newWith: value {Heaper}
+			"A single element ImmuSet"
+			
+			^TinyImmuSet make: value!
+		*/
 	}
 
 	/////////////////////////////////////////////
@@ -247,71 +316,6 @@ public abstract class ImmuSet extends ScruSet {
 	//			^ImmuSet make.MuSet: (thing cast: MuSet)!
 	//		*/
 	//	}
-
-	/**
-	 * This is for ImmuSet subclasses to produce results from temporary MuSets.
-	 * The difference between this and ImmuSet make.MuSet: is that this doesn't make a copy
-	 * of the MuSet when making an ImmuSetOnMu.
-	 */
-	public static ImmuSet from(MuSet set) {
-		if (set.isEmpty()) {
-			return EmptySet;
-		}
-		if (set.count().isEqual(IntegerValue.one())) {
-			return TinyImmuSet.make(set.theOne());
-		}
-		return ImmuSetOnMu.make(set);
-		/*
-		udanax-top.st:45474:ImmuSet class methodsFor: 'protected: pseudo constructors'!
-		{ImmuSet} from: set {MuSet}
-			"This is for ImmuSet subclasses to produce results from temporary MuSets.
-			The difference between this and ImmuSet make.MuSet: is that this doesn't make a copy
-			of the MuSet when making an ImmuSetOnMu."
-			set isEmpty ifTrue: [^ EmptySet].
-			set count == 1 ifTrue: [^ TinyImmuSet make: set theOne].
-			^ ImmuSetOnMu make: set!
-		*/
-	}
-
-	public static ImmuSet make() {
-		return EmptySet;
-		/*
-		udanax-top.st:45484:ImmuSet class methodsFor: 'pseudo constructors'!
-		{ImmuSet INLINE} make
-			^EmptySet!
-		*/
-	}
-
-	public static ImmuSet make(MuSet set) {
-		if (set.isEmpty()) {
-			return EmptySet;
-		}
-		if (set.count().isEqual(IntegerValue.one())) {
-			return TinyImmuSet.make(set.theOne());
-		}
-		return ImmuSetOnMu.make(((MuSet) set.copy()));
-		/*
-		udanax-top.st:45487:ImmuSet class methodsFor: 'pseudo constructors'!
-		{ImmuSet} make.MuSet: set {MuSet}
-			set isEmpty ifTrue: [^ EmptySet].
-			set count == 1 ifTrue: [^ TinyImmuSet make: set theOne].
-			^ ImmuSetOnMu make: (set copy cast: MuSet).!
-		*/
-	}
-
-	/**
-	 * A single element ImmuSet
-	 */
-	public static ImmuSet newWith(Heaper value) {
-		return TinyImmuSet.make(value);
-		/*
-		udanax-top.st:45493:ImmuSet class methodsFor: 'pseudo constructors'!
-		{ImmuSet} newWith: value {Heaper}
-			"A single element ImmuSet"
-			
-			^TinyImmuSet make: value!
-		*/
-	}
 
 	//public static void initTimeNonInherited() {
 	//REQUIRES(Stepper.getCategory());

@@ -17,7 +17,7 @@ import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
- * This is an efficient implementation of ImmuSets for zero and one element sets.
+ * This is an efficient implementation of ImmuSets for one element sets.
  */
 public class TinyImmuSet extends ImmuSet {
 	protected Heaper elementInternal;
@@ -50,10 +50,13 @@ public class TinyImmuSet extends ImmuSet {
 		attributes: ((Set new) add: #CONCRETE; add: #NOT.A.TYPE; add: #COPY; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+
 	/**
 	 * Initialize a singleton immuset
 	 */
-	public TinyImmuSet(Heaper only) {
+	protected TinyImmuSet(Heaper only) {
 		super();
 		elementInternal = only;
 		/*
@@ -64,6 +67,32 @@ public class TinyImmuSet extends ImmuSet {
 			elementInternal _ only!
 		*/
 	}
+
+	protected TinyImmuSet(Rcvr receiver) {
+		super(receiver);
+		elementInternal = receiver.receiveHeaper();
+		/*
+		udanax-top.st:45803:TinyImmuSet methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			elementInternal _ receiver receiveHeaper.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static ImmuSet make(Heaper aHeaper) {
+		return new TinyImmuSet(aHeaper);
+		/*
+		udanax-top.st:45820:TinyImmuSet class methodsFor: 'create'!
+		{ImmuSet} make: aHeaper {Heaper}
+			^ self create: aHeaper!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Enumerating
 
 	public IntegerValue count() {
 		return IntegerValue.one();
@@ -91,6 +120,9 @@ public class TinyImmuSet extends ImmuSet {
 			^ elementInternal!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Adding-Removing
 
 	public ImmuSet with(Heaper anElement) {
 		if (elementInternal.isEqual(anElement)) {
@@ -126,6 +158,9 @@ public class TinyImmuSet extends ImmuSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Accessing
+
 	public boolean hasMember(Heaper someone) {
 		return elementInternal.isEqual(someone);
 		/*
@@ -152,6 +187,9 @@ public class TinyImmuSet extends ImmuSet {
 			^ another hasMember: elementInternal!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Operations
 
 	public ImmuSet intersect(ScruSet another) {
 		if (another.hasMember(elementInternal)) {
@@ -212,23 +250,15 @@ public class TinyImmuSet extends ImmuSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Conversion
+
 	public MuSet asMuSet() {
 		return MuSet.make(elementInternal);
 		/*
 		udanax-top.st:45798:TinyImmuSet methodsFor: 'conversion'!
 		{MuSet} asMuSet
 			^ MuSet make.Heaper: elementInternal!
-		*/
-	}
-
-	public TinyImmuSet(Rcvr receiver) {
-		super(receiver);
-		elementInternal = receiver.receiveHeaper();
-		/*
-		udanax-top.st:45803:TinyImmuSet methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			elementInternal _ receiver receiveHeaper.!
 		*/
 	}
 
@@ -240,15 +270,6 @@ public class TinyImmuSet extends ImmuSet {
 		{void} sendSelfTo: xmtr {Xmtr}
 			super sendSelfTo: xmtr.
 			xmtr sendHeaper: elementInternal.!
-		*/
-	}
-
-	public static ImmuSet make(Heaper aHeaper) {
-		return new TinyImmuSet(aHeaper);
-		/*
-		udanax-top.st:45820:TinyImmuSet class methodsFor: 'create'!
-		{ImmuSet} make: aHeaper {Heaper}
-			^ self create: aHeaper!
 		*/
 	}
 }

@@ -42,6 +42,36 @@ public class EmptyImmuSet extends ImmuSet {
 		attributes: ((Set new) add: #PSEUDO.COPY; add: #CONCRETE; add: #NOT.A.TYPE; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+
+	protected EmptyImmuSet() {
+		super();
+		/*
+		udanax-top.st:45575:EmptyImmuSet methodsFor: 'unprotected for initer create'!
+		create
+			super create!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+
+	public static Heaper make(Rcvr rcvr) {
+		throw new UnsupportedOperationException();
+		//		((SpecialistRcvr) rcvr).registerIbid(ImmuSet.make());
+		//		return ImmuSet.make();
+		/*
+		udanax-top.st:45604:EmptyImmuSet class methodsFor: 'rcvr pseudo constructor'!
+		{Heaper} make.Rcvr: rcvr {Rcvr}
+			(rcvr cast: SpecialistRcvr) registerIbid: ImmuSet make.
+			^ImmuSet make!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Enumerating
+
 	public IntegerValue count() {
 		return IntegerValue.zero();
 		/*
@@ -70,6 +100,9 @@ public class EmptyImmuSet extends ImmuSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Adding-Removing
+
 	public ImmuSet with(Heaper anElement) {
 		return TinyImmuSet.make(anElement);
 		/*
@@ -87,6 +120,9 @@ public class EmptyImmuSet extends ImmuSet {
 			^ self!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Accessing
 
 	public boolean hasMember(Heaper someone) {
 		return false;
@@ -114,6 +150,9 @@ public class EmptyImmuSet extends ImmuSet {
 			^ true!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Operations
 
 	public ImmuSet intersect(ScruSet another) {
 		return this;
@@ -151,15 +190,6 @@ public class EmptyImmuSet extends ImmuSet {
 		*/
 	}
 
-	public EmptyImmuSet() {
-		super();
-		/*
-		udanax-top.st:45575:EmptyImmuSet methodsFor: 'unprotected for initer create'!
-		create
-			super create!
-		*/
-	}
-
 	/**
 	 * Don't destroy our single instance
 	 */
@@ -192,18 +222,6 @@ public class EmptyImmuSet extends ImmuSet {
 		/*
 		udanax-top.st:45593:EmptyImmuSet methodsFor: 'generated:'!
 		{void} sendSelfTo: xmtr {Xmtr}!
-		*/
-	}
-
-	public static Heaper make(Rcvr rcvr) {
-		throw new UnsupportedOperationException();
-//		((SpecialistRcvr) rcvr).registerIbid(ImmuSet.make());
-//		return ImmuSet.make();
-		/*
-		udanax-top.st:45604:EmptyImmuSet class methodsFor: 'rcvr pseudo constructor'!
-		{Heaper} make.Rcvr: rcvr {Rcvr}
-			(rcvr cast: SpecialistRcvr) registerIbid: ImmuSet make.
-			^ImmuSet make!
 		*/
 	}
 }
