@@ -263,23 +263,6 @@ public abstract class PrimSpec extends Heaper {
 				return integerVar();
 			}
 		}
-		/*
-			udanax-top.st:34288:PrimSpec class methodsFor: 'pseudo constructors'!
-			{PrimIntegerSpec} toHold: value {IntegerVar}
-				"The least demanding spec that will hold the given value"
-				
-				value < IntegerVar0
-					ifTrue: [value < Int32Min
-						ifTrue: [^self integerVar]
-						ifFalse: [^self int32]]
-					ifFalse: [value <= Int32Max
-						ifTrue: [value <= UInt8Max
-							ifTrue: [^self uInt8]
-							ifFalse: [^self int32]]
-						ifFalse: [value <= UInt32Max
-							ifTrue: [^self uInt32]
-							ifFalse: [^self integerVar]]]!
-			*/
 	}
 
 	/**
@@ -307,11 +290,6 @@ public abstract class PrimSpec extends Heaper {
 	
 	protected Class arrayClass() {
 		return arrayClass;
-		/*
-			udanax-top.st:34118:PrimSpec methodsFor: 'protected:'!
-			{Category INLINE} arrayClass
-				^myClass!
-			*/
 	}
 	
 	//////////////////////////////////////////////
@@ -353,15 +331,13 @@ public abstract class PrimSpec extends Heaper {
 	}
 	
 	/**
-	 * Make an array with the values at the given address
+	 * Return an array holding a copy of the given elements of <tt>buffer</tt>
+	 * suitable for <tt>this</tt> spec.
+	 * 
+	 * @param buffer Java array containing elements meeting <tt>this</tt> specification.
+	 * @return the array 
 	 */
 	public abstract PrimArray arrayFromBuffer(Object buffer);
-	/*
-	udanax-top.st:34134:PrimSpec methodsFor: 'making'!
-	{PrimArray} arrayFromBuffer: count {Int32} with: buffer {void star}
-		"Make an array with the values at the given address"
-		self subclassResponsibility!
-	*/
 	
 	/**
 	 * Return an array holding the single element containing the
@@ -374,16 +350,6 @@ public abstract class PrimSpec extends Heaper {
 		PrimArray result = array(1);
 		result.storeValue(0, value);
 		return result;
-		/*
-		udanax-top.st:34139:PrimSpec methodsFor: 'making'!
-		{PrimArray} arrayWith: value {Heaper}
-			"Make a single element array containing the given value"
-			
-			| result {PrimArray} |
-			result _ self array: 1.
-			result at: Int32Zero storeValue: value.
-			^result!
-		*/
 	}
 
 	/**
@@ -399,17 +365,6 @@ public abstract class PrimSpec extends Heaper {
 		result.storeValue(0, value);
 		result.storeValue(1, other);
 		return result;
-		/*
-		udanax-top.st:34157:PrimSpec methodsFor: 'making'!
-		{PrimArray} arrayWithTwo: value {Heaper} with: other {Heaper}
-			"Make a two element array containing the given values"
-			
-			| result {PrimArray} |
-			result _ self array: 2.
-			result at: Int32Zero storeValue: value.
-			result at: 1 storeValue: other.
-			^ result.!
-		*/
 	}
 	
 	/**
@@ -427,18 +382,6 @@ public abstract class PrimSpec extends Heaper {
 		result.storeValue(1, other);
 		result.storeValue(2, another);
 		return result;
-		/*
-		udanax-top.st:34147:PrimSpec methodsFor: 'making'!
-		{PrimArray} arrayWithThree: value {Heaper} with: other {Heaper} with: another {Heaper}
-			"Make a two element array containing the given values"
-			
-			| result {PrimArray} |
-			result _ self array: 3.
-			result at: Int32Zero storeValue: value.
-			result at: 1 storeValue: other.
-			result at: 2 storeValue: another.
-			^ result!
-		*/
 	}
 	
 		

@@ -320,6 +320,7 @@ public class PrimIntegerSpec extends PrimSpec {
 		if (this == PrimSpec.integerVar()) {
 			return IntegerVarArray.make((IntegerValue[])buffer);
 		}
+		//TODO need rest of PrimSpecs or some reflection/invocation technique
 		throw new IllegalStateException("BadPrimSpec");
 		/*
 		udanax-top.st:34550:PrimIntegerSpec methodsFor: 'making'!

@@ -13,11 +13,14 @@ package org.abora.white.value.tests;
 import org.abora.white.collection.arrays.PrimArray;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.PrimSpec;
 
 import junit.framework.TestCase;
 
 public class PrimSpecTest extends TestCase {
+	//TODO duplicate spec - move to some shared place
+	private static final float DIFF = 0.000001f;
 
 	public PrimSpecTest(String arg0) {
 		super(arg0);
@@ -155,6 +158,24 @@ public class PrimSpecTest extends TestCase {
 		//TODO IntegerValue once it uses BigInteger 
 	}
 	
+	public void testArray() {
+		// Different types
+		PrimArray array = PrimSpec.int8().array(3);
+		assertSame(PrimSpec.int8(), array.spec());
+		assertEquals(3, array.count());
+		assertEquals(0, ((IntegerValue)array.getValue(0)).intValue());		
+		assertEquals(0, ((IntegerValue)array.getValue(1)).intValue());		
+		assertEquals(0, ((IntegerValue)array.getValue(2)).intValue());		
+
+		array = PrimSpec.iEEE32().array(3);
+		assertSame(PrimSpec.iEEE32(), array.spec());
+		assertEquals(3, array.count());
+
+		array = PrimSpec.pointer().array(3);
+		assertSame(PrimSpec.pointer(), array.spec());
+		assertEquals(3, array.count());
+	}
+	
 	public void testArrayEmpty() {
 		PrimArray array = PrimSpec.int8().array();
 		assertSame(PrimSpec.int8(), array.spec());
@@ -255,4 +276,34 @@ public class PrimSpecTest extends TestCase {
 		//TODO try pointer spec as well
 	}
 
+	public void testArrayFromBuffer() {
+		// empty
+//TODO readd when finished off array subclasses
+//		PrimArray array = PrimSpec.int8().arrayFromBuffer(new byte[0]);
+//		assertSame(PrimSpec.int8(), array.spec());
+//		assertEquals(0, array.count());
+//
+//		// good elements
+//		array = PrimSpec.int8().arrayFromBuffer(new byte[]{0, 1, 2});
+//		assertSame(PrimSpec.int8(), array.spec());
+//		assertEquals(3, array.count());
+//		assertEquals(0, ((IntegerValue)array.getValue(0)).intValue());		
+//		assertEquals(1, ((IntegerValue)array.getValue(1)).intValue());		
+//		assertEquals(2, ((IntegerValue)array.getValue(2)).intValue());		
+
+		PrimArray array = PrimSpec.iEEE32().arrayFromBuffer(new float[]{0.0f, 1.1f, 2.2f});
+		assertSame(PrimSpec.iEEE32(), array.spec());
+		assertEquals(3, array.count());
+		assertEquals(0.0, ((IEEE32Value)array.getValue(0)).asIEEE32(), DIFF);		
+		assertEquals(1.1, ((IEEE32Value)array.getValue(1)).asIEEE32(), DIFF);		
+		assertEquals(2.2, ((IEEE32Value)array.getValue(2)).asIEEE32(), DIFF);		
+
+		array = PrimSpec.iEEE64().arrayFromBuffer(new double[]{0.0, 1.1, 2.2});
+		assertSame(PrimSpec.iEEE64(), array.spec());
+		assertEquals(3, array.count());
+		assertEquals(0.0, ((PrimFloatValue)array.getValue(0)).asIEEE64(), DIFF);		
+		assertEquals(1.1, ((PrimFloatValue)array.getValue(1)).asIEEE64(), DIFF);		
+		assertEquals(2.2, ((PrimFloatValue)array.getValue(2)).asIEEE64(), DIFF);		
+		
+	}
 }

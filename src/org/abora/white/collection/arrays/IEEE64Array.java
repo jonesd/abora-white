@@ -10,11 +10,11 @@
  */
 package org.abora.white.collection.arrays;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
-import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.IEEE64Value;
+import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
@@ -43,19 +43,59 @@ public class IEEE64Array extends PrimFloatArray {
 		storage = new double[count];
 	}
 
+	/** 
+	 * Construct a new array of the specified size with
+	 * all elements initialized to zero.
+	 *
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 * 
+	 * @param count number of elements this will be able to hold
+	 */
+
+	protected IEEE64Array(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
+		this(size);
+		int n = count;
+		if (count == -1) {
+			n = from.count() - sourceOffset;
+		}
+		copyElements(destOffset, from, sourceOffset, n);
+	}
+
+	/** 
+	 * Construct a new array of the same size as the specified source
+	 * and containing a copy of its content. 
+	 *
+	 * Restrict public access to constructor; use suitable static
+	 * factory method instead.  
+	 * 
+	 * @param source primitive array to copy
+	 */
+	protected IEEE64Array(double[] source) {
+		this(source.length);
+		System.arraycopy(source, 0, storage, 0, source.length);
+	}
+
+	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
+		return make(size, (PrimFloatArray) source, sourceOffset, count, destOffset);
+	}
+
 	//////////////////////////////////////////////
 	// Static Factory Methods
 
-	/** create an IEEE64 array filled with zeros */
+	/** 
+	 * Return a new IEEE64Array of the specified size suitable for
+	 * holding IEEE64 values, initially filled with zeros.
+	 *  
+	 * @param count number of elements this will be able to hold
+	 */
 	public static IEEE64Array make(int count) {
 		return new IEEE64Array(count);
 	}
 
 	/** create an IEEE64Array filled with the indicated data in 'from' */
 	public static IEEE64Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
-		IEEE64Array array = new IEEE64Array(size);
-		array.addData(destOffset, (PrimArithmeticArray) from, sourceOffset, count);
-		return array;
+		return new IEEE64Array(size, from, sourceOffset, count, destOffset);
 	}
 
 	public static IEEE64Array make(int size, PrimArray from, int sourceOffset, int count) {
@@ -71,23 +111,8 @@ public class IEEE64Array extends PrimFloatArray {
 	}
 
 	/** create an IEEE64Array filled with the data at 'buffer' */
-	public static IEEE64Array make(int count, double[] buffer) {
-		//TODO take into account count
-		IEEE64Array array = make(buffer.length);
-		//TODO should we copy data or use it?
-		for (int i = 0; i < buffer.length; i++) {
-			array.storeIEEE64(i, buffer[i]);
-		}
-		return array;
-	}
-
-	/** create an IEEE64Array filled with the data at 'buffer' */
 	public static IEEE64Array make(double[] buffer) {
-		return IEEE64Array.make(buffer.length, buffer);
-	}
-
-	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		throw new UnsupportedOperationException();
+		return new IEEE64Array(buffer);
 	}
 
 	//////////////////////////////////////////////
@@ -391,7 +416,7 @@ public class IEEE64Array extends PrimFloatArray {
 	//////////////////////////////////////////////
 	// Printing
 
-	protected void printElementOn(int index, PrintStream oo) {
+	protected void printElementOn(int index, PrintWriter oo) {
 		oo.print(iEEE64At(index));
 	}
 }

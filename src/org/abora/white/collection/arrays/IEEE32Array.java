@@ -157,19 +157,11 @@ public class IEEE32Array extends PrimFloatArray {
 
 	public PrimSpec spec() {
 		return PrimSpec.iEEE32();
-		//		RPTR(PrimSpec) IEEE32Array::spec (){
-		//			return PrimSpec::iEEE32();
-		//		}
 	}
 
 	/** Return the maximum word size that can be stored in this array */
 	public int bitCount() {
 		return 32;
-		//		Int32 IEEE32Array::bitCount () {
-		//			/* Return the maximum bits/entry that can be stored in this array */
-		//
-		//			return 32;
-		//		}
 	}
 
 	//////////////////////////////////////////////

@@ -20,6 +20,7 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for org.abora.white.collection.arrays.tests");
 		//$JUnit-BEGIN$
 		suite.addTest(new TestSuite(IEEE32ArrayTest.class));
+		suite.addTest(new TestSuite(IEEE64ArrayTest.class));
 		//$JUnit-END$
 		return suite;
 	}
