@@ -10,6 +10,8 @@ package org.abora.white.spaces.integers.tests;
 import junit.framework.TestCase;
 
 import org.abora.white.exception.AboraRuntimeException;
+import org.abora.white.spaces.basic.IntegerUpOrder;
+import org.abora.white.spaces.basic.OrderSpec;
 import org.abora.white.spaces.basic.XnRegion;
 import org.abora.white.spaces.integers.IntegerPos;
 import org.abora.white.spaces.integers.IntegerRegion;
@@ -802,5 +804,35 @@ public class IntegerRegionTest extends TestCase {
 		} catch (AboraRuntimeException e) {
 			assertEquals(AboraRuntimeException.INVALID_REQUEST, e.getMessage());
 		}
+	}
+	
+	public void testIntervalsWith() {
+		//TODO more
+	}
+	
+	public void testIsEnumerable() {
+		assertTrue(IntegerRegion.after(IntegerValue.make(10)).isEnumerable(null));
+		assertFalse(IntegerRegion.before(IntegerValue.make(10)).isEnumerable(null));
+
+		OrderSpec order = IntegerUpOrder.make();
+		assertTrue(IntegerRegion.after(IntegerValue.make(10)).isEnumerable(order));
+		assertFalse(IntegerRegion.before(IntegerValue.make(10)).isEnumerable(order));
+		
+		order = order.reversed();
+		assertFalse(IntegerRegion.after(IntegerValue.make(10)).isEnumerable(order));
+		assertTrue(IntegerRegion.before(IntegerValue.make(10)).isEnumerable(order));
+	}
+
+	public void testIsInterval() {
+		// Full/Empty
+		assertTrue(IntegerRegion.make().isInterval());
+		assertTrue(IntegerRegion.allIntegers().isInterval());
+		assertFalse(((IntegerRegion)IntegerRegion.allIntegers().without(IntegerPos.make(10))).isInterval());
+		
+		assertTrue(IntegerRegion.before(IntegerValue.one()).isInterval());
+		assertTrue(IntegerRegion.after(IntegerValue.one()).isInterval());
+		
+		assertTrue(IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).isInterval());
+		assertFalse(((IntegerRegion)IntegerRegion.interval(IntegerValue.zero(), IntegerValue.make(10)).without(IntegerPos.make(6))).isInterval());
 	}
 }

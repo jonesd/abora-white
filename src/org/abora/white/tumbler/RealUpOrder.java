@@ -47,6 +47,37 @@ public class RealUpOrder extends OrderSpec {
 		attributes: ((Set new) add: #CONCRETE; add: #COPY; add: #NOT.A.TYPE; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+	
+	protected RealUpOrder() {
+		super();
+	}
+
+	protected RealUpOrder(Rcvr receiver) {
+		super(receiver);
+		/*
+		udanax-top.st:31020:RealUpOrder methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static OrderSpec make() {
+		return new RealUpOrder();
+		/*
+		udanax-top.st:31035:RealUpOrder class methodsFor: 'creation'!
+		{OrderSpec} make
+			^self create!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Accessing
+
 	public Arrangement arrange(XnRegion region) {
 		Stepper stepper;
 		PtrArray array;
@@ -81,6 +112,9 @@ public class RealUpOrder extends OrderSpec {
 			^RealSpace make!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		return getClass().hashCode() + 1;
@@ -149,34 +183,12 @@ public class RealUpOrder extends OrderSpec {
 		*/
 	}
 
-	protected RealUpOrder() {
-		super();
-	}
-
-	protected RealUpOrder(Rcvr receiver) {
-		super(receiver);
-		/*
-		udanax-top.st:31020:RealUpOrder methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		/*
 		udanax-top.st:31023:RealUpOrder methodsFor: 'generated:'!
 		{void} sendSelfTo: xmtr {Xmtr}
 			super sendSelfTo: xmtr.!
-		*/
-	}
-
-	public static OrderSpec make() {
-		return new RealUpOrder();
-		/*
-		udanax-top.st:31035:RealUpOrder class methodsFor: 'creation'!
-		{OrderSpec} make
-			^self create!
 		*/
 	}
 }

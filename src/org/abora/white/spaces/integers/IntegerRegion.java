@@ -1711,8 +1711,8 @@ public class IntegerRegion extends XnRegion {
 	}
 
 	/**
-	 * Actually uses the 'order' argument correctly to enumerate the
-	 * positions. Treats NULL the same as ascending. Iff I am bounded left
+	 * Actually uses the '<code>order</code>' argument correctly to enumerate the
+	 * positions. Treats <code>null</code> the same as ascending. Iff I am bounded left
 	 * am I enumerable in ascending order. Similarly, only if I am bounded
 	 * right am I enumerable in descending order.
 	 */

@@ -21,6 +21,9 @@ import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
 public class IntegerUpOrder extends OrderSpec {
+	//TODO why isn't this a singleton?
+	//TODO should we move class to org.abora.white.spaces.integers package
+	
 	/*
 	udanax-top.st:30887:
 	OrderSpec subclass: #IntegerUpOrder
@@ -44,6 +47,37 @@ public class IntegerUpOrder extends OrderSpec {
 	(IntegerUpOrder getOrMakeCxxClassDescription)
 		attributes: ((Set new) add: #CONCRETE; add: #COPY; add: #NOT.A.TYPE; yourself)!
 	*/
+
+	/////////////////////////////////////////////
+	// Constructors
+	
+	protected IntegerUpOrder() {
+		super();
+	}
+
+	protected IntegerUpOrder(Rcvr receiver) {
+		super(receiver);
+		/*
+		udanax-top.st:30948:IntegerUpOrder methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static OrderSpec make() {
+		return new IntegerUpOrder();
+		/*
+		udanax-top.st:30963:IntegerUpOrder class methodsFor: 'pseudoconstructors'!
+		{OrderSpec} make
+			^self create!
+		*/
+	}
+	
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		return getClass().hashCode() + 1;
@@ -100,10 +134,8 @@ public class IntegerUpOrder extends OrderSpec {
 	 * Return true if some position in before is less than or equal to all positions in after.
 	 */
 	public boolean preceeds(XnRegion before, XnRegion after) {
-		IntegerRegion first;
-		IntegerRegion second;
-		first = (IntegerRegion) before;
-		second = (IntegerRegion) after;
+		IntegerRegion first = (IntegerRegion) before;
+		IntegerRegion second = (IntegerRegion) after;
 		if (!first.isBoundedBelow()) {
 			return true;
 		}
@@ -125,6 +157,9 @@ public class IntegerUpOrder extends OrderSpec {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Accessing
+
 	public Arrangement arrange(XnRegion region) {
 		return IntegerArrangement.make(region, this);
 		/*
@@ -138,7 +173,7 @@ public class IntegerUpOrder extends OrderSpec {
 	 * Return the first n positions in the region according to my ordering.
 	 */
 	public XnRegion chooseMany(XnRegion region, IntegerValue n) {
-		return (arrange(region)).keysOf(0, n.asInt32());
+		return arrange(region).keysOf(0, n.asInt32());
 		/*
 		udanax-top.st:30932:IntegerUpOrder methodsFor: 'accessing'!
 		{XnRegion} chooseMany: region {XnRegion} with: n {IntegerVar}
@@ -152,7 +187,8 @@ public class IntegerUpOrder extends OrderSpec {
 	 * Return the first position in the region according to my ordering.
 	 */
 	public Position chooseOne(XnRegion region) {
-		return IntegerPos.make(((IntegerRegion) region).start());
+		IntegerRegion integerRegion = (IntegerRegion) region; 
+		return IntegerPos.make(integerRegion.start());
 		/*
 		udanax-top.st:30937:IntegerUpOrder methodsFor: 'accessing'!
 		{Position} chooseOne: region {XnRegion}
@@ -172,34 +208,12 @@ public class IntegerUpOrder extends OrderSpec {
 		*/
 	}
 
-	protected IntegerUpOrder() {
-		super();
-	}
-
-	protected IntegerUpOrder(Rcvr receiver) {
-		super(receiver);
-		/*
-		udanax-top.st:30948:IntegerUpOrder methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		/*
 		udanax-top.st:30951:IntegerUpOrder methodsFor: 'generated:'!
 		{void} sendSelfTo: xmtr {Xmtr}
 			super sendSelfTo: xmtr.!
-		*/
-	}
-
-	public static OrderSpec make() {
-		return new IntegerUpOrder();
-		/*
-		udanax-top.st:30963:IntegerUpOrder class methodsFor: 'pseudoconstructors'!
-		{OrderSpec} make
-			^self create!
 		*/
 	}
 }

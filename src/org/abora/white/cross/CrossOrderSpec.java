@@ -28,6 +28,7 @@ import org.abora.white.xpp.basic.Heaper;
  * myLexOrder lists the lexicographic order in which each dimension should be processed.
  * Every dimension should be listed exactly one, from most significant (at index 0) to least
  * significant.
+ * <p>
  * mySubOrders are indexed by *dimension*, not by lexicographic order.  In order to index by
  * lex order, look up the dimension in myLexOrder, and then look up the resulting dimension
  * number in mySubOrders.
@@ -75,7 +76,10 @@ public class CrossOrderSpec extends OrderSpec {
 		attributes: ((Set new) add: #CONCRETE; add: #ON.CLIENT; add: #COPY; yourself)!
 	*/
 
-	public CrossOrderSpec(CrossSpace space, PtrArray subOrders, PrimIntArray lexOrder) {
+	/////////////////////////////////////////////
+	// Constructors
+
+	protected CrossOrderSpec(CrossSpace space, PtrArray subOrders, PrimIntArray lexOrder) {
 		super();
 		mySpace = space;
 		mySubOrders = subOrders;
@@ -89,6 +93,163 @@ public class CrossOrderSpec extends OrderSpec {
 			myLexOrder := lexOrder!
 		*/
 	}
+
+	protected CrossOrderSpec(Rcvr receiver) {
+		super(receiver);
+		mySpace = (CrossSpace) receiver.receiveHeaper();
+		mySubOrders = (PtrArray) receiver.receiveHeaper();
+		myLexOrder = (PrimIntArray) receiver.receiveHeaper();
+		/*
+		udanax-top.st:30690:CrossOrderSpec methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			mySpace _ receiver receiveHeaper.
+			mySubOrders _ receiver receiveHeaper.
+			myLexOrder _ receiver receiveHeaper.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+
+	public static CrossOrderSpec make(CrossSpace space, PtrArray subOrderings, PrimIntArray lexOrder) {
+		PrimIntArray lexO;
+		PtrArray subOrders;
+		subOrders = PtrArray.make(space.axisCount());
+		for (int i = 0; i < subOrders.count(); i++) {
+			subOrders.store(i, (space.axis(i)).fetchAscending());
+		}
+		if (subOrderings != null) {
+			for (int i = 0; i < subOrders.count(); i++) {
+				OrderSpec subOrder;
+				subOrder = (OrderSpec) (subOrderings.fetch(i));
+				if (subOrder == null) {
+					if (subOrders.fetch(i) != null) {
+						throw new IllegalStateException("Must have an ordering from each space");
+					}
+				} else {
+					subOrders.store(i, subOrder);
+				}
+			}
+		}
+		if (lexOrder == null) {
+			lexO = PrimIntArray.zeros(32, subOrders.count());
+			for (int i = 0; i < subOrders.count(); i++) {
+				lexO.storeInteger(i, IntegerValue.make(i));
+			}
+		} else {
+			lexO = lexOrder;
+		}
+		return new CrossOrderSpec(space, subOrders, lexO);
+		/*
+		udanax-top.st:30714:CrossOrderSpec class methodsFor: 'pseudoconstructors'!
+		make: space {CrossSpace} 
+			with: subOrderings {(PtrArray of: OrderSpec | NULL) default: NULL} 
+			with: lexOrder {PrimIntArray default: NULL}
+			| lexO {PrimIntArray} 
+			  subOrders {PtrArray of: OrderSpec} |
+			  
+			subOrders := PtrArray nulls: space axisCount.
+			Int32Zero almostTo: subOrders count do: [:i {Int32} |
+				subOrders at: i store: (space axis: i) fetchAscending].
+			
+			subOrderings ~~ NULL ifTrue:
+				[Int32Zero almostTo: subOrders count do: [:i {Int32} |
+					| subOrder {OrderSpec | NULL} |
+					subOrder := (subOrderings fetch: i) cast: OrderSpec.
+					subOrder == NULL ifTrue:
+						[(subOrders fetch: i) ~~ NULL assert: 'Must have an ordering from each space']
+					ifFalse:
+						[subOrders at: i store: subOrder]]].
+			
+			lexOrder == NULL ifTrue:
+				[lexO := PrimIntArray zeros: 32 with: subOrders count.
+				Int32Zero almostTo: subOrders count do: [:i {Int32} |
+					lexO at: i storeInteger: i]]
+			ifFalse:
+				[lexO := lexOrder].
+			^self create: space with: subOrders with: lexO!
+		*/
+	}
+
+	/**
+	 * Only used during construction; must pass the array in explicitly since the space isnt
+	 * initialized yet
+	 */
+	public static CrossOrderSpec fetchAscending(GenericCrossSpace space, PtrArray subSpaces) {
+		PtrArray result;
+		PrimIntArray lex;
+		result = PtrArray.make(subSpaces.count());
+		lex = PrimIntArray.zeros(32, subSpaces.count());
+		for (int dimension = 0; dimension < result.count(); dimension++) {
+			OrderSpec sub;
+			sub = ((CoordinateSpace) (subSpaces.fetch(dimension))).fetchAscending();
+			if (sub == null) {
+				return null;
+			}
+			result.store(dimension, sub);
+			lex.storeInteger(dimension, IntegerValue.make(dimension));
+		}
+		return new CrossOrderSpec(space, result, lex);
+		/*
+		udanax-top.st:30754:CrossOrderSpec class methodsFor: 'private: pseudo constructors'!
+		{CrossOrderSpec} fetchAscending: space {GenericCrossSpace}
+			with: subSpaces {PtrArray of: CoordinateSpace}
+			"Only used during construction; must pass the array in explicitly since the space isnt initialized yet"
+			
+			| result {PtrArray of: OrderSpec} lex {PrimIntArray} |
+			result := PtrArray nulls: subSpaces count.
+			lex := PrimIntArray zeros: 32 with: subSpaces count.
+			Int32Zero almostTo: result count do: [ :dimension {Int32} | | sub {OrderSpec} |
+				sub := ((subSpaces fetch: dimension) cast: CoordinateSpace) fetchAscending.
+				sub == NULL ifTrue:
+					[^NULL].
+				result at: dimension store: sub.
+				lex at: dimension storeInteger: dimension].
+			^self create: space with: result with: lex!
+		*/
+	}
+
+	/**
+	 * Only used during construction; must pass the array in explicitly since the space isnt
+	 * initialized yet
+	 */
+	public static CrossOrderSpec fetchDescending(GenericCrossSpace space, PtrArray subSpaces) {
+		PtrArray result;
+		PrimIntArray lex;
+		result = PtrArray.make(subSpaces.count());
+		lex = PrimIntArray.zeros(32, subSpaces.count());
+		for (int dimension = 0; dimension < result.count(); dimension++) {
+			OrderSpec sub;
+			sub = ((CoordinateSpace) (subSpaces.fetch(dimension))).fetchAscending();
+			if (sub == null) {
+				return null;
+			}
+			result.store(dimension, sub);
+			lex.storeInteger(dimension, IntegerValue.make(dimension));
+		}
+		return new CrossOrderSpec(space, result, lex);
+		/*
+		udanax-top.st:30769:CrossOrderSpec class methodsFor: 'private: pseudo constructors'!
+		{CrossOrderSpec} fetchDescending: space {GenericCrossSpace}
+			with: subSpaces {PtrArray of: CoordinateSpace}
+			"Only used during construction; must pass the array in explicitly since the space isnt initialized yet"
+			
+			| result {PtrArray of: OrderSpec} lex {PrimIntArray} |
+			result := PtrArray nulls: subSpaces count.
+			lex := PrimIntArray zeros: 32 with: subSpaces count.
+			Int32Zero almostTo: result count do: [ :dimension {Int32} | | sub {OrderSpec} |
+				sub := ((subSpaces fetch: dimension) cast: CoordinateSpace) fetchAscending.
+				sub == NULL ifTrue:
+					[^NULL].
+				result at: dimension store: sub.
+				lex at: dimension storeInteger: dimension].
+			^self create: space with: result with: lex!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Accessing
 
 	public CoordinateSpace coordinateSpace() {
 		return mySpace;
@@ -142,6 +303,9 @@ public class CrossOrderSpec extends OrderSpec {
 			^mySubOrders copy cast: PtrArray!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		return mySpace.hashForEqual() ^ (mySubOrders.hashForEqual() ^ myLexOrder.hashForEqual());
@@ -261,21 +425,6 @@ public class CrossOrderSpec extends OrderSpec {
 		*/
 	}
 
-	public CrossOrderSpec(Rcvr receiver) {
-		super(receiver);
-		mySpace = (CrossSpace) receiver.receiveHeaper();
-		mySubOrders = (PtrArray) receiver.receiveHeaper();
-		myLexOrder = (PrimIntArray) receiver.receiveHeaper();
-		/*
-		udanax-top.st:30690:CrossOrderSpec methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			mySpace _ receiver receiveHeaper.
-			mySubOrders _ receiver receiveHeaper.
-			myLexOrder _ receiver receiveHeaper.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		xmtr.sendHeaper(mySpace);
@@ -291,65 +440,6 @@ public class CrossOrderSpec extends OrderSpec {
 		*/
 	}
 
-	public static CrossOrderSpec make(CrossSpace space, PtrArray subOrderings, PrimIntArray lexOrder) {
-		PrimIntArray lexO;
-		PtrArray subOrders;
-		subOrders = PtrArray.make(space.axisCount());
-		for (int i = 0; i < subOrders.count(); i++) {
-			subOrders.store(i, (space.axis(i)).fetchAscending());
-		}
-		if (subOrderings != null) {
-			for (int i = 0; i < subOrders.count(); i++) {
-				OrderSpec subOrder;
-				subOrder = (OrderSpec) (subOrderings.fetch(i));
-				if (subOrder == null) {
-					if (subOrders.fetch(i) != null) {
-						throw new IllegalStateException("Must have an ordering from each space");
-					}
-				} else {
-					subOrders.store(i, subOrder);
-				}
-			}
-		}
-		if (lexOrder == null) {
-			lexO = PrimIntArray.zeros(32, subOrders.count());
-			for (int i = 0; i < subOrders.count(); i++) {
-				lexO.storeInteger(i, IntegerValue.make(i));
-			}
-		} else {
-			lexO = lexOrder;
-		}
-		return new CrossOrderSpec(space, subOrders, lexO);
-		/*
-		udanax-top.st:30714:CrossOrderSpec class methodsFor: 'pseudoconstructors'!
-		make: space {CrossSpace} 
-			with: subOrderings {(PtrArray of: OrderSpec | NULL) default: NULL} 
-			with: lexOrder {PrimIntArray default: NULL}
-			| lexO {PrimIntArray} 
-			  subOrders {PtrArray of: OrderSpec} |
-			  
-			subOrders := PtrArray nulls: space axisCount.
-			Int32Zero almostTo: subOrders count do: [:i {Int32} |
-				subOrders at: i store: (space axis: i) fetchAscending].
-			
-			subOrderings ~~ NULL ifTrue:
-				[Int32Zero almostTo: subOrders count do: [:i {Int32} |
-					| subOrder {OrderSpec | NULL} |
-					subOrder := (subOrderings fetch: i) cast: OrderSpec.
-					subOrder == NULL ifTrue:
-						[(subOrders fetch: i) ~~ NULL assert: 'Must have an ordering from each space']
-					ifFalse:
-						[subOrders at: i store: subOrder]]].
-			
-			lexOrder == NULL ifTrue:
-				[lexO := PrimIntArray zeros: 32 with: subOrders count.
-				Int32Zero almostTo: subOrders count do: [:i {Int32} |
-					lexO at: i storeInteger: i]]
-			ifFalse:
-				[lexO := lexOrder].
-			^self create: space with: subOrders with: lexO!
-		*/
-	}
 
 //	public static Heaper make(Object space) {
 //		return make().space().with(null, null);
@@ -371,95 +461,19 @@ public class CrossOrderSpec extends OrderSpec {
 //		*/
 //	}
 
-	/**
-	 * Only used during construction; must pass the array in explicitly since the space isnt
-	 * initialized yet
-	 */
-	public static CrossOrderSpec fetchAscending(GenericCrossSpace space, PtrArray subSpaces) {
-		PtrArray result;
-		PrimIntArray lex;
-		result = PtrArray.make(subSpaces.count());
-		lex = PrimIntArray.zeros(32, subSpaces.count());
-		for (int dimension = 0; dimension < result.count(); dimension++) {
-			OrderSpec sub;
-			sub = ((CoordinateSpace) (subSpaces.fetch(dimension))).fetchAscending();
-			if (sub == null) {
-				return null;
-			}
-			result.store(dimension, sub);
-			lex.storeInteger(dimension, IntegerValue.make(dimension));
-		}
-		return new CrossOrderSpec(space, result, lex);
-		/*
-		udanax-top.st:30754:CrossOrderSpec class methodsFor: 'private: pseudo constructors'!
-		{CrossOrderSpec} fetchAscending: space {GenericCrossSpace}
-			with: subSpaces {PtrArray of: CoordinateSpace}
-			"Only used during construction; must pass the array in explicitly since the space isnt initialized yet"
-			
-			| result {PtrArray of: OrderSpec} lex {PrimIntArray} |
-			result := PtrArray nulls: subSpaces count.
-			lex := PrimIntArray zeros: 32 with: subSpaces count.
-			Int32Zero almostTo: result count do: [ :dimension {Int32} | | sub {OrderSpec} |
-				sub := ((subSpaces fetch: dimension) cast: CoordinateSpace) fetchAscending.
-				sub == NULL ifTrue:
-					[^NULL].
-				result at: dimension store: sub.
-				lex at: dimension storeInteger: dimension].
-			^self create: space with: result with: lex!
-		*/
-	}
-
-	/**
-	 * Only used during construction; must pass the array in explicitly since the space isnt
-	 * initialized yet
-	 */
-	public static CrossOrderSpec fetchDescending(GenericCrossSpace space, PtrArray subSpaces) {
-		PtrArray result;
-		PrimIntArray lex;
-		result = PtrArray.make(subSpaces.count());
-		lex = PrimIntArray.zeros(32, subSpaces.count());
-		for (int dimension = 0; dimension < result.count(); dimension++) {
-			OrderSpec sub;
-			sub = ((CoordinateSpace) (subSpaces.fetch(dimension))).fetchAscending();
-			if (sub == null) {
-				return null;
-			}
-			result.store(dimension, sub);
-			lex.storeInteger(dimension, IntegerValue.make(dimension));
-		}
-		return new CrossOrderSpec(space, result, lex);
-		/*
-		udanax-top.st:30769:CrossOrderSpec class methodsFor: 'private: pseudo constructors'!
-		{CrossOrderSpec} fetchDescending: space {GenericCrossSpace}
-			with: subSpaces {PtrArray of: CoordinateSpace}
-			"Only used during construction; must pass the array in explicitly since the space isnt initialized yet"
-			
-			| result {PtrArray of: OrderSpec} lex {PrimIntArray} |
-			result := PtrArray nulls: subSpaces count.
-			lex := PrimIntArray zeros: 32 with: subSpaces count.
-			Int32Zero almostTo: result count do: [ :dimension {Int32} | | sub {OrderSpec} |
-				sub := ((subSpaces fetch: dimension) cast: CoordinateSpace) fetchAscending.
-				sub == NULL ifTrue:
-					[^NULL].
-				result at: dimension store: sub.
-				lex at: dimension storeInteger: dimension].
-			^self create: space with: result with: lex!
-		*/
-	}
-
-	/**
-	 * {Int32Array CLIENT} lexOrder
-	 * {OrderSpec CLIENT} subOrder: i {Int32}
-	 * {PtrArray CLIENT of: OrderSpec} subOrders
-	 */
-	public static void info() {
-		/*
-		udanax-top.st:30786:CrossOrderSpec class methodsFor: 'smalltalk: system'!
-		info.stProtocol
-		"{Int32Array CLIENT} lexOrder
-		{OrderSpec CLIENT} subOrder: i {Int32}
-		{PtrArray CLIENT of: OrderSpec} subOrders
-		"!
-		*/
-	}
+//	/**
+//	 * {Int32Array CLIENT} lexOrder
+//	 * {OrderSpec CLIENT} subOrder: i {Int32}
+//	 * {PtrArray CLIENT of: OrderSpec} subOrders
+//	 */
+//	public static void info() {
+//		/*
+//		udanax-top.st:30786:CrossOrderSpec class methodsFor: 'smalltalk: system'!
+//		info.stProtocol
+//		"{Int32Array CLIENT} lexOrder
+//		{OrderSpec CLIENT} subOrder: i {Int32}
+//		{PtrArray CLIENT of: OrderSpec} subOrders
+//		"!
+//		*/
+//	}
 }

@@ -47,6 +47,37 @@ public class SequenceUpOrder extends OrderSpec {
 		attributes: ((Set new) add: #CONCRETE; add: #COPY; add: #NOT.A.TYPE; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+	
+	protected SequenceUpOrder() {
+		super();
+	}
+
+	protected SequenceUpOrder(Rcvr receiver) {
+		super(receiver);
+		/*
+		udanax-top.st:31170:SequenceUpOrder methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static OrderSpec make() {
+		return new SequenceUpOrder();
+		/*
+		udanax-top.st:31185:SequenceUpOrder class methodsFor: 'pseudo constructors'!
+		{OrderSpec} make
+			^self create!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Testing
+
 	public int actualHashForEqual() {
 		return getClass().hashCode();
 //		return getCategory().hashForEqual();
@@ -111,6 +142,9 @@ public class SequenceUpOrder extends OrderSpec {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Accessing
+
 	public Arrangement arrange(XnRegion region) {
 		Stepper stepper;
 		PtrArray array;
@@ -145,34 +179,12 @@ public class SequenceUpOrder extends OrderSpec {
 		*/
 	}
 
-	protected SequenceUpOrder() {
-		super();
-	}
-
-	protected SequenceUpOrder(Rcvr receiver) {
-		super(receiver);
-		/*
-		udanax-top.st:31170:SequenceUpOrder methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		/*
 		udanax-top.st:31173:SequenceUpOrder methodsFor: 'generated:'!
 		{void} sendSelfTo: xmtr {Xmtr}
 			super sendSelfTo: xmtr.!
-		*/
-	}
-
-	public static OrderSpec make() {
-		return new SequenceUpOrder();
-		/*
-		udanax-top.st:31185:SequenceUpOrder class methodsFor: 'pseudo constructors'!
-		{OrderSpec} make
-			^self create!
 		*/
 	}
 }

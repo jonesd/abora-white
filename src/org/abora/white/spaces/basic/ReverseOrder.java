@@ -41,6 +41,49 @@ public class ReverseOrder extends OrderSpec {
 		attributes: ((Set new) add: #CONCRETE; add: #COPY; add: #NOT.A.TYPE; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+	
+	public ReverseOrder(OrderSpec order) {
+		super();
+		if (order == null) {
+			throw new IllegalArgumentException();
+		}
+		myOrder = order;
+		/*
+		udanax-top.st:31089:ReverseOrder methodsFor: 'private: creation'!
+		create: order {OrderSpec}
+			super create.
+			myOrder := order!
+		*/
+	}
+
+	public ReverseOrder(Rcvr receiver) {
+		super(receiver);
+		myOrder = (OrderSpec) receiver.receiveHeaper();
+		/*
+		udanax-top.st:31096:ReverseOrder methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			myOrder _ receiver receiveHeaper.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static OrderSpec make(OrderSpec order) {
+		return new ReverseOrder(order);
+		/*
+		udanax-top.st:31113:ReverseOrder class methodsFor: 'pseudoconstructors'!
+		{OrderSpec} make: order {OrderSpec}
+			^self create: order!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Accessing
+
 	public CoordinateSpace coordinateSpace() {
 		return myOrder.coordinateSpace();
 		/*
@@ -60,6 +103,9 @@ public class ReverseOrder extends OrderSpec {
 			^myOrder!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		return myOrder.hashForEqual() ^ -1;
@@ -91,8 +137,8 @@ public class ReverseOrder extends OrderSpec {
 
 	public boolean isEqual(Heaper other) {
 		if (other instanceof OrderSpec) {
-			OrderSpec os = (OrderSpec) other;
-			return myOrder.isEqual(os.reversed());
+			OrderSpec orderSpec = (OrderSpec) other;
+			return myOrder.isEqual(orderSpec.reversed());
 		} else {
 			return false;
 		}
@@ -132,28 +178,6 @@ public class ReverseOrder extends OrderSpec {
 		*/
 	}
 
-	public ReverseOrder(OrderSpec order) {
-		super();
-		myOrder = order;
-		/*
-		udanax-top.st:31089:ReverseOrder methodsFor: 'private: creation'!
-		create: order {OrderSpec}
-			super create.
-			myOrder := order!
-		*/
-	}
-
-	public ReverseOrder(Rcvr receiver) {
-		super(receiver);
-		myOrder = (OrderSpec) receiver.receiveHeaper();
-		/*
-		udanax-top.st:31096:ReverseOrder methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			myOrder _ receiver receiveHeaper.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		xmtr.sendHeaper(myOrder);
@@ -162,15 +186,6 @@ public class ReverseOrder extends OrderSpec {
 		{void} sendSelfTo: xmtr {Xmtr}
 			super sendSelfTo: xmtr.
 			xmtr sendHeaper: myOrder.!
-		*/
-	}
-
-	public static OrderSpec make(OrderSpec order) {
-		return new ReverseOrder(order);
-		/*
-		udanax-top.st:31113:ReverseOrder class methodsFor: 'pseudoconstructors'!
-		{OrderSpec} make: order {OrderSpec}
-			^self create: order!
 		*/
 	}
 }

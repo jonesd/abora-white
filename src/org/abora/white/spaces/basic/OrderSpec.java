@@ -19,14 +19,16 @@ import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
- * [documentation note: we need to hide the documentation about partial orders, but still
- * warn that the orders may become partial]. An OrderSpec for a given coordinate space
+ * An OrderSpec for a given coordinate space
  * represents a partial ordering of all the Positions of that coordinate space.  The
- * fundamental ordering relationship is "follows".  The response of Positions to isGE defines
+ * fundamental ordering relationship is "<code>follows</code>".  The response of Positions to <code>isGE</code> defines
  * the natural, "ascending" partial order among the positions.  Every coordinate space will
  * have at least this ascending and the corresponding descending OrderSpecs.  OrderSpecs are
  * useful to specify in what order a stepper produced for stepping over positions should do
  * so.
+ * <p>
+ * [documentation note: we need to hide the documentation about partial orders, but still
+ * warn that the orders may become partial].
  */
 public abstract class OrderSpec extends Heaper {
 	/*
@@ -58,14 +60,24 @@ public abstract class OrderSpec extends Heaper {
 		attributes: ((Set new) add: #ON.CLIENT; add: #DEFERRED; add: #COPY; yourself)!
 	*/
 
-	public boolean isFullOrder() {
-		return isFullOrder(null);
+	/////////////////////////////////////////////
+	// Constructors
+	
+	protected OrderSpec() {
+		super();
+	}
+
+	protected OrderSpec(Rcvr receiver) {
+		super(receiver);
 		/*
-		udanax-top.st:30492:OrderSpec methodsFor: 'smalltalk: defaults'!
-		isFullOrder
-			^self isFullOrder: NULL!
+		udanax-top.st:30564:OrderSpec methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		//TODO review
@@ -163,6 +175,15 @@ public abstract class OrderSpec extends Heaper {
 		self subclassResponsibility!
 	*/
 
+	public boolean isFullOrder() {
+		return isFullOrder(null);
+		/*
+		udanax-top.st:30492:OrderSpec methodsFor: 'smalltalk: defaults'!
+		isFullOrder
+			^self isFullOrder: NULL!
+		*/
+	}
+
 	/**
 	 * Return true if some position in before is less than or equal to all positions in after.
 	 */
@@ -174,6 +195,9 @@ public abstract class OrderSpec extends Heaper {
 		
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Accessing
 
 	/**
 	 * Return an Arrangement of the positions in region according to the ordering of the
@@ -228,18 +252,6 @@ public abstract class OrderSpec extends Heaper {
 	//		*/
 	//	}
 
-	protected OrderSpec() {
-		super();
-	}
-
-	protected OrderSpec(Rcvr receiver) {
-		super(receiver);
-		/*
-		udanax-top.st:30564:OrderSpec methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.!
-		*/
-	}
 
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
@@ -277,19 +289,19 @@ public abstract class OrderSpec extends Heaper {
 	//		*/
 	//	}
 
-	/**
-	 * {CoordinateSpace CLIENT} coordinateSpace
-	 * {BooleanVar CLIENT} follows: x {Position} with: y {Position}
-	 * {OrderSpec CLIENT} reversed
-	 */
-	public static void info() {
-		/*
-		udanax-top.st:30591:OrderSpec class methodsFor: 'smalltalk: system'!
-		info.stProtocol
-		"{CoordinateSpace CLIENT} coordinateSpace
-		{BooleanVar CLIENT} follows: x {Position} with: y {Position}
-		{OrderSpec CLIENT} reversed
-		"!
-		*/
-	}
+//	/**
+//	 * {CoordinateSpace CLIENT} coordinateSpace
+//	 * {BooleanVar CLIENT} follows: x {Position} with: y {Position}
+//	 * {OrderSpec CLIENT} reversed
+//	 */
+//	public static void info() {
+//		/*
+//		udanax-top.st:30591:OrderSpec class methodsFor: 'smalltalk: system'!
+//		info.stProtocol
+//		"{CoordinateSpace CLIENT} coordinateSpace
+//		{BooleanVar CLIENT} follows: x {Position} with: y {Position}
+//		{OrderSpec CLIENT} reversed
+//		"!
+//		*/
+//	}
 }
