@@ -225,7 +225,32 @@
 
 <h3>Class Instance Variables</h3>
 
-		<p>To be researched.</p>
+		<p>Smalltalk supports both Class Variables and Class Instance
+			Variables. Class Variables effectively match the static fields
+			common in C++ and Java. Such a variable is declared in one
+			class, and a single value is associated with it that can be
+			shared by all subclasses. Class Instance Variables
+			are again declared once in association with a class, but the
+			difference is that every subclass has its own value bound to the
+			variable.</p>
+
+		<p>Java does not natively support this. X++ support for this has
+			to be researched.</p>
+
+<h3>Category</h3>
+
+		<p>Udanax-Gold appears to use instances of its Category class to
+			support runtime class information. Smalltalk and Java both
+			include built-in class objects that are available in a deployed
+			runtime application. I assume that C++ of the time didn't,
+			together with alternative client languages, which prompted the
+			creation of the Category class.</p>
+
+		<p>For the moment the Java Class objects are being used in place
+			of Categories. In the future the Category class my need to be
+			re-added as more is learnt about its use.</p>
+
+		<p>See: <a href="../udanax-gold2java/abora-gold/api/org/abora/gold/xpp/basic/Category.html">Category API</a>
 
 <h3>Potential Bugs</h3>
 
