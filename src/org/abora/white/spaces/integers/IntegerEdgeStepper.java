@@ -27,6 +27,7 @@ public class IntegerEdgeStepper extends Stepper {
 	protected int myIndex;
 	protected int myCount;
 	protected IntegerVarArray myEdges;
+	
 	protected static InstanceCache SomeEdgeSteppers = InstanceCache.make(2);
 	/*
 	udanax-top.st:54373:
@@ -62,6 +63,65 @@ public class IntegerEdgeStepper extends Stepper {
 		attributes: ((Set new) add: #CONCRETE; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+	
+	protected IntegerEdgeStepper(boolean entering, int count, IntegerVarArray edges) {
+		this(entering, 0, count, edges);
+		/*
+		udanax-top.st:54412:IntegerEdgeStepper methodsFor: 'protected: create'!
+		create: entering {BooleanVar} with: count {UInt32} with: edges {IntegerVarArray}
+			super create.
+			myEntering _ entering.
+			myIndex _ Int32Zero.
+			myCount _ count.
+			myEdges _ edges!
+		*/
+	}
+
+	protected IntegerEdgeStepper(boolean entering, int index, int count, IntegerVarArray edges) {
+		super();
+		myEntering = entering;
+		myIndex = index;
+		myCount = count;
+		myEdges = edges;
+		/*
+		udanax-top.st:54419:IntegerEdgeStepper methodsFor: 'protected: create'!
+		create: entering {BooleanVar} with: index {UInt32} with: count {UInt32} with: edges {IntegerVarArray}
+			super create.
+			myEntering _ entering.
+			myIndex _ index.
+			myCount _ count.
+			myEdges _ edges!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factor Methods
+	
+	public static IntegerEdgeStepper make(boolean entering, int count, IntegerVarArray edges) {
+		Heaper result = SomeEdgeSteppers.fetch();
+		if (result == null) {
+			return new IntegerEdgeStepper(entering, count, edges);
+		} else {
+			//TODO review
+			return new IntegerEdgeStepper(entering, count, edges);
+		}
+		/*
+		udanax-top.st:54463:IntegerEdgeStepper class methodsFor: 'create'!
+		make: entering {BooleanVar} with: count {UInt32} with: edges {IntegerVarArray}
+			| result {Heaper} |
+			result := SomeEdgeSteppers fetch.
+			result == NULL ifTrue: [
+				^ self create: entering with: count with: edges]
+			ifFalse: [
+				^ (self new.Become: result) create: entering with: count with: edges]!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Operations
+
 	public Heaper fetch() {
 		if (hasValue()) {
 			return IntegerPos.make(edge());
@@ -95,6 +155,9 @@ public class IntegerEdgeStepper extends Stepper {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Edge Accessing
+
 	/**
 	 * the current transition
 	 */
@@ -125,39 +188,8 @@ public class IntegerEdgeStepper extends Stepper {
 		*/
 	}
 
-	public IntegerEdgeStepper(boolean entering, int count, IntegerVarArray edges) {
-		super();
-		myEntering = entering;
-		myIndex = 0;
-		myCount = count;
-		myEdges = edges;
-		/*
-		udanax-top.st:54412:IntegerEdgeStepper methodsFor: 'protected: create'!
-		create: entering {BooleanVar} with: count {UInt32} with: edges {IntegerVarArray}
-			super create.
-			myEntering _ entering.
-			myIndex _ Int32Zero.
-			myCount _ count.
-			myEdges _ edges!
-		*/
-	}
-
-	public IntegerEdgeStepper(boolean entering, int index, int count, IntegerVarArray edges) {
-		super();
-		myEntering = entering;
-		myIndex = index;
-		myCount = count;
-		myEdges = edges;
-		/*
-		udanax-top.st:54419:IntegerEdgeStepper methodsFor: 'protected: create'!
-		create: entering {BooleanVar} with: index {UInt32} with: count {UInt32} with: edges {IntegerVarArray}
-			super create.
-			myEntering _ entering.
-			myIndex _ index.
-			myCount _ count.
-			myEdges _ edges!
-		*/
-	}
+	/////////////////////////////////////////////
+	// Destroy
 
 	public void destroy() {
 		if (!(SomeEdgeSteppers.store(this))) {
@@ -171,6 +203,9 @@ public class IntegerEdgeStepper extends Stepper {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Create
+
 	public Stepper copy() {
 		return new IntegerEdgeStepper(myEntering, myIndex, myCount, myEdges);
 		/*
@@ -179,6 +214,9 @@ public class IntegerEdgeStepper extends Stepper {
 			^IntegerEdgeStepper create: myEntering with: myIndex with: myCount with: myEdges!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Printing
 
 	public void printOn(PrintWriter oo) {
 		oo.print(getClass().getName());
@@ -206,6 +244,9 @@ public class IntegerEdgeStepper extends Stepper {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Errors
+
 	public static void outOfBounds() {
 		throw new UnsupportedOperationException();
 		//		TODOBLAST(OUT_OF_BOUNDS);
@@ -213,26 +254,6 @@ public class IntegerEdgeStepper extends Stepper {
 		udanax-top.st:54458:IntegerEdgeStepper class methodsFor: 'errors'!
 		{void} outOfBounds
 			self BLAST: #OutOfBounds!
-		*/
-	}
-
-	public static IntegerEdgeStepper make(boolean entering, int count, IntegerVarArray edges) {
-		Heaper result = SomeEdgeSteppers.fetch();
-		if (result == null) {
-			return new IntegerEdgeStepper(entering, count, edges);
-		} else {
-			//TODO review
-			return new IntegerEdgeStepper(entering, count, edges);
-		}
-		/*
-		udanax-top.st:54463:IntegerEdgeStepper class methodsFor: 'create'!
-		make: entering {BooleanVar} with: count {UInt32} with: edges {IntegerVarArray}
-			| result {Heaper} |
-			result := SomeEdgeSteppers fetch.
-			result == NULL ifTrue: [
-				^ self create: entering with: count with: edges]
-			ifFalse: [
-				^ (self new.Become: result) create: entering with: count with: edges]!
 		*/
 	}
 

@@ -46,36 +46,42 @@ import org.abora.white.xpp.basic.Heaper;
  * <li>6) A disjoint union of (in order) an optional left inequality, a set of
  * intervals, and an optional right inequality.</li>
  * </ul>
- * If a non-empty region has a least element, then it "isBoundedLeft".  Otherwise it extends
+ * If a non-empty region has a least element, then it "<code>isBoundedLeft</code>".  Otherwise it extends
  * leftwards indefinitely.  Similarly, if a non-empty region has a greatest element, then it
- * "isBoundedRight".  Otherwise it extends rightwards indefinitely.  (We may figuratively
+ * "<code>isBoundedRight</code>".  Otherwise it extends rightwards indefinitely.  (We may figuratively
  * speak of the region extending towards + or - infinity, but we have purposely avoided
  * introducing any value which represents an infinity.)
  * <p>
  * Looking at cases again:
  * <ul>
- * <li>1) "isBoundedLeft" and "isBoundedRight" since it doesn''t extent
+ * <li>1) "<code>isBoundedLeft</code>" and "<code>isBoundedRight</code>" since it doesn't extent
  * indenfinitely in either direction.  (A danger to watch out for is that
- * this still has niether a greatest nor a least element).</li>
+ * this still has neither a greatest nor a least element).</li>
  * <li>2) niether.</li>
- * <li>3) "isBoundedRight"</li>
- * <li>4) "isBoundedLeft"</li>
- * <li>5) "isBoundedLeft" and "isBoundedRight"</li>
- * <li>6) "isBoundedLeft" iff doesn''t include a left inequality,<br>
- * "isBoundedRight" iff doesn''t include a right inequality.</li>
+ * <li>3) "<code>isBoundedRight</code>"</li>
+ * <li>4) "<code>isBoundedLeft</code>"</li>
+ * <li>5) "<code>isBoundedLeft</code>" and "<code>isBoundedRight</code>"</li>
+ * <li>6) "<code>isBoundedLeft</code>" iff doesn''t include a left inequality,<br>
+ * "<code>isBoundedRight</code>" iff doesn''t include a right inequality.</li>
  * </ul>
  * An efficiency note:  Currently many of the method which could be doing an O(log) binary
  * search (such as hasMember) are instead doing a linear search.  This will be fixed if it
  * turns out to be a problem in practice.
  * <p>
+ * IntegerRegions are immutable.
+ * <p>
  * See OrderedRegion.
  */
 public class IntegerRegion extends XnRegion {
-	protected boolean myStartsInside;
-	protected int myTransitionCount;
-	protected IntegerVarArray myTransitions;
+	protected final boolean myStartsInside;
+	protected final int myTransitionCount;
+	protected final IntegerVarArray myTransitions;
+	
+	// Otptimization for all or nothing cases
 	protected static IntegerRegion AllIntegers;
 	protected static IntegerRegion EmptyIntegerRegion;
+	
+	// Optimizations for consequitive repeated use
 	protected static IntegerRegion LastAfterRegion;
 	protected static IntegerValue LastAfterStart;
 	protected static IntegerValue LastBeforeEnd;
@@ -88,7 +94,6 @@ public class IntegerRegion extends XnRegion {
 	
 	static {
 		IntegerVarArray empty = IntegerVarArray.make(1);
-		/* temp used to get around problem with static members and INIT macro - heh 10 January 1992 */
 		AllIntegers = new IntegerRegion(true, 0, empty);
 		EmptyIntegerRegion = new IntegerRegion(false, 0, empty);
 		/* call the pseudo constructors with arguments that are known to flush the caches */
@@ -435,7 +440,7 @@ public class IntegerRegion extends XnRegion {
 	}
 
 	/**
-	 * The region of all integers which are &gt;= left and &lt; right
+	 * The region of all integers which are &gt;= left and &lt; right.
 	 */
 	public static IntegerRegion make(IntegerValue left, IntegerValue right) {
 		if (left.isGE(right)) {
@@ -456,6 +461,19 @@ public class IntegerRegion extends XnRegion {
 			ivArray at: Int32Zero storeIntegerVar: left.
 			ivArray at: 1 storeIntegerVar: right.
 			^IntegerRegion create: false with: 2 with: ivArray!
+		*/
+	}
+
+	/**
+	 * used for an efficiency hack in PointRegion.  Don't use.
+	 */
+	public static IntegerVarArray badlyViolatePrivacyOfIntegerRegionTransitions(IntegerRegion reg) {
+		return reg.secretTransitions();
+		/*
+		udanax-top.st:69243:IntegerRegion class methodsFor: 'privacy violator'!
+		{IntegerVarArray INLINE} badlyViolatePrivacyOfIntegerRegionTransitions: reg {IntegerRegion} 
+			"used for an efficiency hack in PointRegion.  Don't use."
+			^reg secretTransitions!
 		*/
 	}
 
@@ -526,7 +544,7 @@ public class IntegerRegion extends XnRegion {
 
 	/**
 	 * transform the region into a simple region with left bound 0
-	 * (or -inf if unbounded).
+	 * (or -inf if unbounded below).
 	 * <p>
 	 * What on earth is this for? (Yes, I've looked at senders)
 	 */
@@ -540,8 +558,9 @@ public class IntegerRegion extends XnRegion {
 			}
 		} else {
 			if (isBoundedAbove()) {
+				XnRegion intersectionRegion = intersect(IntegerRegion.after((myTransitions.integerVarAt(0))));
 				return IntegerRegion.before(
-					((myTransitions.integerVarAt(0)).plus((intersect((IntegerRegion.after((myTransitions.integerVarAt(0)))))).count())));
+					(myTransitions.integerVarAt(0).plus(intersectionRegion.count())));
 			} else {
 				return IntegerRegion.allIntegers();
 			}
@@ -573,15 +592,12 @@ public class IntegerRegion extends XnRegion {
 	 */
 	public Mapping compactor() {
 		/* ((IntegerRegion make: 3 with: 7) unionWith: (IntegerRegion after: 10)) compactor */
-		Mapping result;
-		IntegerValue end;
-		int index;
-		IntegerRegion simple;
-		Mapping sub;
 		if (myTransitionCount == 0) {
 			return IntegerMapping.make().restrict(this);
 		}
-		result = null;
+		Mapping result = null;
+		IntegerValue end;
+		int index;
 		if (myStartsInside) {
 			end = myTransitions.integerVarAt(0);
 			index = 1;
@@ -590,8 +606,8 @@ public class IntegerRegion extends XnRegion {
 			index = 0;
 		}
 		while (index < myTransitionCount) {
-			simple = simpleRegionAtIndex(index);
-			sub = (IntegerMapping.make(end.minus(simple.start()))).restrict(simple);
+			IntegerRegion simple = simpleRegionAtIndex(index);
+			Mapping sub = (IntegerMapping.make(end.minus(simple.start()))).restrict(simple);
 			if (result == null) {
 				result = sub;
 			} else {
@@ -647,15 +663,16 @@ public class IntegerRegion extends XnRegion {
 	}
 
 	/**
-	 * True if this is either empty or a simple region with lower bound of either 0 or -infinity.
-	 * Equivalent to
-	 * <code>this->compacted()->isEqual (this)</code>
+	 * Return true if <code>this</code> region is either empty or a simple region
+	 * with lower bound of either 0 or -infinity.
+	 * <p>
+	 * Equivalent to <code>this->compacted()->isEqual (this)</code>
 	 */
 	public boolean isCompacted() {
 		if (myStartsInside) {
 			return myTransitionCount == 1;
 		} else {
-			return myTransitionCount == 0 || (myTransitionCount == 2 && ((myTransitions.integerVarAt(0)) == IntegerValue.zero()));
+			return myTransitionCount == 0 || (myTransitionCount == 2 && (myTransitions.integerVarAt(0).isEqual(IntegerValue.zero())));
 		}
 		/*
 		udanax-top.st:68549:IntegerRegion methodsFor: 'accessing'!
@@ -676,7 +693,6 @@ public class IntegerRegion extends XnRegion {
 	 * particular region (a table domain, for example).
 	 */
 	public IntegerValue nearestIntHole(IntegerValue index) {
-		boolean test;
 		IntegerEdgeStepper edges = edgeStepper();
 		while (edges.hasValue()) {
 			if (index.isLT(edges.edge())) {
@@ -684,15 +700,14 @@ public class IntegerRegion extends XnRegion {
 					edges.destroy();
 					return index;
 				} else {
-					IntegerValue result;
-					result = edges.edge();
+					IntegerValue result = edges.edge();
 					edges.destroy();
 					return result;
 				}
 			}
 			edges.step();
 		}
-		test = edges.isEntering();
+		boolean test = edges.isEntering();
 		edges.destroy();
 		if (test) {
 			return index;
@@ -726,10 +741,10 @@ public class IntegerRegion extends XnRegion {
 	}
 
 	/**
-	 * The region starting from pos (inclusive) and going until the next transition. If I contain
-	 * pos, then I return the longest contiguous region starting at pos of positions I contain.
-	 * If I don't contain pos, then I return the longest contiguous region starting at pos of
-	 * positions I do not contain.
+	 * Return the region starting from pos (inclusive) and going until the next transition. If <code>this</code> contains
+	 * pos, then return the longest contiguous region starting at pos of positions it contains.
+	 * If <code>this</code> don't contain pos, then return the longest contiguous region starting at pos of
+	 * positions it does not contain.
 	 */
 	public IntegerRegion runAt(IntegerValue pos) {
 		for (int i = 0; i < myTransitionCount; i++) {
@@ -876,17 +891,16 @@ public class IntegerRegion extends XnRegion {
 	 * Unboxed version.  See class comment for XuInteger
 	 */
 	public boolean hasIntMember(IntegerValue key) {
-		boolean result;
 		IntegerEdgeStepper edges = edgeStepper();
 		while (edges.hasValue()) {
 			if (key.isLT(edges.edge())) {
-				result = !edges.isEntering();
+				boolean result = !edges.isEntering();
 				edges.destroy();
 				return result;
 			}
 			edges.step();
 		}
-		result = !edges.isEntering();
+		boolean result = !edges.isEntering();
 		edges.destroy();
 		return result;
 		/*
@@ -1332,8 +1346,7 @@ public class IntegerRegion extends XnRegion {
 	}
 
 	public XnRegion intersect(XnRegion region) {
-		IntegerRegion other;
-		other = (IntegerRegion) region;
+		IntegerRegion other = (IntegerRegion) region;
 		if (0 == myTransitionCount) {
 			if (myStartsInside) {
 				return other;
@@ -1428,8 +1441,7 @@ public class IntegerRegion extends XnRegion {
 	 * The result is the smallest simple region which satisfies the spec in XuRegion::simpleUnion
 	 */
 	public XnRegion simpleUnion(XnRegion otherRegion) {
-		IntegerRegion other;
-		other = (IntegerRegion) otherRegion;
+		IntegerRegion other = (IntegerRegion) otherRegion;
 		if (isEmpty()) {
 			return other.asSimpleRegion();
 		}
@@ -1473,15 +1485,10 @@ public class IntegerRegion extends XnRegion {
 		if (region.isEmpty()) {
 			return this;
 		} else {
-			IntegerRegion other;
-			IntegerEdgeStepper mine;
-			IntegerEdgeStepper others;
-			IntegerEdgeAccumulator result;
-			XnRegion resultReg;
-			other = (IntegerRegion) region;
-			mine = edgeStepper();
-			others = other.edgeStepper();
-			result = IntegerEdgeAccumulator.make((myStartsInside || (!other.isBoundedBelow())), myTransitionCount + other.transitionCount());
+			IntegerRegion other = (IntegerRegion) region;
+			IntegerEdgeStepper mine = edgeStepper();
+			IntegerEdgeStepper others = other.edgeStepper();
+			IntegerEdgeAccumulator result = IntegerEdgeAccumulator.make((myStartsInside || (!other.isBoundedBelow())), myTransitionCount + other.transitionCount());
 			while (mine.hasValue() && (others.hasValue())) {
 				IntegerValue me;
 				IntegerValue him;
@@ -1507,7 +1514,7 @@ public class IntegerRegion extends XnRegion {
 			}
 			mine.destroy();
 			others.destroy();
-			resultReg = result.region();
+			XnRegion resultReg = result.region();
 			result.destroy();
 			return resultReg;
 		}
@@ -1729,7 +1736,6 @@ public class IntegerRegion extends XnRegion {
 	// Breaking Up
 
 	public ScruSet distinctions() {
-		IntegerRegion intReg;
 		if (!isSimple()) {
 			throw new AboraRuntimeException(AboraRuntimeException.INVALID_REQUEST);
 		}
@@ -1739,7 +1745,7 @@ public class IntegerRegion extends XnRegion {
 		if (isEmpty() || (myTransitionCount == 1)) {
 			return ImmuSet.make().with(this);
 		}
-		intReg = new IntegerRegion(myStartsInside, 1, myTransitions);
+		IntegerRegion intReg = new IntegerRegion(myStartsInside, 1, myTransitions);
 		return (ImmuSet.make().with(intReg)).with((IntegerRegion.before(stop())));
 		/*
 		udanax-top.st:69001:IntegerRegion methodsFor: 'breaking up'!
@@ -2001,19 +2007,6 @@ public class IntegerRegion extends XnRegion {
 //			LastSingletonRegion _ NULL.!
 //		*/
 //	}
-
-	/**
-	 * used for an efficiency hack in PointRegion.  Don't use.
-	 */
-	public static IntegerVarArray badlyViolatePrivacyOfIntegerRegionTransitions(IntegerRegion reg) {
-		return reg.secretTransitions();
-		/*
-		udanax-top.st:69243:IntegerRegion class methodsFor: 'privacy violator'!
-		{IntegerVarArray INLINE} badlyViolatePrivacyOfIntegerRegionTransitions: reg {IntegerRegion} 
-			"used for an efficiency hack in PointRegion.  Don't use."
-			^reg secretTransitions!
-		*/
-	}
 
 //	/**
 //	 * {Stepper CLIENT of: RealRegion} intervals: order {OrderSpec default: NULL}
