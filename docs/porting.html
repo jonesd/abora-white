@@ -23,11 +23,82 @@
 			do? The purpose of this page is to document these problems and
 			the final outcome I have chosen for Abora-White.</p>
 
-<h3>IntegerVar and BooleanVar</h3>
+<h3>BooleanVar</h3>
+
+		<p>This was simply replace with the Java <tt>boolean</tt>
+			primitive data type.</p>
+
+<h3>IntegerVar</h3>
+
+		<p>The Smalltalk native support for Integers is very powerful. For
+			small numbers (< 29(ish) bits) a compact unboxed in-representation form
+			is used to minimise performance overhead. If an integer larger
+			than the initial range is needed then the system automatically
+			changes to a boxed  Integer object format - transparently to the
+			application user. The boxed and unboxed versions provide the
+			same protocol, and both support C-like operators such as +. The
+			only weirdness is that there is no operator precedence rules,
+			other than computations start from the left.</p>
+
+		<p>The X++ version of Udanax-Gold seems to support just 32-bit
+			integers, which is a surprise. I guess this is either a
+			misunderstanding on my part, or perhaps unlimited precision
+			support for a pending feature? C++ allows automatic conversions between int and
+			IntegerVar class representations.</p>
+
+		<p>The Java native support for integers is split between primitive
+			data types of various bit sizes, and the BigInteger class which
+			enables unlimited precision integers. There is no automatic
+			promotion from primitives to BigInteger. Additionally arithmetic
+			operators are supported for the primitive data types, but not
+			for BigIntegers.</p>
+
+		<p>Assuming Udanax-Gold IntegerVars are required to support
+			unlimited procession, I have temporarily gone for a wrapped
+			version of BigInteger. The downsides are performance hits for
+			small and large numbers, and no arithmetic operator support. The
+			worst of both worlds!</p>
 
 <h3>Java Primitive Data Types</h3>
 
+		<p>The Java primitive data types don't completely match those of
+			X++.</p>
+
+		<p>All Java primitives are signed, except for the
+			<tt>char</tt> type, this contrasts to X++ where there is full
+			control between signed and unsigned. This is particularly
+			significant for the UInt32 type which is often used.</p>
+
+		<p>The second case has to do with Strings; Java string characters
+			are unsigned 16-bit Unicode, default X++ string characters are unsigned 8-bit.</p>
+
 <h3>Exceptions</h3>
+
+	<p>Udanax-Gold makes extensive use of Exceptions. I believe that on
+			the Smalltalk side, the instance based exception mechanism of
+			the Smalltalk language is used. On the X++ side I think a custom
+			exception mechanism was implemented - possibly done before C++
+			exceptions were added to the C++ specification.</p>
+
+	<p>Java supports a reasonable class based exception mechanism. A
+			facility beyond the Udanax-Gold exceptions is the support for
+			declaring the types of exceptions thrown by a method.</p>
+
+		<p>The initial take is to follow the instance style, and I have
+		added a <tt>org.abora.white.exception.AboraRuntimeException</tt>,
+			together with a whole bunch of constants extracted from the
+			exception use in Udanax-Gold. As the name suggests, this is
+			implemented as a Java RuntimeException so that it does not have
+			to be included in a methods definition. It is too early to try
+			and properly define the relevant throws for each method.</p>
+
+	<p>The pattern for throwing one of these exceptions is like the
+			following:<br>
+<tt>throw new AboraRuntimeException(AboraRuntimeException.NULL_INSERTION);</tt></p>
+
+		<p>Over time I would like to move to a class based approach, and
+			additionally make as much use of the Java built-in exceptions
+			where possible.</p>
 
 <h3>Potential Bugs</h3>
 
