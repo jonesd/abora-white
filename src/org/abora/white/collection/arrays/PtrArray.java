@@ -16,7 +16,7 @@ import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class PtrArray extends PrimArray {
-	protected Heaper[] storage;
+	protected final Heaper[] storage;
 
 	//////////////////////////////////////////////
 	// Constructors
@@ -94,13 +94,6 @@ public class PtrArray extends PrimArray {
 
 	public void store(int index, Heaper pointer) {
 		storage[index] = pointer;
-		//		void PtrArray::store (Int32 index, APTR(Heaper) OR(NULL) pointer){
-		//			Heaplet::checkedArrayStore
-		//				(this,
-		//			 ((Heaper**)this->storage()) + this->rangeCheck (index),
-		//			 pointer,
-		//			 index);
-		//		}
 	}
 
 	/**
@@ -108,6 +101,7 @@ public class PtrArray extends PrimArray {
 	 * BLAST if NULL
 	 */
 	public Heaper get(int index) {
+		//TODO how does this differ from getValue?
 		Heaper result = fetch(index);
 		if (result == null) {
 			throw new IllegalArgumentException("NullEntry");
@@ -127,6 +121,7 @@ public class PtrArray extends PrimArray {
 	 * Non-pointer arrays box up the contents in a PrimValue object.
 	 */
 	public Heaper fetch(int index) {
+		//TODO how does this differ from fetchValue?
 		return storage[index];
 		//		INLINE RPTR(Heaper) OR(NULL) PtrArray::fetch (Int32 index){
 		//			return ((Heaper**)this->storage())[this->rangeCheck (index)];
@@ -241,6 +236,129 @@ public class PtrArray extends PrimArray {
 		//			return result;
 		//		}
 	}
+
+	public boolean elementsEQ(int here, PrimArray other, int there, int count) {
+		PtrArray o = (PtrArray) other;
+
+		int n = Math.min(other.count() - there, count() - here);
+		if (count > n) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (count >= 0) {
+			n = count;
+		}
+		for (int i = 0; i < n; i += 1) {
+			if (fetch(here + i) != o.fetch(there + i)) {
+				return false;
+			}
+		}
+		return true;
+		//		BooleanVar PtrArray::elementsEQ (Int32 here,
+		//						 PrimArray * other,
+		//						 Int32 there/* = Int32Zero*/,
+		//						 Int32 count/* = -1*/)
+		//		{
+		//			Int32 n;
+		//			SPTR(PtrArray) o = CAST(PtrArray,other);
+		//
+		//			n = min(other->count() - there, this->count() - here);
+		//			if (count > n) {
+		//			BLAST(IndexOutOfBounds);
+		//			}
+		//			if (count >= 0) {
+		//			n = count;
+		//			}
+		//			for (Int32 i = 0; i < n; i += 1) {
+		//			if (this->unsafeFetch(here + i) != o->unsafeFetch(there + i)) {
+		//				return FALSE;
+		//			}
+		//			}
+		//			return TRUE;
+		//		}
+		//
+	}
+
+	public boolean elementsEQ(int here, PrimArray other, int there) {
+		return elementsEQ(here, other, there, -1);
+	}
+
+	public boolean elementsEQ(int here, PrimArray other) {
+		return elementsEQ(here, other, 0);
+	}
+
+	public boolean elementsEqual(int here, PrimArray other, int there, int count) {
+		PtrArray o = (PtrArray) other;
+
+		int n = Math.min(other.count() - there, count() - here);
+		if (count > n) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (count >= 0) {
+			n = count;
+		}
+		for (int i = 0; i < n; i += 1) {
+			Heaper a = fetch(here + i);
+			Heaper b = o.fetch(there + i);
+
+			if (!(a == b || a != null && b != null && a.isEqual(b))) {
+				return false;
+			}
+		}
+		return true;
+		//		BooleanVar PtrArray::elementsEqual (Int32 here,
+		//							APTR(PrimArray) other,
+		//							Int32 there/* = Int32Zero*/,
+		//							Int32 count/* = -1*/)
+		//		{
+		//			Int32 n;
+		//			SPTR(PtrArray) o = CAST(PtrArray,other);
+		//
+		//			n = min(other->count() - there, this->count() - here);
+		//			if (count > n) {
+		//			BLAST(IndexOutOfBounds);
+		//			}
+		//			if (count >= 0) {
+		//			n = count;
+		//			}
+		//			for (Int32 i = 0; i < n; i += 1) {
+		//			SPTR(Heaper) a;
+		//			SPTR(Heaper) b;
+		//
+		//			if (!((a = this->unsafeFetch(here + i)) ==
+		//				  (b = o->unsafeFetch(there + i))
+		//				  || a != NULL && b != NULL && a->isEqual(b))) {
+		//				return FALSE;
+		//			}
+		//			}
+		//			return TRUE;
+		//		}
+	}
+
+	public int elementsHash(int count, int start) {
+		int result = 0;
+		int n = count == -1 ? count() - start : count;
+		if (start < 0 || n + start > count()) {
+			throw new IndexOutOfBoundsException();
+		}
+		for (int i = 0; i < n; i++) {
+			result ^= fetch(i + start).hashForEqual();
+		}
+		return result;
+		//		UInt32 PtrArray::elementsHash(Int32 count/* = -1*/,
+		//						  Int32 start/* = Int32Zero*/)
+		//		{
+		//			UInt32 result = 0;
+		//			Int32 n = count == -1 ? this->count() - start : count;
+		//			if (start < 0 || n + start > this->count()) {
+		//				BLAST(IndexOutOfBounds);
+		//			}
+		//			for (Int32 i = 0; i < n; i++) {
+		//			result ^= this->unsafeFetch(i + start)->hashForEqual();
+		//			}
+		//			return result;
+		//		}
+	}
+
 
 	//////////////////////////////////////////////
 	// Finding
@@ -489,87 +607,6 @@ public class PtrArray extends PrimArray {
 		//		}
 	}
 
-	//////////////////////////////////////////////
-	// Bulk Storage
-
-	public void storeAll(Heaper value, int count, int start) {
-		int n = count() - start;
-		if (count > n) {
-			throw new IndexOutOfBoundsException();
-		}
-		if (value == null && start == 0) {
-			for (int i = 0; i < count(); i++) {
-				store(i, null);
-			}
-			//			this->zeroElements (0, count);
-			return;
-		}
-		if (count >= 0) {
-			n = count;
-		}
-		for (int i = 0; i < n; i += 1) {
-			store(start + i, value);
-		}
-		//		void PtrArray::storeAll (APTR(Heaper) value/* = NULL*/,
-		//					 Int32 count/* = -1*/,
-		//					 Int32 start/* = Int32Zero*/)
-		//		{
-		//			Int32 n;
-		//
-		//			n = this->count() - start;
-		//			if (count > n) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
-		//			if (value == NULL && start == Int32Zero) {
-		//			for (Int32 i = 0; i < this->count(); i++) {
-		//				this->store(i, NULL);
-		//			}
-		////			this->zeroElements (0, count);
-		//			return;
-		//			}
-		//			if (count >= 0) {
-		//			n = count;
-		//			}
-		//			for (Int32 i = 0; i < n; i += 1) {
-		//			this->store(start + i, value);
-		//			}
-		//		}
-	}
-
-	public void copyToBuffer(Heaper[] buffer, int count, int start) {
-		int n;
-		if (count >= 0) {
-			n = count;
-		} else {
-			n = count() - start;
-		}
-		if (n > buffer.length) {
-			n = buffer.length;
-		}
-		System.arraycopy(storage, start, buffer, 0, n);
-
-		//		void PtrArray::copyToBuffer (void * buffer,
-		//						 Int32 size,
-		//						 Int32 count /*= -1*/,
-		//						 Int32 start /* = Int32Zero*/)
-		//		{
-		//			Int32 bufSize;
-		//			Int32 n;
-		//
-		//			bufSize = size / sizeof(Heaper*);
-		//			if (count >= 0) {
-		//			n = count;
-		//			} else {
-		//			n = this->count() - start;
-		//			}
-		//			if (n > bufSize) {
-		//			n = bufSize;
-		//			}
-		//			MEMMOVE (buffer, (Heaper**)this->storage() + start,
-		//				 (int)(n * sizeof(Heaper*)));
-		//		}
-	}
-
 	public int indexOfEQ(Heaper value, int start, int nth) {
 		if (count() == 0 || nth == 0) {
 			return -1;
@@ -813,127 +850,89 @@ public class PtrArray extends PrimArray {
 		return indexPastEQ(value, 0);
 	}
 
-	public boolean elementsEQ(int here, PrimArray other, int there, int count) {
-		PtrArray o = (PtrArray) other;
 
-		int n = Math.min(other.count() - there, count() - here);
+	//////////////////////////////////////////////
+	// Bulk Storage
+
+	public void storeAll(Heaper value, int count, int start) {
+		int n = count() - start;
 		if (count > n) {
 			throw new IndexOutOfBoundsException();
+		}
+		if (value == null && start == 0) {
+			for (int i = 0; i < count(); i++) {
+				store(i, null);
+			}
+			//			this->zeroElements (0, count);
+			return;
 		}
 		if (count >= 0) {
 			n = count;
 		}
 		for (int i = 0; i < n; i += 1) {
-			if (fetch(here + i) != o.fetch(there + i)) {
-				return false;
-			}
+			store(start + i, value);
 		}
-		return true;
-		//		BooleanVar PtrArray::elementsEQ (Int32 here,
-		//						 PrimArray * other,
-		//						 Int32 there/* = Int32Zero*/,
-		//						 Int32 count/* = -1*/)
+		//		void PtrArray::storeAll (APTR(Heaper) value/* = NULL*/,
+		//					 Int32 count/* = -1*/,
+		//					 Int32 start/* = Int32Zero*/)
 		//		{
 		//			Int32 n;
-		//			SPTR(PtrArray) o = CAST(PtrArray,other);
 		//
-		//			n = min(other->count() - there, this->count() - here);
+		//			n = this->count() - start;
 		//			if (count > n) {
 		//			BLAST(IndexOutOfBounds);
+		//			}
+		//			if (value == NULL && start == Int32Zero) {
+		//			for (Int32 i = 0; i < this->count(); i++) {
+		//				this->store(i, NULL);
+		//			}
+		////			this->zeroElements (0, count);
+		//			return;
 		//			}
 		//			if (count >= 0) {
 		//			n = count;
 		//			}
 		//			for (Int32 i = 0; i < n; i += 1) {
-		//			if (this->unsafeFetch(here + i) != o->unsafeFetch(there + i)) {
-		//				return FALSE;
+		//			this->store(start + i, value);
 		//			}
-		//			}
-		//			return TRUE;
 		//		}
-		//
 	}
 
-	public boolean elementsEQ(int here, PrimArray other, int there) {
-		return elementsEQ(here, other, there, -1);
-	}
-
-	public boolean elementsEQ(int here, PrimArray other) {
-		return elementsEQ(here, other, 0);
-	}
-
-	public boolean elementsEqual(int here, PrimArray other, int there, int count) {
-		PtrArray o = (PtrArray) other;
-
-		int n = Math.min(other.count() - there, count() - here);
-		if (count > n) {
-			throw new IndexOutOfBoundsException();
-		}
+	public void copyToBuffer(Heaper[] buffer, int count, int start) {
+		int n;
 		if (count >= 0) {
 			n = count;
+		} else {
+			n = count() - start;
 		}
-		for (int i = 0; i < n; i += 1) {
-			Heaper a = fetch(here + i);
-			Heaper b = o.fetch(there + i);
+		if (n > buffer.length) {
+			n = buffer.length;
+		}
+		System.arraycopy(storage, start, buffer, 0, n);
 
-			if (!(a == b || a != null && b != null && a.isEqual(b))) {
-				return false;
-			}
-		}
-		return true;
-		//		BooleanVar PtrArray::elementsEqual (Int32 here,
-		//							APTR(PrimArray) other,
-		//							Int32 there/* = Int32Zero*/,
-		//							Int32 count/* = -1*/)
+		//		void PtrArray::copyToBuffer (void * buffer,
+		//						 Int32 size,
+		//						 Int32 count /*= -1*/,
+		//						 Int32 start /* = Int32Zero*/)
 		//		{
+		//			Int32 bufSize;
 		//			Int32 n;
-		//			SPTR(PtrArray) o = CAST(PtrArray,other);
 		//
-		//			n = min(other->count() - there, this->count() - here);
-		//			if (count > n) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
+		//			bufSize = size / sizeof(Heaper*);
 		//			if (count >= 0) {
 		//			n = count;
+		//			} else {
+		//			n = this->count() - start;
 		//			}
-		//			for (Int32 i = 0; i < n; i += 1) {
-		//			SPTR(Heaper) a;
-		//			SPTR(Heaper) b;
-		//
-		//			if (!((a = this->unsafeFetch(here + i)) ==
-		//				  (b = o->unsafeFetch(there + i))
-		//				  || a != NULL && b != NULL && a->isEqual(b))) {
-		//				return FALSE;
+		//			if (n > bufSize) {
+		//			n = bufSize;
 		//			}
-		//			}
-		//			return TRUE;
+		//			MEMMOVE (buffer, (Heaper**)this->storage() + start,
+		//				 (int)(n * sizeof(Heaper*)));
 		//		}
 	}
 
-	public int elementsHash(int count, int start) {
-		int result = 0;
-		int n = count == -1 ? count() - start : count;
-		if (start < 0 || n + start > count()) {
-			throw new IndexOutOfBoundsException();
-		}
-		for (int i = 0; i < n; i++) {
-			result ^= fetch(i + start).hashForEqual();
-		}
-		return result;
-		//		UInt32 PtrArray::elementsHash(Int32 count/* = -1*/,
-		//						  Int32 start/* = Int32Zero*/)
-		//		{
-		//			UInt32 result = 0;
-		//			Int32 n = count == -1 ? this->count() - start : count;
-		//			if (start < 0 || n + start > this->count()) {
-		//				BLAST(IndexOutOfBounds);
-		//			}
-		//			for (Int32 i = 0; i < n; i++) {
-		//			result ^= this->unsafeFetch(i + start)->hashForEqual();
-		//			}
-		//			return result;
-		//		}
-	}
+
 
 	protected Heaper zeroElement() {
 		return null;
@@ -944,10 +943,6 @@ public class PtrArray extends PrimArray {
 
 	protected void printElementOn(int index, PrintWriter oo) {
 		oo.print(fetch(index));
-		//		void PtrArray::printElementOn (Int32 index, ostream& oo)
-		//		{
-		//			oo << this->fetch(index);
-		//		}
 	}
 
 	//	/** for bulk methods that need checking and for migration */
