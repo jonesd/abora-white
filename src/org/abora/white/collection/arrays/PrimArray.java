@@ -167,7 +167,12 @@ public abstract class PrimArray extends Heaper {
 	// Bulk storing
 
 	/** 
-	 * Set a range of elements to have the same value
+	 * Fill a consequitive range of elements with the supplied <code>value</code>.
+	 *  
+	 * @param value to store within range or 0.0 if null.
+	 * @param count number of consequentive elements in range or all
+	 * 			elements from <code>start</code> if -1.
+	 * @param start index of first element in range.
 	 */
 	//TODO possibly rename to fill(...) to better match Java terminology
 	public abstract void storeAll(Heaper value, int count, int start);
@@ -176,23 +181,29 @@ public abstract class PrimArray extends Heaper {
 		storeAll(value, count, 0);
 	}
 
+	/** 
+	 * Fill every element of this to value or null or 0 depending on the type of array.
+	 */
 	public void storeAll(Heaper value) {
 		storeAll(value, -1);
 	}
 
+	/** 
+	 * Fill every element of this to null or 0 depending on the type of array.
+	 */
 	public void storeAll() {
 		storeAll(null);
 	}
 
 	
 	/**
-	 * Copy the respective elements of other to this over the specified index range.
+	 * Copy the respective elements of <code>other</code> to this over the specified index range.
 	 * The other array must be of a compatible type. 
 	 * 
 	 * @param to first index of receiver to be included in the receivers range..
 	 * @param other other elements to be copied into this.
 	 * @param count number of elements from the other array included in range, or -1 for
-	 * 			all others elements starting at from. Fail if count is
+	 * 			all others elements starting at from. Fail if <code>count</code> is
 	 * 			greater than number of available elements.
 	 * @param from first index of the other array to be included in the range.
 	 */ 
@@ -228,10 +239,10 @@ public abstract class PrimArray extends Heaper {
 
 	/**
 	 * Return a copy of this including just the elements specified by
-	 * the index range prepended by before, and postpended by after
+	 * the index range prepended by <code>before</code>, and postpended by <code>after</code>
 	 * number of null or 0 elements.
 	 * <p>
-	 * If before = 10, then the the resulting array with be 10 elements
+	 * If <code>before == 10</code>, then the the resulting array with be 10 elements
 	 * larger and the copied elements would start at index 10.
 	 * 
 	 * @param count number of elements to copy, or -1 for all from and after start
@@ -258,9 +269,9 @@ public abstract class PrimArray extends Heaper {
 
 	/**
 	 * Return a copy of this including just the elements specified by
-	 * the index range prepended by before number of null or 0 elements.
+	 * the index range prepended by <code>before</code> number of null or 0 elements.
 	 * <p>
-	 * If before = 10, then the the resulting array with be 10 elements
+	 * If <code>before == 10</code>, then the the resulting array with be 10 elements
 	 * larger and the copied elements would start at index 10.
 	 * 
 	 * @param count number of elements to copy, or -1 for all from and after start
@@ -305,8 +316,8 @@ public abstract class PrimArray extends Heaper {
 	}
 
 	/**
-	 *  Make a copy of the array into a larger array.  The array has
-	 * 'after' slots after the copied elements.
+	 * Return a copy of this with <code>after</code> null/0 elements
+	 * postpended to the copied elements.
 	 * 
 	 * @param after number of trailing null or 0 elements to include after the copied
 	 * 	elements in the returned array.
@@ -401,22 +412,33 @@ public abstract class PrimArray extends Heaper {
 
 
 	/**
-	 * The index of the nth occurrence of the given sequence of values at or
-	 * after (before if n is negative) the given starting index, or -1 if there
-	 * is none. Negative numbers for start are relative to the end of the array.
+	 * Return the index of the <code>nth</code> occurrence of the given sequence
+	 * of values of other at or after (before if <code>nth</code> is negative) the given
+	 * index in this, or -1 if there is none. Negative numbers for <code>start</code> are
+	 * relative to the end of the array.
+	 * 
+	 * @param other array of elements that is being searched for in this.
+	 * @param otherCount number of elements from <code>other</code> that is being
+	 * 	searched for, or -1 to include all elements after <code>otherStart</code>.
+	 * @param otherStart index of first element of <code>other</code> to start searching for.
+	 * @param start index to start the search. If positive start from that index,
+	 * 			if negative start from relative to end of array where -1 is the last valid index.
+	 * @param nth nth occurrence of the matched value at or after the start if
+	 * 			positive, or at or before if negative. A 0 nth immediately fails.
+	 * @return index of match or -1 if failed
 	 */
-	public int indexOfElements(PrimArray other, int valueCount, int valueStart, int start, int nth) {
+	public int indexOfElements(PrimArray other, int otherCount, int otherStart, int start, int nth) {
 		if (count() == 0 || nth == 0) {
 			return -1;
 		}
-		int valueN;
-		if (valueCount < 0) {
-			valueN = other.count();
+		int otherN;
+		if (otherCount < 0) {
+			otherN = other.count();
 		} else {
-			if (valueCount > other.count()) {
+			if (otherCount > other.count()) {
 				throw new IndexOutOfBoundsException();
 			}
-			valueN = valueCount;
+			otherN = otherCount;
 		}
 		int result;
 		if (start >= 0) {
@@ -428,10 +450,10 @@ public abstract class PrimArray extends Heaper {
 		boolean forward = nth > 0;
 		for (;;) {
 			{
-				if (forward ? (result > count() - valueN) : result < 0) {
+				if (forward ? (result > count() - otherN) : result < 0) {
 					return -1;
 				}
-				if (elementsEqual(result, other, valueStart, valueN)) {
+				if (elementsEqual(result, other, otherStart, otherN)) {
 					n -= 1;
 					if (n == 0) {
 						return result;
@@ -444,60 +466,27 @@ public abstract class PrimArray extends Heaper {
 				}
 			}
 		}
-//		int valueN;
-//		int result;
-//		int n;
-//
-//		if (count() == 0 || nth == 0) {
-//			return -1;
-//		}
-//		if (valueCount < 0) {
-//			valueN = other.count();
-//		} else {
-//			if (valueCount > other.count()) {
-//				throw new AboraRuntimeException(AboraRuntimeException.INDEX_OUT_OF_BOUNDS);
-//			}
-//			valueN = valueCount;
-//		}
-//		if (start >= 0) {
-//			result = start;
-//		} else {
-//			result = count() + start;
-//		}
-//		n = nth < 0 ? -nth : nth;
-//		boolean forward = nth > 0;
-//		for (;;) {
-//			{
-//				if (forward ? (result > count()) - valueN : result < 0) {
-//					return -1;
-//				}
-//				if (elementsEqual(result, other, valueStart, valueN).asBoolean()) {
-//					n -= 1;
-//					if (n == 0) {
-//						return result;
-//					}
-//				}
-//				if (forward) {
-//					result += 1;
-//				} else {
-//					result -= 1;
-//				}
-//			}
-//		}
 	}
 
-	public int indexOfElements(PrimArray other, int valueCount, int valueStart, int start) {
-		return indexOfElements(other, valueCount, valueStart, start, 1);
+	public int indexOfElements(PrimArray other, int otherCount, int otherStart, int start) {
+		return indexOfElements(other, otherCount, otherStart, start, 1);
 	}
 
-	public int indexOfElements(PrimArray other, int valueCount, int valueStart) {
-		return indexOfElements(other, valueCount, valueStart, 0);
+	public int indexOfElements(PrimArray other, int otherCount, int otherStart) {
+		return indexOfElements(other, otherCount, otherStart, 0);
 	}
 
-	public int indexOfElements(PrimArray other, int valueCount) {
-		return indexOfElements(other, valueCount, 0);
+	public int indexOfElements(PrimArray other, int otherCount) {
+		return indexOfElements(other, otherCount, 0);
 	}
 
+	/**
+	 * Return the index of the first occurrence of <code>other</code> in this 
+	 * or -1 if there is none. 
+	 * 
+	 * @param other array of elements that is being searched for in this.
+	 * @return index of match or -1 if failed
+	 */
 	public int indexOfElements(PrimArray other) {
 		return indexOfElements(other, -1);
 	}

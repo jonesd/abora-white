@@ -21,7 +21,7 @@ import org.abora.white.xpp.basic.Heaper;
  * which match the Java float primitive type.
  */
 public class IEEE32Array extends PrimFloatArray {
-	private float[] storage = null;
+	private final float[] storage;
 
 
 	//////////////////////////////////////////////
@@ -160,14 +160,6 @@ public class IEEE32Array extends PrimFloatArray {
 	//////////////////////////////////////////////
 	// bulk storing
 
-	/** 
-	 * Fill a consequitive range of elements with the supplied value.
-	 *  
-	 * @param value to store within range or 0.0 if null
-	 * @param count number of consequentive elements in range or all
-	 * 			elements from start if -1
-	 * @param start index of first element in range (default to start)
-	 */
 	public void storeAll(Heaper value, int count, int start) {
 		int n = count() - start;
 		if (count > n) {
@@ -176,14 +168,14 @@ public class IEEE32Array extends PrimFloatArray {
 		if (count >= 0) {
 			n = count;
 		}
-		float f;
+		float floatValue;
 		if (value == null) {
-			f = 0.0f;
+			floatValue = 0.0f;
 		} else {
-			f = ((PrimFloatValue) value).asIEEE32();
+			floatValue = ((PrimFloatValue) value).asIEEE32();
 		}
 		for (int i = 0; i < n; i += 1) {
-			storeIEEE32(start + i, f);
+			storeIEEE32(start + i, floatValue);
 		}
 	}
 

@@ -31,19 +31,30 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		super();
 	}
 
-	/** Make an array initialized to zero values */
-	public static PrimFloatArray zeros(int bitCount, int count) {
-		throw new UnsupportedOperationException();
-	}
-
+//	/** Make an array initialized to zero values */
+//	public static PrimFloatArray zeros(int bitCount, int count) {
+//		throw new UnsupportedOperationException();
+//	}
+//
 
 	//////////////////////////////////////////////
 	// Accessing
 	
-	/** Store a floating point value */
+	/** 
+	 * Store a floating point number at the specified <code>index</code>.
+	 * 
+	 * @param index 0 based index to store the <code>value</code> at.
+	 * @param value value to store in array, may lose precision if
+	 * 	array cant hold the full extent of it. 
+	 */
 	public abstract void storeFloat(int index, double value);
 
-	/** Get an actual floating point number */
+	/**
+	 * Return the floating point number at the specified <code>index</code>.
+	 * 
+	 * @param index 0 based index of this to read the number from.
+	 * @return value at the specified index. 
+	 */
 	public abstract double floatAt(int index);
 
 

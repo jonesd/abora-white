@@ -575,11 +575,85 @@ public class IEEE32ArrayTest extends TestCase {
 	}
 	
 	public void testIndexOfElements() {
-		IEEE32Array array = makeIEEE32Array12321();
-		IEEE32Array search = IEEE32Array.make(new float[]{1.1f, 2.2f});
+		// empty
+		IEEE32Array array = makeIEEE32ArrayEmpty();
+		IEEE32Array search = makeIEEE32Array1();
+		assertEquals(-1, array.indexOfElements(search));
+
+		array = makeIEEE32ArrayEmpty();
+		search = makeIEEE32ArrayEmpty();
+		assertEquals(-1, array.indexOfElements(search));
+
+// TODO skip zero length other?
+//		array = makeIEEE32Array12345();
+//		search = makeIEEE32ArrayEmpty();
+//		assertEquals(-1, array.indexOfElements(search));
+
+		// forward search
+		array = IEEE32Array.make(new float[]{1.1f, 2.2f, 3.3f, 1.1f, 2.2f});
+		search = IEEE32Array.make(new float[]{1.1f, 2.2f});
 		assertEquals(0, array.indexOfElements(search));
+		assertEquals(3, array.indexOfElements(search, -1, 0, 0, 2));
+		assertEquals(-1, array.indexOfElements(search, -1, 0, 0, 3));
+
+		array = makeIEEE32Array12321();
+		search = IEEE32Array.make(new float[]{4.4f, 9.9f, 2.2f, 8.8f});
+		assertEquals(1, array.indexOfElements(search, 1, 2, 0, 1));
+		assertEquals(3, array.indexOfElements(search, 1, 2, 0, 2));
+		assertEquals(-1, array.indexOfElements(search, 1, 2, 0, 3));
 		
-		//TODO More tests!!!!!!!!!!!!!!!!!!!!!!!!!
+		// reverse search		
+		array = IEEE32Array.make(new float[]{1.1f, 2.2f, 3.3f, 1.1f, 2.2f});
+		search = IEEE32Array.make(new float[]{1.1f, 2.2f});
+		assertEquals(3, array.indexOfElements(search, -1, 0, -2, -1));
+		assertEquals(0, array.indexOfElements(search, -1, 0, -2, -2));
+		assertEquals(-1, array.indexOfElements(search, -1, 0, -2, -3));
+
+		// overlapping search
+		// TODO should this succeed?
+		array = IEEE32Array.make(new float[]{1.1f, 1.1f, 1.1f});
+		search = IEEE32Array.make(new float[]{1.1f, 1.1f});
+		assertEquals(0, array.indexOfElements(search));
+		assertEquals(1, array.indexOfElements(search, -1, 0, 0, 2));
+		assertEquals(-1, array.indexOfElements(search, -1, 0, 0, 3));
+
+		// nth == 0 immediate fail
+		array = makeIEEE32Array12321();
+		search = IEEE32Array.make(new float[]{1.1f});
+		assertEquals(-1, array.indexOfElements(search, -1, 0, 0, 0));
+
+		// overflowing otherCount
+		array = makeIEEE32Array12321();
+		search = IEEE32Array.make(new float[]{1.1f, 2.2f});
+		try {
+			array.indexOfElements(search, 3);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+		try {
+			array.indexOfElements(search, 2, 1);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+
+		// invalid start		
+		array = makeIEEE32Array12321();
+		search = IEEE32Array.make(new float[]{1.1f, 2.2f});
+// TODO different invalid start values if + or - 
+//		try {
+//			array.indexOfElements(search, -1, 0, 6, 0);
+//			fail();
+//		} catch (IndexOutOfBoundsException e) {
+//			// expected
+//		}
+		try {
+			array.indexOfElements(search, -1, 0, -1, -1);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}		
 	}
 	
 	public void testAddElements() {

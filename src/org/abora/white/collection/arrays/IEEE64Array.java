@@ -126,14 +126,14 @@ public class IEEE64Array extends PrimFloatArray {
 		if (count >= 0) {
 			n = count;
 		}
-		double f;
+		double floatValue;
 		if (value == null) {
-			f = 0.0;
+			floatValue = 0.0;
 		} else {
-			f = ((PrimFloatValue) value).asIEEE64();
+			floatValue = ((PrimFloatValue) value).asIEEE64();
 		}
 		for (int i = 0; i < n; i += 1) {
-			storeIEEE64(start + i, f);
+			storeIEEE64(start + i, floatValue);
 		}
 		//		void IEEE64Array::storeAll (APTR(Heaper) value/* = NULL*/,
 		//						Int32 count/* = -1*/,
