@@ -226,16 +226,22 @@
 <h3>Class Instance Variables</h3>
 
 		<p>Smalltalk supports both Class Variables and Class Instance
-			Variables. Class Variables effectively match the static fields
-			common in C++ and Java. Such a variable is declared in one
-			class, and a single value is associated with it that can be
-			shared by all subclasses. Class Instance Variables
-			are again declared once in association with a class, but the
-			difference is that every subclass has its own value bound to the
-			variable.</p>
+		Variables. Class Variables effectively match the static fields
+		common in C++ and Java. Such a variable is declared in one class,
+		and a single value is associated with it that can be shared by all
+		subclasses. Class Instance Variables are again declared once in
+		association with a class, but the difference is that every
+		subclass has its own value bound to the variable.</p>
 
-		<p>Java does not natively support this. X++ support for this has
-			to be researched.</p>
+		<p>Java does not natively support class instance variables, but it
+		is relatively straightforward to implement by following the X++
+		approach. Declare and define a private static variable in the
+		original host of the class instance variable and all its
+		subclasses. The static modifier will force each class to have its
+		own variable and code will bind to the local classes version, and
+		the private access will ensure that code cant use a superclass
+		version instead. The only downside is the duplicate definitions
+		when it comes to code maintenance.</p>
 
 <h3>Category</h3>
 
