@@ -831,6 +831,10 @@ public class IntegerVarArrayTest extends TestCase {
 		array2 = IntegerVarArray.make(new IntegerValue[] { IntegerValue.make(0) });
 		assertEquals(0, array1.compare(array2));
 
+		array1 = IntegerVarArray.make(new IntegerValue[] { IntegerValue.make(1), IntegerValue.make(-1) });
+		array2 = IntegerVarArray.make(new IntegerValue[] { IntegerValue.make(1) });
+		assertEquals(-1, array1.compare(array2));
+
 		// compare sub-regions		
 		array1 = AssertArrays.makeIntegerVarArray12321();
 		array2 = AssertArrays.makeIntegerVarArray12345();

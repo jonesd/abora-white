@@ -21,6 +21,7 @@ public class AllTests {
 
 		suite.addTest(org.abora.white.collection.arrays.tests.AllTests.suite());
 		suite.addTest(org.abora.white.value.tests.AllTests.suite());
+		suite.addTest(org.abora.white.hash.tests.AllTests.suite());
 
 		//$JUnit-BEGIN$
 		//$JUnit-END$

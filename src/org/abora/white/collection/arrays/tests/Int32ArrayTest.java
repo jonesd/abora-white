@@ -15,6 +15,7 @@ import org.abora.white.collection.arrays.IEEE32Array;
 import org.abora.white.collection.arrays.IEEE64Array;
 import org.abora.white.collection.arrays.Int32Array;
 import org.abora.white.collection.arrays.Int64Array;
+import org.abora.white.collection.arrays.PrimIntegerArray;
 import org.abora.white.value.IEEE32Value;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.IntegerValue;
@@ -501,6 +502,9 @@ public class Int32ArrayTest extends TestCase {
 		index = AssertArrays.makeInt32Array1().indexOf(IntegerValue.make(1), 0, 0);
 		assertEquals(-1, index);
 
+		index = AssertArrays.makeInt32Array12345().indexOf(IntegerValue.make(1));
+		assertEquals(0, index);
+
 		index = AssertArrays.makeInt32Array12345().indexOf(IntegerValue.make(1), 0, 1);
 		assertEquals(0, index);
 
@@ -555,6 +559,15 @@ public class Int32ArrayTest extends TestCase {
 		}
 	}
 
+	public void testIndexOfInteger() {
+		int index = AssertArrays.makeInt32Array12321().indexOfInteger(IntegerValue.make(1));
+		assertEquals(0, index);
+		index = AssertArrays.makeInt32Array12321().indexOfInteger(IntegerValue.make(1), 1);
+		assertEquals(4, index);
+		index = AssertArrays.makeInt32Array12321().indexOfInteger(IntegerValue.make(4), 1);
+		assertEquals(-1, index);
+	}
+
 	public void testIndexPast() {
 		int index = AssertArrays.makeInt32ArrayEmpty().indexPast(IntegerValue.make(1), 0, 1);
 		assertEquals(-1, index);
@@ -564,6 +577,9 @@ public class Int32ArrayTest extends TestCase {
 
 		index = AssertArrays.makeInt32Array1().indexPast(IntegerValue.make(1), 0, 0);
 		assertEquals(-1, index);
+
+		index = AssertArrays.makeInt32Array12345().indexPast(IntegerValue.make(1));
+		assertEquals(1, index);
 
 		index = AssertArrays.makeInt32Array12345().indexPast(IntegerValue.make(1), 0, 1);
 		assertEquals(1, index);
@@ -607,6 +623,9 @@ public class Int32ArrayTest extends TestCase {
 		index = AssertArrays.makeInt32Array12321().indexPast(IntegerValue.make(2), -1, -3);
 		assertEquals(0, index);
 
+		index = AssertArrays.makeInt32Array12321().indexPast(IntegerValue.make(2), -1, -4);
+		assertEquals(-1, index);
+
 		index = AssertArrays.makeInt32Array12321().indexPast(IntegerValue.make(2), -3, -1);
 		assertEquals(2, index);
 
@@ -626,6 +645,13 @@ public class Int32ArrayTest extends TestCase {
 		} catch (ClassCastException e) {
 			// expected
 		}
+	}
+
+	public void testIndexPastInteger() {
+		int index = AssertArrays.makeInt32Array12321().indexPastInteger(IntegerValue.make(1));
+		assertEquals(1, index);
+		index = AssertArrays.makeInt32Array12321().indexPastInteger(IntegerValue.make(1), 1);
+		assertEquals(1, index);
 	}
 
 	public void testIndexOfElements() {
@@ -888,6 +914,10 @@ public class Int32ArrayTest extends TestCase {
 		array2 = Int32Array.make(new int[] { 0 });
 		assertEquals(0, array1.compare(array2));
 
+		array1 = Int32Array.make(new int[]{1, -1});
+		array2 = Int32Array.make(new int[]{1});
+		assertEquals(-1, array1.compare(array2));
+
 		// compare sub-regions		
 		array1 = AssertArrays.makeInt32Array12321();
 		array2 = AssertArrays.makeInt32Array12345();
@@ -1053,4 +1083,107 @@ public class Int32ArrayTest extends TestCase {
 			// expected
 		}
 	}
+	
+	public void testHold() {
+		// simple store
+		Int32Array array = AssertArrays.makeInt32Array12345();
+		PrimIntegerArray held = array.hold(0, IntegerValue.make(99));
+		assertNotSame(array, held);
+		assertEquals(Int32Array.make(new int[] {99, 2, 3, 4, 5}), held);
+		assertEquals(AssertArrays.makeInt32Array12345(), array);
+
+		array = AssertArrays.makeInt32Array12345();
+		held = array.hold(0, IntegerValue.make(99), true);
+		assertSame(array, held);
+		assertEquals(Int32Array.make(new int[] {99, 2, 3, 4, 5}), array);
+
+		// store of greater type
+		array = AssertArrays.makeInt32Array12345();
+		held = array.hold(0, IntegerValue.make(Integer.MAX_VALUE + 1L));
+		assertNotSame(array, held);
+		assertEquals(Int64Array.make(new long[] {Integer.MAX_VALUE + 1L, 2, 3, 4, 5}), held);
+		assertEquals(AssertArrays.makeInt32Array12345(), array);
+
+		// store of greater type - ignore the modify original request
+		array = AssertArrays.makeInt32Array12345();
+		held = array.hold(0, IntegerValue.make(Integer.MAX_VALUE + 1L), true);
+		assertNotSame(array, held);
+		assertEquals(Int64Array.make(new long[] {Integer.MAX_VALUE + 1L, 2, 3, 4, 5}), held);
+		assertEquals(AssertArrays.makeInt32Array12345(), array);
+
+		// extending same type
+		array = AssertArrays.makeInt32ArrayEmpty();
+		held = array.hold(0, IntegerValue.make(99));
+		assertNotSame(array, held);
+		assertEquals(Int32Array.make(new int[] {99}), held);
+		assertEquals(AssertArrays.makeInt32ArrayEmpty(), array);
+
+		array = AssertArrays.makeInt32Array12345();
+		held = array.hold(5, IntegerValue.make(99));
+		assertNotSame(array, held);
+		assertEquals(Int32Array.make(new int[] {1, 2, 3, 4, 5, 99}), held);
+		assertEquals(AssertArrays.makeInt32Array12345(), array);
+
+		array = AssertArrays.makeInt32Array12345();
+		held = array.hold(6, IntegerValue.make(99));
+		assertNotSame(array, held);
+		assertEquals(Int32Array.make(new int[] {1, 2, 3, 4, 5, 0, 99}), held);
+		assertEquals(AssertArrays.makeInt32Array12345(), array);
+
+		// extending greater type
+		array = AssertArrays.makeInt32Array12345();
+		held = array.hold(6, IntegerValue.make(Integer.MAX_VALUE + 1L));
+		assertNotSame(array, held);
+		assertEquals(Int64Array.make(new long[] {1, 2, 3, 4, 5, 0, Integer.MAX_VALUE + 1L}), held);
+		assertEquals(AssertArrays.makeInt32Array12345(), array);
+
+		// store before start
+		try {
+			AssertArrays.makeInt32ArrayEmpty().hold(-1, IntegerValue.make(1));
+			fail("-1");
+		} catch (IndexOutOfBoundsException e) {
+			//expected
+		}
+
+		// store null
+		try {
+			AssertArrays.makeInt32ArrayEmpty().hold(1, null);
+			fail("null");
+		} catch (NullPointerException e) {
+			//expected
+		}
+	}
+	
+	public void testElementsHash() {
+		// complete hash
+		int hash = AssertArrays.makeInt32ArrayEmpty().elementsHash();
+		assertFalse(0 == hash);
+		
+		assertFalse(AssertArrays.makeInt32Array12345().elementsHash() == AssertArrays.makeInt32Array12321().elementsHash());
+
+		// partial hash
+		Int32Array array = AssertArrays.makeInt32Array12345();
+		assertFalse(0 == array.elementsHash());
+		assertFalse(array.elementsHash(0) == array.elementsHash(1));
+		assertFalse(array.elementsHash(1, 1) == array.elementsHash(1));
+		
+		// out of range
+		try {
+			AssertArrays.makeInt32Array12345().elementsHash(5, 1);
+			fail("5,1");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+
+	public void testContentsHash() {
+		int hash = AssertArrays.makeInt32ArrayEmpty().contentsHash();
+		assertFalse(0 == hash);
+		
+		Int32Array array = AssertArrays.makeInt32Array12345();
+		assertFalse(0 == array.contentsHash());
+		
+		assertFalse(AssertArrays.makeInt32Array12345().contentsHash() == AssertArrays.makeInt32Array12321().contentsHash());
+	}
+
 }

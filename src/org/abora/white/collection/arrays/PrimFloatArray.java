@@ -10,8 +10,7 @@
  */
 package org.abora.white.collection.arrays;
 
-import java.util.Arrays;
-
+import org.abora.white.hash.FHash;
 import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.PrimFloatValue;
 import org.abora.white.xpp.basic.Heaper;
@@ -82,8 +81,23 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 	// Comparing and Hashing
 	
 	public int elementsHash(int count, int start) {
-		throw new UnsupportedOperationException();
-//		//TODO double check implementation
+		int n = count() - start;
+		if (count > n) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (count >= 0) {
+			n = count;
+		}
+		if (n == 0) {
+			return FHash.hashInt(17);
+		} else {
+			if (n == 1) {
+				return FHash.hashDouble(floatAt(start));
+			} else {
+				return FHash.hashInt(n) ^ FHash.hashDouble(floatAt(start)) ^ FHash.hashDouble(floatAt(start + n - 1));
+			}
+		}
+		//TODO double check implementation
 //		int hash = 17;
 //		for (int i = start; i < count; i += 1) {
 //			double value = floatAt(i);

@@ -45,6 +45,20 @@ public class Int16ArrayTest extends TestCase {
 		}
 	}
 
+	public void testMakeCopy() {
+		Int16Array array = Int16Array.make(AssertArrays.makeInt16ArrayEmpty());
+		assertEquals(0, array.count());
+
+		array = Int16Array.make(AssertArrays.makeInt16Array12345());
+		AssertArrays.assertEquals(5, array.count());
+		AssertArrays.assertEquals(AssertArrays.makeInt16Array12345(), array);
+
+		array = Int16Array.make(7, AssertArrays.makeInt16Array12345());
+		AssertArrays.assertEquals(7, array.count());
+		AssertArrays.assertEquals(Int16Array.make(new short[]{1,2,3,4,5,0,0}), array);
+		
+	}
+
 	public void testInt16At() {
 		Int16Array a = Int16Array.make(new short[] { 0, 1, -2, 3 });
 
@@ -886,6 +900,10 @@ public class Int16ArrayTest extends TestCase {
 		array1 = Int16Array.make(new short[] { 0, 0 });
 		array2 = Int16Array.make(new short[] { 0 });
 		assertEquals(0, array1.compare(array2));
+
+		array1 = Int16Array.make(new short[]{1, -1});
+		array2 = Int16Array.make(new short[]{1});
+		assertEquals(-1, array1.compare(array2));
 
 		// compare sub-regions		
 		array1 = AssertArrays.makeInt16Array12321();

@@ -14,6 +14,7 @@ import org.abora.white.value.IntegerValue;
 import org.abora.white.value.PrimIntegerSpec;
 import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
+import org.abora.white.hash.FHash;
 
 /**
  * A common superclass for primitive arrays of integer types; this is the point
@@ -27,7 +28,6 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 	protected PrimIntegerArray() {
 		super();
 	}
-
 
 	//////////////////////////////////////////////
 	// accessing
@@ -50,18 +50,27 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 	public abstract IntegerValue integerAt(int index);
 
 	/**
-	 * Store a new value into the array at the given index. If the value does
-	 * not fit into the range that can be stored here, return an array of a kind
-	 * that will accept it. If the index is past the end, return a larger array.
-	 * If canModify, then returns a newly created array only if the value will
-	 * not fit into this one, otherwise will always return a new array.
+	 * Store an integer <code>value</code> at the specified <code>index</code>.
+	 * If <code>index</code> is past the end of the current array, then
+	 * return a copy of the array that has been extended to include the specified <code>index</code>.
+	 * Fill new intervening elements with zero.
+	 * If <code>value</code> can not be held by the current array, then return
+	 * a copy of the array of a kind that can hold the value.
+	 * If <code>canModify</code> and the value can be stored in the current array
+	 * then modify this array, otherwise in all other cases return a copy of the
+	 * this array.
+	 * 
+	 * @param index index in array the element will be stored at.
+	 * @param value integer to store in array
+	 * @param canModify true if the the value can be stored in <code>this</code> array,
+	 * 	if possible, otherwise always return a copy of <code>this</code> array.
+	 * @return array holding <code>value</code>, may be this array or a copy.
 	 */
 	public PrimIntegerArray hold(int index, IntegerValue value, boolean canModify) {
-		PrimArray result;
-
 		if (index < 0) {
 			throw new IndexOutOfBoundsException();
 		}
+		PrimArray result;
 		if (index >= count()) {
 			if (((PrimIntegerSpec) spec()).canHold(value)) {
 				result = spec().copyGrow(this, index + 1 - count());
@@ -81,49 +90,11 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		}
 		((PrimIntegerArray) result).storeInteger(index, value);
 		return (PrimIntegerArray) result;
-		//		RPTR(PrimIntegerArray) PrimIntegerArray::hold (Int32 index,
-		//								   IntegerVar value,
-		//								   BooleanVar canModify/* = FALSE*/)
-		//		{
-		//			/* Store a new value into the array at the given index. If 
-		//			the value does not fit into the range that can be stored 
-		//			here, return an array of a kind that will accept it. If the 
-		//			index is past the end, return a larger array.
-		//			If canModify, then returns a newly created array only if the 
-		//			value will not fit into this one, otherwise will always 
-		//			return a new array. */
-		//
-		//			SPTR(PrimArray) result;
-		//
-		//			if (index < 0) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
-		//			if (index >= this->count()) {
-		//			if (CAST(PrimIntegerSpec,this->spec())->canHold(value)) {
-		//				result = this->spec()->copyGrow(this, index + 1 - this->count());
-		//			} else {
-		//				result = PrimSpec::toHold(value)->copyGrow(this, index + 1 - this->count());
-		//			}
-		//			} else {
-		//			if (CAST(PrimIntegerSpec,this->spec())->canHold(value)) {
-		//				if (canModify) {
-		//				result = this;
-		//				} else {
-		//				result = this->copy();
-		//				}
-		//			} else {
-		//				result = PrimSpec::toHold(value)->copy(this);
-		//			}
-		//			}
-		//			CAST(PrimIntegerArray,result)->storeInteger(index, value);
-		//			return CAST(PrimIntegerArray,result);
-		//		}
 	}
 
 	public PrimIntegerArray hold(int index, IntegerValue value) {
 		return hold(index, value, false);
 	}
-
 
 	//////////////////////////////////////////////
 	// Searching/Finding
@@ -230,7 +201,6 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 		return indexPastInteger(value, 0);
 	}
 
-
 	//////////////////////////////////////////////
 	// Bulk Storing
 
@@ -252,7 +222,6 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 			storeInteger(start + i, k);
 		}
 	}
-
 
 	//////////////////////////////////////////////
 	// Comparing and Hashing
@@ -283,48 +252,15 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 			n = count;
 		}
 		if (n == 0) {
-			throw new UnsupportedOperationException();
-			//			return : : fastHash(17);
+			return FHash.hashInt(17);
 		} else {
 			if (n == 1) {
-				throw new UnsupportedOperationException();
-				//				return : : fastHash(this - > integerAt(0).asLong());
+				return FHash.hashInt(integerAt(start).asInt32());
 			} else {
-				throw new UnsupportedOperationException();
-				//				/* I keep the &65565s here for compatibility with Smalltalk */
-				//				return : : fastHash(n)
-				//					^ : : fastHash(integerAt(start).asLong() & 65535)
-				//					^ : : fastHash(integerAt(start + n - 1).asLong() & 65535);
+				return FHash.hashInt(n) ^ FHash.hashInt(integerAt(start).asInt32()) ^ FHash.hashInt(integerAt(start + n - 1).asInt32());
 			}
 		}
-		//		UInt32 PrimIntegerArray::elementsHash (Int32 count/* = -1*/,
-		//							   Int32 start/* = Int32Zero*/)
-		//		{
-		//			Int32 n;
-		//
-		//			n = this->count() - start;
-		//			if (count > n) {
-		//			BLAST(IndexOutOfBounds);
-		//			}
-		//			if (count >= 0) {
-		//			n = count;
-		//			}
-		//			if (n == 0) {
-		//			return ::fastHash(17);
-		//			} else {
-		//			if (n == 1) {
-		//				return ::fastHash(this->integerAt(0).asLong());
-		//			} else {
-		//				/* I keep the &65565s here for compatibility with Smalltalk */
-		//				return
-		//				  ::fastHash(n) 
-		//				  ^ ::fastHash(this->integerAt(start).asLong() & 65535)
-		//				  ^ ::fastHash(this->integerAt(start + n - 1).asLong() & 65535);
-		//			}
-		//			}
-		//		}
 	}
-
 
 	//////////////////////////////////////////////
 	// Helper methods
@@ -332,7 +268,7 @@ public abstract class PrimIntegerArray extends PrimArithmeticArray {
 	protected Heaper zeroElement() {
 		return IntegerValue.zero();
 	}
-	
+
 	//////////////////////////////////////////////
 	// Arithmetic Operations
 

@@ -891,6 +891,10 @@ public class Int64ArrayTest extends TestCase {
 		array2 = Int64Array.make(new long[] { 0 });
 		assertEquals(0, array1.compare(array2));
 
+		array1 = Int64Array.make(new long[]{1, -1});
+		array2 = Int64Array.make(new long[]{1});
+		assertEquals(-1, array1.compare(array2));
+
 		// compare sub-regions		
 		array1 = AssertArrays.makeInt64Array12321();
 		array2 = AssertArrays.makeInt64Array12345();

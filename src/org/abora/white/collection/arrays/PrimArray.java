@@ -584,29 +584,9 @@ public abstract class PrimArray extends Heaper {
 	//////////////////////////////////////////////
 	// Helper methods
 
-	//TODO remove this if we dont end up using it
-	protected int rangeCheck(int index) {
-		if (index < 0 || index >= count()) {
-			throw new IndexOutOfBoundsException();
-		}
-		return index;
-	}
-
 	public void zeroElements(int from, int count) {
 		Heaper zeroElement = zeroElement();
 		storeAll(zeroElement, count, from);
-		//		int n = count;
-		//
-		//		if (n < 0) {
-		//			n = count();
-		//		}
-		//		if (n + from > count()) {
-		//			throw new AboraRuntimeException(AboraRuntimeException.TOO_MANY_ZEROS);
-		//		}
-		//		if (from < 0) {
-		//			throw new AboraRuntimeException(AboraRuntimeException.BOGUS_START_INDEX);
-		//		}
-		//		Arrays.fill(myStorage, from, from + n, 0);
 	}
 
 	public void zeroElements(int from) {

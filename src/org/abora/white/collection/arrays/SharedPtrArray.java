@@ -56,6 +56,10 @@ public class SharedPtrArray extends PtrArray {
 		return make(size, from, 0);
 	}
 
+	public static PtrArray make(PrimArray from) {
+		return make(from.count(), from, 0);
+	}
+
 	/** create a PtrArray filled with the data from 'buffer' */
 	public static PtrArray make(Heaper[] buffer) {
 		return new SharedPtrArray(buffer);
@@ -74,21 +78,13 @@ public class SharedPtrArray extends PtrArray {
 
 	public int shareCount() {
 		return myShareCount;
-		//		INLINE Int4 SharedPtrArray::shareCount () {
-		//			return myShareCount;
 	}
 
 	public void shareLess() {
 		myShareCount -= 1;
-		//		void SharedPtrArray::shareLess () {
-		//			myShareCount -= 1;
-		//		}
 	}
 
 	public void shareMore() {
 		myShareCount += 1;
-		//		void SharedPtrArray::shareMore () {
-		//			myShareCount += 1;
-		//		}
 	}
 }

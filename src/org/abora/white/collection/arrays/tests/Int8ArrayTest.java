@@ -887,6 +887,10 @@ public class Int8ArrayTest extends TestCase {
 		array2 = Int8Array.make(new byte[] { 0 });
 		assertEquals(0, array1.compare(array2));
 
+		array1 = Int8Array.make(new byte[]{1, -1});
+		array2 = Int8Array.make(new byte[]{1});
+		assertEquals(-1, array1.compare(array2));
+
 		// compare sub-regions		
 		array1 = AssertArrays.makeInt8Array12321();
 		array2 = AssertArrays.makeInt8Array12345();

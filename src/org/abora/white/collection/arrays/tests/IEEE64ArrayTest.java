@@ -804,6 +804,10 @@ public class IEEE64ArrayTest extends TestCase {
 		array2 = IEEE64Array.make(new double[]{0.0});
 		assertEquals(0, array1.compare(array2));
 
+		array1 = IEEE64Array.make(new double[]{1.0, -1.0});
+		array2 = IEEE64Array.make(new double[]{1.0});
+		assertEquals(-1, array1.compare(array2));
+
 		// compare sub-regions		
 		array1 = AssertArrays.makeIEEE64Array12321();
 		array2 = AssertArrays.makeIEEE64Array12345();
@@ -973,6 +977,38 @@ public class IEEE64ArrayTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 			// expected
 		}
+	}
+
+	public void testElementsHash() {
+		// complete hash
+		int hash = AssertArrays.makeIEEE64ArrayEmpty().elementsHash();
+		assertFalse(0 == hash);
+		
+		assertFalse(AssertArrays.makeIEEE64Array12345().elementsHash() == AssertArrays.makeIEEE64Array12321().elementsHash());
+
+		// partial hash
+		IEEE64Array array = AssertArrays.makeIEEE64Array12345();
+		assertFalse(0 == array.elementsHash());
+		assertFalse(array.elementsHash(0) == array.elementsHash(1));
+		assertFalse(array.elementsHash(1, 1) == array.elementsHash(1));
+		
+		// out of range
+		try {
+			AssertArrays.makeIEEE64Array12345().elementsHash(5, 1);
+			fail("5,1");
+		} catch (IndexOutOfBoundsException e) {
+			// expected
+		}
+	}
+
+	public void testContentsHash() {
+		int hash = AssertArrays.makeIEEE64ArrayEmpty().contentsHash();
+		assertFalse(0 == hash);
+		
+		IEEE64Array array = AssertArrays.makeIEEE64Array12345();
+		assertFalse(0 == array.contentsHash());
+		
+		assertFalse(AssertArrays.makeIEEE64Array12345().contentsHash() == AssertArrays.makeIEEE64Array12321().contentsHash());
 	}
 }
 
