@@ -29,6 +29,7 @@ import org.abora.white.xpp.basic.Heaper;
  * protocol, there is little need for this class to be a type.  However, this class does
  * provide a bit of extra protocol convenience: highestIndex & lowestIndex. Unless these are
  * retired, we cannot retire this class from type status.
+ * <p>
  * Note that there may be tables with XuInteger keys (i.e., IntegerSpace domains) which are
  * not kinds of IntegerTables.  In particular it is perfectly sensible to create a HashTable
  * with XuInteger keys when the domain region is likely to be sparse.

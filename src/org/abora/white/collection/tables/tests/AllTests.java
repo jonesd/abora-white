@@ -15,6 +15,8 @@ public class AllTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for org.abora.white.collection.tables.tests");
 		//$JUnit-BEGIN$
+		suite.addTest(new TestSuite(ActualArrayTest.class));
+		suite.addTest(new TestSuite(MuArrayTest.class));
 		suite.addTest(new TestSuite(PairTest.class));
 		//$JUnit-END$
 		return suite;

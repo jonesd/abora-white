@@ -32,6 +32,7 @@ import org.abora.white.xpp.basic.Heaper;
  * which is they are to have simple domains.  Therefore they should not be constructed with
  * non-contiguous sections.  This is not currently enforced.  Given that it is enforced, an
  * XuArray with count N would have as its domain exactly the integers from 0 to N-1.
+ * <p>
  * There is some controversy over whether XuArray should be a type and enforce this contraint
  * (by BLASTing if an attempt is made to violate the constraint), or whether XuArray is just
  * a specialized implementation for when an IntegerTable happens to meet this constraint; in
@@ -89,257 +90,7 @@ public abstract class MuArray extends IntegerTable {
 	}
 
 	/////////////////////////////////////////////
-	// Accessing
-
-	public abstract Heaper atIntStore(IntegerValue key, Heaper value);
-	/*
-	udanax-top.st:49125:MuArray methodsFor: 'accessing'!
-	{Heaper} atInt: key {IntegerVar} store: value {Heaper} 
-		self subclassResponsibility!
-	*/
-
-	public abstract CoordinateSpace coordinateSpace();
-	/*
-	udanax-top.st:49129:MuArray methodsFor: 'accessing'!
-	{CoordinateSpace} coordinateSpace
-		^ IntegerSpace make!
-	*/
-
-	public abstract IntegerValue count();
-	/*
-	udanax-top.st:49133:MuArray methodsFor: 'accessing'!
-	{IntegerVar} count
-		self subclassResponsibility.!
-	*/
-
-	public abstract XnRegion domain();
-	/*
-	udanax-top.st:49137:MuArray methodsFor: 'accessing'!
-	{XnRegion} domain
-		self subclassResponsibility.!
-	*/
-
-	public abstract IntegerValue highestIndex();
-	/*
-	udanax-top.st:49141:MuArray methodsFor: 'accessing'!
-	{IntegerVar} highestIndex
-		self subclassResponsibility!
-	*/
-
-	public abstract Heaper intFetch(IntegerValue key);
-	/*
-	udanax-top.st:49144:MuArray methodsFor: 'accessing'!
-	{Heaper} intFetch: key {IntegerVar}
-		self subclassResponsibility!
-	*/
-
-	public abstract boolean intWipe(IntegerValue anIdx);
-	/*
-	udanax-top.st:49147:MuArray methodsFor: 'accessing'!
-	{BooleanVar} intWipe: anIdx {IntegerVar}
-		self subclassResponsibility!
-	*/
-
-	public abstract IntegerValue lowestIndex();
-	/*
-	udanax-top.st:49150:MuArray methodsFor: 'accessing'!
-	{IntegerVar} lowestIndex
-		self subclassResponsibility!
-	*/
-
-	/**
-	 * Return a table which contains the elements from start to stop, starting at firstIndex.
-	 * Zero-based subclasses will blast if firstIndex is non-zero
-	 */
-	public ScruTable offsetSubTableBetween(IntegerValue startIndex, IntegerValue stopIndex, IntegerValue firstIndex) {
-		return subTableBetween(startIndex, stopIndex);
-		/*
-		udanax-top.st:49153:MuArray methodsFor: 'accessing'!
-		{ScruTable} offsetSubTableBetween: startIndex {IntegerVar} 
-			with: stopIndex {IntegerVar} 
-			with: firstIndex {IntegerVar unused} 
-			"Return a table which contains the elements from start to stop, starting at firstIndex.
-			Zero-based subclasses will blast if firstIndex is non-zero"
-			^ self subTableBetween: startIndex with: stopIndex!
-		*/
-	}
-
-	public abstract ScruTable subTable(XnRegion region);
-	/*
-	udanax-top.st:49161:MuArray methodsFor: 'accessing'!
-	{ScruTable} subTable: region {XnRegion} 
-		self subclassResponsibility!
-	*/
-
-	public abstract ScruTable subTableBetween(IntegerValue startLoc, IntegerValue endLoc);
-	/*
-	udanax-top.st:49165:MuArray methodsFor: 'accessing'!
-	{ScruTable} subTableBetween: startLoc {IntegerVar} with: endLoc {IntegerVar} 
-		self subclassResponsibility!
-	*/
-
-	public ScruTable transformedBy(Dsp dsp) {
-		if (dsp.inverse().isEqual(dsp)) {
-			return this;
-		} else {
-			return MuArray.offsetScruArray(this, dsp);
-		}
-		/*
-		udanax-top.st:49168:MuArray methodsFor: 'accessing'!
-		{ScruTable} transformedBy: dsp {Dsp} 
-			(dsp inverse isEqual: dsp) 
-				ifTrue: [^self]
-				ifFalse: [^MuArray offsetScruArray: self with: dsp]!
-		*/
-	}
-
-	public abstract ScruTable copy();
-	/*
-	udanax-top.st:49176:MuArray methodsFor: 'creation'!
-	{ScruTable} copy
-		self subclassResponsibility!
-	*/
-
-	public abstract ScruTable emptySize(IntegerValue size);
-	/*
-	udanax-top.st:49179:MuArray methodsFor: 'creation'!
-	{ScruTable} emptySize: size {IntegerVar}
-		self subclassResponsibility!
-	*/
-
-	public boolean includesIntKey(IntegerValue aKey) {
-		return aKey.isGE(IntegerValue.zero()) && (aKey.isLT(count()));
-		/*
-		udanax-top.st:49185:MuArray methodsFor: 'testing'!
-		{BooleanVar} includesIntKey: aKey {IntegerVar}
-			^aKey >= IntegerVar0 and: [aKey < self count]!
-		*/
-	}
-
-	public boolean isEmpty() {
-		return count().isEqual(IntegerValue.zero());
-		/*
-		udanax-top.st:49188:MuArray methodsFor: 'testing'!
-		{BooleanVar} isEmpty
-			^self count = IntegerVar0!
-		*/
-	}
-
-	public abstract XnRegion runAtInt(IntegerValue key);
-	/*
-	udanax-top.st:49193:MuArray methodsFor: 'runs'!
-	{XnRegion} runAtInt: key {IntegerVar}
-		self subclassResponsibility!
-	*/
-
-	/**
-	 * Return a stepper on this table.
-	 */
-	public abstract TableStepper stepper(OrderSpec order);
-	/*
-	udanax-top.st:49198:MuArray methodsFor: 'enumerating'!
-	{TableStepper} stepper: order {OrderSpec default: NULL}
-		"Return a stepper on this table."
-		self subclassResponsibility!
-	*/
-
-	public Heaper theOne() {
-		if (!count().equals(IntegerValue.one())) {
-			throw new AboraRuntimeException(AboraRuntimeException.NOT_ONE_ELEMENT);
-		}
-		return intFetch(IntegerValue.zero());
-		/*
-		udanax-top.st:49203:MuArray methodsFor: 'enumerating'!
-		{Heaper} theOne
-			self count ~~ 1 ifTrue:
-				[ Heaper BLAST: #NotOneElement ].
-			^ self intFetch: IntegerVar0!
-		*/
-	}
-
-	/**
-	 * I 'wipe' from myself all associations whose key
-	 * is in 'region'. See MuTable::wipe
-	 */
-	public void wipeAll(XnRegion region) {
-		if (!(region.coordinateSpace().isEqual(coordinateSpace()))) {
-			throw new AboraRuntimeException(AboraRuntimeException.WRONG_COORD_SPACE);
-		}
-		if (isEmpty()) {
-			return;
-		}
-		if (!region.isSimple()) {
-			throw new AboraRuntimeException(AboraRuntimeException.NOT_SIMPLE);
-		}
-		Stepper stepper = ((region.intersect(domain())).stepper((IntegerSpace.make().getDescending())));
-		try {
-			IntegerPos p;
-			while ((p = (IntegerPos) stepper.fetch()) != null) {
-				intWipe(p.asIntegerVar());
-				stepper.step();
-			}
-		} finally {
-			stepper.destroy();
-		}
-		/*
-		udanax-top.st:49210:MuArray methodsFor: 'bulk operations'!
-		{void} wipeAll: region {XnRegion} 
-			"I 'wipe' from myself all associations whose key 
-			is in 'region'. See MuTable::wipe"
-			(region coordinateSpace isEqual: self coordinateSpace)
-				ifFalse: [Heaper BLAST: #WrongCoordSpace].
-			self isEmpty ifTrue: [^VOID].
-			region isSimple ifFalse: [Heaper BLAST: #NotSimple].
-			((region intersect: self domain)
-				stepper: (IntegerSpace make getDescending))
-				forEach: [:p {IntegerPos} | self intWipe: p asIntegerVar]!
-		*/
-	}
-
-	public Heaper atStore(Position key, Heaper value) {
-		return atIntStore(((IntegerPos) key).asIntegerVar(), value);
-		/*
-		udanax-top.st:49224:MuArray methodsFor: 'overload junk'!
-		{Heaper} at: key {Position} store: value {Heaper} 
-			^ self atInt: (key cast: IntegerPos) asIntegerVar store: value!
-		*/
-	}
-
-	public Heaper fetch(Position key) {
-		return intFetch((((IntegerPos) key).asIntegerVar()));
-		/*
-		udanax-top.st:49228:MuArray methodsFor: 'overload junk'!
-		{Heaper} fetch: key {Position} 
-			^ self intFetch: ((key cast: IntegerPos) asIntegerVar)!
-		*/
-	}
-
-	public boolean includesKey(Position aKey) {
-		return includesIntKey((((IntegerPos) aKey).asIntegerVar()));
-		/*
-		udanax-top.st:49232:MuArray methodsFor: 'overload junk'!
-		{BooleanVar} includesKey: aKey {Position}
-			^self includesIntKey: ((aKey cast: IntegerPos) asIntegerVar)!
-		*/
-	}
-
-	public XnRegion runAt(Position key) {
-		return runAtInt((((IntegerPos) key).asIntegerVar()));
-		/*
-		udanax-top.st:49235:MuArray methodsFor: 'overload junk'!
-		{XnRegion} runAt: key {Position} 
-			^self runAtInt: ((key quickCast: IntegerPos) asIntegerVar)!
-		*/
-	}
-
-	public boolean wipe(Position key) {
-		return intWipe((((IntegerPos) key).asIntegerVar()));
-		/*
-		udanax-top.st:49239:MuArray methodsFor: 'overload junk'!
-		{BooleanVar} wipe: key {Position}
-			^ self intWipe: ((key cast: IntegerPos) asIntegerVar)!
-		*/
-	}
+	// Static Factory Methods
 
 	/**
 	 * A new empty XnArray
@@ -509,6 +260,275 @@ public abstract class MuArray extends IntegerTable {
 			is offset by 'dsp' from where it is in 'array'. By saying it is a view, we mean 
 			that as 'array' is modified, the view tracks the changes."
 			^OffsetScruArray make: array with: dsp!
+		*/
+	}
+
+
+	/////////////////////////////////////////////
+	// Accessing
+
+	public abstract Heaper atIntStore(IntegerValue key, Heaper value);
+	/*
+	udanax-top.st:49125:MuArray methodsFor: 'accessing'!
+	{Heaper} atInt: key {IntegerVar} store: value {Heaper} 
+		self subclassResponsibility!
+	*/
+
+	public abstract CoordinateSpace coordinateSpace();
+	/*
+	udanax-top.st:49129:MuArray methodsFor: 'accessing'!
+	{CoordinateSpace} coordinateSpace
+		^ IntegerSpace make!
+	*/
+
+	public abstract IntegerValue count();
+	/*
+	udanax-top.st:49133:MuArray methodsFor: 'accessing'!
+	{IntegerVar} count
+		self subclassResponsibility.!
+	*/
+
+	public abstract XnRegion domain();
+	/*
+	udanax-top.st:49137:MuArray methodsFor: 'accessing'!
+	{XnRegion} domain
+		self subclassResponsibility.!
+	*/
+
+	public abstract IntegerValue highestIndex();
+	/*
+	udanax-top.st:49141:MuArray methodsFor: 'accessing'!
+	{IntegerVar} highestIndex
+		self subclassResponsibility!
+	*/
+
+	public abstract Heaper intFetch(IntegerValue key);
+	/*
+	udanax-top.st:49144:MuArray methodsFor: 'accessing'!
+	{Heaper} intFetch: key {IntegerVar}
+		self subclassResponsibility!
+	*/
+
+	public abstract boolean intWipe(IntegerValue anIdx);
+	/*
+	udanax-top.st:49147:MuArray methodsFor: 'accessing'!
+	{BooleanVar} intWipe: anIdx {IntegerVar}
+		self subclassResponsibility!
+	*/
+
+	public abstract IntegerValue lowestIndex();
+	/*
+	udanax-top.st:49150:MuArray methodsFor: 'accessing'!
+	{IntegerVar} lowestIndex
+		self subclassResponsibility!
+	*/
+
+	/**
+	 * Return a table which contains the elements from start to stop, starting at firstIndex.
+	 * Zero-based subclasses will blast if firstIndex is non-zero
+	 */
+	public ScruTable offsetSubTableBetween(IntegerValue startIndex, IntegerValue stopIndex, IntegerValue firstIndex) {
+		return subTableBetween(startIndex, stopIndex);
+		/*
+		udanax-top.st:49153:MuArray methodsFor: 'accessing'!
+		{ScruTable} offsetSubTableBetween: startIndex {IntegerVar} 
+			with: stopIndex {IntegerVar} 
+			with: firstIndex {IntegerVar unused} 
+			"Return a table which contains the elements from start to stop, starting at firstIndex.
+			Zero-based subclasses will blast if firstIndex is non-zero"
+			^ self subTableBetween: startIndex with: stopIndex!
+		*/
+	}
+
+	public abstract ScruTable subTable(XnRegion region);
+	/*
+	udanax-top.st:49161:MuArray methodsFor: 'accessing'!
+	{ScruTable} subTable: region {XnRegion} 
+		self subclassResponsibility!
+	*/
+
+	public abstract ScruTable subTableBetween(IntegerValue startLoc, IntegerValue endLoc);
+	/*
+	udanax-top.st:49165:MuArray methodsFor: 'accessing'!
+	{ScruTable} subTableBetween: startLoc {IntegerVar} with: endLoc {IntegerVar} 
+		self subclassResponsibility!
+	*/
+
+	public ScruTable transformedBy(Dsp dsp) {
+		if (dsp.inverse().isEqual(dsp)) {
+			return this;
+		} else {
+			return MuArray.offsetScruArray(this, dsp);
+		}
+		/*
+		udanax-top.st:49168:MuArray methodsFor: 'accessing'!
+		{ScruTable} transformedBy: dsp {Dsp} 
+			(dsp inverse isEqual: dsp) 
+				ifTrue: [^self]
+				ifFalse: [^MuArray offsetScruArray: self with: dsp]!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Creation
+
+	public abstract ScruTable copy();
+	/*
+	udanax-top.st:49176:MuArray methodsFor: 'creation'!
+	{ScruTable} copy
+		self subclassResponsibility!
+	*/
+
+	public abstract ScruTable emptySize(IntegerValue size);
+	/*
+	udanax-top.st:49179:MuArray methodsFor: 'creation'!
+	{ScruTable} emptySize: size {IntegerVar}
+		self subclassResponsibility!
+	*/
+
+	/////////////////////////////////////////////
+	// Testing
+
+	public boolean includesIntKey(IntegerValue aKey) {
+		return aKey.isGE(IntegerValue.zero()) && (aKey.isLT(count()));
+		/*
+		udanax-top.st:49185:MuArray methodsFor: 'testing'!
+		{BooleanVar} includesIntKey: aKey {IntegerVar}
+			^aKey >= IntegerVar0 and: [aKey < self count]!
+		*/
+	}
+
+	public boolean isEmpty() {
+		return count().isEqual(IntegerValue.zero());
+		/*
+		udanax-top.st:49188:MuArray methodsFor: 'testing'!
+		{BooleanVar} isEmpty
+			^self count = IntegerVar0!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Runs
+
+	public abstract XnRegion runAtInt(IntegerValue key);
+	/*
+	udanax-top.st:49193:MuArray methodsFor: 'runs'!
+	{XnRegion} runAtInt: key {IntegerVar}
+		self subclassResponsibility!
+	*/
+
+	/////////////////////////////////////////////
+	// Enumerating
+
+	/**
+	 * Return a stepper on this table.
+	 */
+	public abstract TableStepper stepper(OrderSpec order);
+	/*
+	udanax-top.st:49198:MuArray methodsFor: 'enumerating'!
+	{TableStepper} stepper: order {OrderSpec default: NULL}
+		"Return a stepper on this table."
+		self subclassResponsibility!
+	*/
+
+	public Heaper theOne() {
+		if (!count().equals(IntegerValue.one())) {
+			throw new AboraRuntimeException(AboraRuntimeException.NOT_ONE_ELEMENT);
+		}
+		return intFetch(IntegerValue.zero());
+		/*
+		udanax-top.st:49203:MuArray methodsFor: 'enumerating'!
+		{Heaper} theOne
+			self count ~~ 1 ifTrue:
+				[ Heaper BLAST: #NotOneElement ].
+			^ self intFetch: IntegerVar0!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Bulk Operations
+
+	/**
+	 * I 'wipe' from myself all associations whose key
+	 * is in 'region'. See MuTable::wipe
+	 */
+	public void wipeAll(XnRegion region) {
+		if (!(region.coordinateSpace().isEqual(coordinateSpace()))) {
+			throw new AboraRuntimeException(AboraRuntimeException.WRONG_COORD_SPACE);
+		}
+		if (isEmpty()) {
+			return;
+		}
+		if (!region.isSimple()) {
+			throw new AboraRuntimeException(AboraRuntimeException.NOT_SIMPLE);
+		}
+		Stepper stepper = ((region.intersect(domain())).stepper((IntegerSpace.make().getDescending())));
+		try {
+			IntegerPos p;
+			while ((p = (IntegerPos) stepper.fetch()) != null) {
+				intWipe(p.asIntegerVar());
+				stepper.step();
+			}
+		} finally {
+			stepper.destroy();
+		}
+		/*
+		udanax-top.st:49210:MuArray methodsFor: 'bulk operations'!
+		{void} wipeAll: region {XnRegion} 
+			"I 'wipe' from myself all associations whose key 
+			is in 'region'. See MuTable::wipe"
+			(region coordinateSpace isEqual: self coordinateSpace)
+				ifFalse: [Heaper BLAST: #WrongCoordSpace].
+			self isEmpty ifTrue: [^VOID].
+			region isSimple ifFalse: [Heaper BLAST: #NotSimple].
+			((region intersect: self domain)
+				stepper: (IntegerSpace make getDescending))
+				forEach: [:p {IntegerPos} | self intWipe: p asIntegerVar]!
+		*/
+	}
+
+	public Heaper atStore(Position key, Heaper value) {
+		return atIntStore(((IntegerPos) key).asIntegerVar(), value);
+		/*
+		udanax-top.st:49224:MuArray methodsFor: 'overload junk'!
+		{Heaper} at: key {Position} store: value {Heaper} 
+			^ self atInt: (key cast: IntegerPos) asIntegerVar store: value!
+		*/
+	}
+
+	public Heaper fetch(Position key) {
+		return intFetch((((IntegerPos) key).asIntegerVar()));
+		/*
+		udanax-top.st:49228:MuArray methodsFor: 'overload junk'!
+		{Heaper} fetch: key {Position} 
+			^ self intFetch: ((key cast: IntegerPos) asIntegerVar)!
+		*/
+	}
+
+	public boolean includesKey(Position aKey) {
+		return includesIntKey((((IntegerPos) aKey).asIntegerVar()));
+		/*
+		udanax-top.st:49232:MuArray methodsFor: 'overload junk'!
+		{BooleanVar} includesKey: aKey {Position}
+			^self includesIntKey: ((aKey cast: IntegerPos) asIntegerVar)!
+		*/
+	}
+
+	public XnRegion runAt(Position key) {
+		return runAtInt((((IntegerPos) key).asIntegerVar()));
+		/*
+		udanax-top.st:49235:MuArray methodsFor: 'overload junk'!
+		{XnRegion} runAt: key {Position} 
+			^self runAtInt: ((key quickCast: IntegerPos) asIntegerVar)!
+		*/
+	}
+
+	public boolean wipe(Position key) {
+		return intWipe((((IntegerPos) key).asIntegerVar()));
+		/*
+		udanax-top.st:49239:MuArray methodsFor: 'overload junk'!
+		{BooleanVar} wipe: key {Position}
+			^ self intWipe: ((key cast: IntegerPos) asIntegerVar)!
 		*/
 	}
 }

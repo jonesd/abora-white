@@ -31,6 +31,9 @@ import org.abora.white.spaces.integers.IntegerSpace;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
+/**
+ * Implementation of MuArray. 
+ */
 public class ActualArray extends MuArray {
 	protected PtrArray elements;
 	protected int tally;
@@ -54,6 +57,84 @@ public class ActualArray extends MuArray {
 		attributes: ((Set new) add: #CONCRETE; add: #COPY; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+
+	/**
+	 * The optional argument just hints at the number of elements
+	 * to eventually be added.  It makes no difference semantically.
+	 */
+	protected ActualArray() {
+		super();
+		elements = PtrArray.make(4);
+		tally = 0;
+		/*
+		udanax-top.st:49442:ActualArray methodsFor: 'private: creation'!
+		create
+			"The optional argument just hints at the number of elements
+			 to eventually be added.  It makes no difference semantically."
+			super create.
+			elements _ PtrArray nulls: 4.
+			tally _ UInt32Zero!
+		*/
+	}
+
+	/**
+	 * The optional argument just hints at the number of elements
+	 * to eventually be added.  It makes no difference semantically.
+	 */
+	protected ActualArray(IntegerValue size) {
+		super();
+		int newSize;
+		if (size.isGT(IntegerValue.make(4))) {
+			newSize = size.asInt32();
+		} else {
+			newSize = 4;
+		}
+		elements = PtrArray.make(newSize);
+		tally = 0;
+		/*
+		udanax-top.st:49449:ActualArray methodsFor: 'private: creation'!
+		create.IntegerVar: size {IntegerVar} 
+			"The optional argument just hints at the number of elements
+			 to eventually be added.  It makes no difference semantically."
+			| newSize {UInt32} |
+			super create.
+			size > 4 ifTrue: [newSize _ size DOTasLong] ifFalse: [newSize _ 4].
+			elements _ PtrArray nulls: newSize.
+			tally _ UInt32Zero!
+		*/
+	}
+
+	protected ActualArray(PtrArray newElems, int newTally) {
+		super();
+		elements = newElems;
+		tally = newTally;
+		/*
+		udanax-top.st:49458:ActualArray methodsFor: 'private: creation'!
+		create: newElems {PtrArray of: Heaper} with: newTally {UInt32} 
+			super create.
+			elements _ newElems.
+			tally _ newTally!
+		*/
+	}
+
+	protected ActualArray(Rcvr receiver) {
+		super(receiver);
+		elements = (PtrArray) receiver.receiveHeaper();
+		tally = receiver.receiveUInt32();
+		/*
+		udanax-top.st:49572:ActualArray methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			elements _ receiver receiveHeaper.
+			tally _ receiver receiveUInt32.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Testing
+
 	public int fastHash() {
 		return tally + getClass().hashCode();
 		/*
@@ -71,6 +152,9 @@ public class ActualArray extends MuArray {
 			^tally == UInt32Zero!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Accessing
 
 	/**
 	 * store the new value at the specified position.  Note that this is an insertion iff
@@ -286,6 +370,9 @@ public class ActualArray extends MuArray {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Creation
+
 	public ScruTable copy() {
 		return new ActualArray(((PtrArray) elements.copy()), tally);
 		/*
@@ -301,65 +388,6 @@ public class ActualArray extends MuArray {
 		udanax-top.st:49436:ActualArray methodsFor: 'creation'!
 		{ScruTable} emptySize: size {IntegerVar unused}
 			^MuArray make.IntegerVar: (elements count)!
-		*/
-	}
-
-	/**
-	 * The optional argument just hints at the number of elements
-	 * to eventually be added.  It makes no difference semantically.
-	 */
-	protected ActualArray() {
-		super();
-		elements = PtrArray.make(4);
-		tally = 0;
-		/*
-		udanax-top.st:49442:ActualArray methodsFor: 'private: creation'!
-		create
-			"The optional argument just hints at the number of elements
-			 to eventually be added.  It makes no difference semantically."
-			super create.
-			elements _ PtrArray nulls: 4.
-			tally _ UInt32Zero!
-		*/
-	}
-
-	/**
-	 * The optional argument just hints at the number of elements
-	 * to eventually be added.  It makes no difference semantically.
-	 */
-	protected ActualArray(IntegerValue size) {
-		super();
-		int newSize;
-		if (size.isGT(IntegerValue.make(4))) {
-			newSize = size.asInt32();
-		} else {
-			newSize = 4;
-		}
-		elements = PtrArray.make(newSize);
-		tally = 0;
-		/*
-		udanax-top.st:49449:ActualArray methodsFor: 'private: creation'!
-		create.IntegerVar: size {IntegerVar} 
-			"The optional argument just hints at the number of elements
-			 to eventually be added.  It makes no difference semantically."
-			| newSize {UInt32} |
-			super create.
-			size > 4 ifTrue: [newSize _ size DOTasLong] ifFalse: [newSize _ 4].
-			elements _ PtrArray nulls: newSize.
-			tally _ UInt32Zero!
-		*/
-	}
-
-	protected ActualArray(PtrArray newElems, int newTally) {
-		super();
-		elements = newElems;
-		tally = newTally;
-		/*
-		udanax-top.st:49458:ActualArray methodsFor: 'private: creation'!
-		create: newElems {PtrArray of: Heaper} with: newTally {UInt32} 
-			super create.
-			elements _ newElems.
-			tally _ newTally!
 		*/
 	}
 
@@ -603,19 +631,6 @@ public class ActualArray extends MuArray {
 		udanax-top.st:49567:ActualArray methodsFor: 'overload junk'!
 		{BooleanVar} wipe: key {Position}
 			^ self intWipe: ((key cast: IntegerPos) asIntegerVar)!
-		*/
-	}
-
-	public ActualArray(Rcvr receiver) {
-		super(receiver);
-		elements = (PtrArray) receiver.receiveHeaper();
-		tally = receiver.receiveUInt32();
-		/*
-		udanax-top.st:49572:ActualArray methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			elements _ receiver receiveHeaper.
-			tally _ receiver receiveUInt32.!
 		*/
 	}
 

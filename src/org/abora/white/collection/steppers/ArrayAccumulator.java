@@ -45,7 +45,10 @@ public class ArrayAccumulator extends TableAccumulator {
 		attributes: ((Set new) add: #CONCRETE; add: #NOT.A.TYPE; yourself)!
 	*/
 
-	public ArrayAccumulator(MuArray onTable) {
+	/////////////////////////////////////////////
+	// Constructors
+
+	protected ArrayAccumulator(MuArray onTable) {
 		super();
 		arrayInternal = onTable;
 		/*
@@ -55,6 +58,21 @@ public class ArrayAccumulator extends TableAccumulator {
 			arrayInternal _ onTable!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static TableAccumulator make(MuArray onTable) {
+		return new ArrayAccumulator(onTable);
+		/*
+		udanax-top.st:12466:ArrayAccumulator class methodsFor: 'create'!
+		{TableAccumulator} make: onTable {MuArray}
+			^ self create: onTable!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Operations
 
 	public void step(Heaper obj) {
 		if (arrayInternal.isEmpty()) {
@@ -80,6 +98,9 @@ public class ArrayAccumulator extends TableAccumulator {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Create
+
 	public Accumulator copy() {
 		return ArrayAccumulator.make(((MuArray) arrayInternal.copy()));
 		/*
@@ -89,14 +110,6 @@ public class ArrayAccumulator extends TableAccumulator {
 		*/
 	}
 
-	public static TableAccumulator make(MuArray onTable) {
-		return new ArrayAccumulator(onTable);
-		/*
-		udanax-top.st:12466:ArrayAccumulator class methodsFor: 'create'!
-		{TableAccumulator} make: onTable {MuArray}
-			^ self create: onTable!
-		*/
-	}
 
 //	public static void create(Object aTable) {
 //		return new ArrayAccumulator(aTable);

@@ -158,7 +158,7 @@ public class ImmuSetOnMu extends ImmuSet {
 			return ImmuSet.make();
 		} else {
 			MuSet tmp;
-			tmp = (MuSet) (setInternal.copy());
+			tmp = (MuSet) setInternal.copy();
 			tmp.restrictTo(another);
 			return ImmuSet.from(tmp);
 		}
@@ -179,7 +179,7 @@ public class ImmuSetOnMu extends ImmuSet {
 		if (another.isEmpty()) {
 			return this;
 		} else {
-			MuSet tmp = (MuSet) (setInternal.copy());
+			MuSet tmp = (MuSet) setInternal.copy();
 			tmp.wipeAll(another);
 			return ImmuSet.from(tmp);
 		}
