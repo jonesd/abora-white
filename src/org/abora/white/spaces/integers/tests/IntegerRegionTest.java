@@ -696,4 +696,111 @@ public class IntegerRegionTest extends TestCase {
 		complement = region.complement();
 		assertEquals(IntegerRegion.before(IntegerValue.make(10)), complement);
 	}
+	
+	public void testIntersect() {
+		IntegerRegion empty = IntegerRegion.make();
+		IntegerRegion full = IntegerRegion.allIntegers();
+		
+		assertTrue(empty.intersect(empty).isEmpty());
+		assertTrue(empty.intersect(full).isEmpty());
+		assertTrue(full.intersect(empty).isEmpty());
+		
+		assertTrue(full.intersect(full).isFull());
+		
+		IntegerRegion after10 = IntegerRegion.after(IntegerValue.make(10));
+		assertEquals(after10, after10.intersect(after10));
+		assertEquals(after10, after10.intersect(full));
+		assertTrue(after10.intersect(empty).isEmpty());
+		
+		IntegerRegion after10hole15 = (IntegerRegion)after10.without(IntegerPos.make(15));
+		
+		assertEquals(after10hole15, after10.intersect(after10hole15));
+		
+		IntegerRegion lower = IntegerRegion.before(IntegerValue.make(5));
+		
+		assertTrue(lower.intersect(after10hole15).isEmpty());
+		assertTrue(lower.intersect(empty).isEmpty());
+		assertEquals(lower, lower.intersect(full));
+		
+		IntegerRegion lower2 = (IntegerRegion)lower.unionWith(IntegerRegion.make(IntegerValue.make(15)));
+		
+		assertEquals(IntegerRegion.make(IntegerValue.make(15)), lower2.intersect(after10));
+		assertTrue(lower2.intersect(after10hole15).isEmpty());
+		
+		IntegerRegion lower3 = (IntegerRegion) lower2.unionWith(IntegerRegion.make(IntegerValue.make(23)));
+
+		assertEquals(IntegerRegion.make(IntegerValue.make(15)).with(IntegerPos.make(23)), lower3.intersect(after10));
+		assertEquals(IntegerRegion.make(IntegerValue.make(23)), lower3.intersect(after10hole15));
+	}
+	
+	public void testSimpleUnion() {
+		IntegerRegion empty = IntegerRegion.make();
+		IntegerRegion full = IntegerRegion.allIntegers();
+		IntegerRegion fiveAndTen = (IntegerRegion)IntegerRegion.make(IntegerValue.make(5)).with(IntegerPos.make(10));
+		
+		assertEquals(empty, empty.simpleUnion(empty));
+		assertEquals(full, full.simpleUnion(empty));
+		assertEquals(full, full.simpleUnion(fiveAndTen));
+		
+		assertEquals(IntegerRegion.before(IntegerValue.make(11)), IntegerRegion.before(IntegerValue.one()).simpleUnion(fiveAndTen));
+		assertEquals(full, IntegerRegion.before(IntegerValue.make(5)).simpleUnion(IntegerRegion.after(IntegerValue.make(10))));
+		
+		assertEquals(IntegerRegion.after(IntegerValue.make(2)), IntegerRegion.after(IntegerValue.make(4)).simpleUnion(IntegerRegion.after(IntegerValue.make(2))));		
+		assertEquals(IntegerRegion.interval(IntegerValue.make(2), IntegerValue.make(8)), IntegerRegion.interval(IntegerValue.make(4), IntegerValue.make(8)).simpleUnion(IntegerRegion.interval(IntegerValue.make(2), IntegerValue.make(6))));		
+	}
+	
+	public void testUnionWith() {
+		IntegerRegion empty = IntegerRegion.make();
+		IntegerRegion full = IntegerRegion.allIntegers();
+		IntegerRegion fiveAndTen = (IntegerRegion)IntegerRegion.make(IntegerValue.make(5)).with(IntegerPos.make(10));
+
+		assertEquals(fiveAndTen, fiveAndTen.unionWith(empty));
+		assertEquals(full, fiveAndTen.unionWith(full));
+		
+		//TODO more		
+	}
+	
+	public void testWith() {
+		IntegerRegion with = (IntegerRegion)IntegerRegion.make().with(IntegerPos.make(10));
+		assertEquals(IntegerRegion.make(IntegerValue.make(10)), with);
+		
+		with = (IntegerRegion)IntegerRegion.allIntegers().with(IntegerPos.make(10));
+		assertTrue(with.isFull());
+		
+		try {
+			IntegerRegion.make().with(RealPos.makeIEEE32(1.1f));
+			fail("realpos");
+		} catch (ClassCastException e) {
+			// expected
+		}
+	}
+	
+	public void testWithInt() {
+		IntegerRegion with = (IntegerRegion)IntegerRegion.make().withInt(IntegerValue.make(10));
+		assertEquals(IntegerRegion.make(IntegerValue.make(10)), with);
+		
+		with = (IntegerRegion)IntegerRegion.interval(IntegerValue.make(3), IntegerValue.make(10)).withInt(IntegerValue.make(10));
+		assertEquals(IntegerRegion.interval(IntegerValue.make(3), IntegerValue.make(11)), with);
+		
+		//TODO more
+	}
+	
+	public void testIntervals() {
+		//TODO more
+	}
+	
+	public void testCount() {
+		assertEquals(IntegerValue.zero(), IntegerRegion.make().count());
+		assertEquals(IntegerValue.one(), IntegerRegion.make(IntegerValue.make(10)).count());
+		assertEquals(IntegerValue.make(4), IntegerRegion.interval(IntegerValue.make(2), IntegerValue.make(6)).count());
+		assertEquals(IntegerValue.make(5), IntegerRegion.interval(IntegerValue.make(2), IntegerValue.make(6)).with(IntegerPos.make(19)).count());
+		
+		// Non-Finite region
+		try {
+			IntegerRegion.allIntegers().count();
+			fail("finite");
+		} catch (AboraRuntimeException e) {
+			assertEquals(AboraRuntimeException.INVALID_REQUEST, e.getMessage());
+		}
+	}
 }

@@ -1511,10 +1511,8 @@ public class IntegerRegion extends XnRegion {
 			IntegerEdgeStepper others = other.edgeStepper();
 			IntegerEdgeAccumulator result = IntegerEdgeAccumulator.make((myStartsInside || (!other.isBoundedBelow())), myTransitionCount + other.transitionCount());
 			while (mine.hasValue() && (others.hasValue())) {
-				IntegerValue me;
-				IntegerValue him;
-				me = mine.edge();
-				him = others.edge();
+				IntegerValue me = mine.edge();
+				IntegerValue him = others.edge();
 				if (me.isLT(him)) {
 					if (others.isEntering()) {
 						result.edge(me);
@@ -1591,7 +1589,7 @@ public class IntegerRegion extends XnRegion {
 		if (isEmpty()) {
 			return IntegerRegion.make(pos);
 		}
-		if (isBoundedAbove() && (pos == stop())) {
+		if (isBoundedAbove() && (pos.isEqual(stop()))) {
 			IntegerVarArray newTransitions = (IntegerVarArray) myTransitions.copy();
 			newTransitions.storeIntegerVar(myTransitionCount - 1, pos.plus(IntegerValue.one()));
 			return new IntegerRegion(myStartsInside, myTransitionCount, newTransitions);
@@ -1606,13 +1604,13 @@ public class IntegerRegion extends XnRegion {
 		}
 		if (mine.isEntering()) {
 			result.edge(pos);
-			if (me == pos) {
+			if (me != null && me.isEqual(pos)) {
 				mine.step();
 			} else {
 				result.edge(pos.plus(IntegerValue.one()));
 			}
 		} else {
-			if (me == pos) {
+			if (me != null && me.isEqual(pos)) {
 				mine.step();
 				result.edge(pos.plus(IntegerValue.one()));
 			}
