@@ -281,11 +281,21 @@
 		free.</p>
 
 		<ul>
+
 			<li>PrimIntegerArray:indexPastInteger - when nth is < 0, wont
 				find match on index=0 (should have result >= 0)</li>
+
 			<li>Pair:isEqual - throws exception if you use obsolete pairs
 				with alternative null values: <tt>(Pair.pairWithNulls(aHeaper,
 					null)).isEqual(Pair.pairWithNulls(null, aHeaper))</tt></li>
+
+			<li>MuSet & ImmuSet use incompatible contentsHash mechanisms.
+			ActualHashSet adds together element hashes, whereas ImmuSets
+			(inherited from ScruSet) bitXor together element hashes. I
+			assume this is an oversight rather than a designed, but
+			undocumented, mechanism to force Mu/ImmuSet with the same
+			elements to produce different contentHashes.</li>
+
 		</ul>
 
 <!-- abora:footer -->
