@@ -1,12 +1,14 @@
 /*
  * Abora-White
- * Part of the Abora hypertext project
- * Copyright 2003 David G Jones, david_jones@night.dircon.co.uk
+ * Part of the Abora hypertext project: http://www.abora.org
+ * Copyright 2003 David G Jones
  * 
- * Based on Udanax-Gold source code: Copyright 1991 XOC, www.udanax.com
+ * Based on the Udanax-Gold source code: http://www.udanax.com
+ * Copyright 1979-1999 Udanax.com. All rights reserved
+ * 
+ * $Id$
  */
-
-package org.abora.white.collection.basic;
+package org.abora.white.collection.arrays;
 
 import java.io.PrintWriter;
 
@@ -41,7 +43,7 @@ public class IEEE32Array extends PrimFloatArray {
 	/** create an IEEE32Array filled with the indicated data in 'from' */
 	public static IEEE32Array make(int size, PrimArray from, int sourceOffset, int count, int destOffset) {
 		IEEE32Array array = new IEEE32Array(size);
-		array.addData(destOffset, (PrimDataArray)from, sourceOffset, count);
+		array.addData(destOffset, (PrimDataArray) from, sourceOffset, count);
 		return array;
 	}
 
@@ -69,7 +71,7 @@ public class IEEE32Array extends PrimFloatArray {
 
 	/** Store an actual floating point value */
 	public void storeIEEE32(int index, float value) {
-		storage[rangeCheck(index)] = value;
+		storage[index] = value;
 
 		//		INLINE void IEEE32Array::storeIEEE32 (Int32 index, IEEE32 value){
 		//			/* Store a floating point value */
@@ -80,7 +82,7 @@ public class IEEE32Array extends PrimFloatArray {
 
 	/** Get an actual floating point number */
 	public float iEEE32At(int index) {
-		return storage[rangeCheck(index)];
+		return storage[index];
 
 		//		INLINE IEEE32 IEEE32Array::iEEE32At (Int32 index){
 		//			/* Get an actual floating point number */
@@ -131,25 +133,32 @@ public class IEEE32Array extends PrimFloatArray {
 		//		}
 	}
 
-//	public PrimSpec spec() {
-//		return PrimSpec.iEEE32();
-//
-//		//		RPTR(PrimSpec) IEEE32Array::spec (){
-//		//			return PrimSpec::iEEE32();
-//		//		}
-//	}
+	//	public PrimSpec spec() {
+	//		return PrimSpec.iEEE32();
+	//
+	//		//		RPTR(PrimSpec) IEEE32Array::spec (){
+	//		//			return PrimSpec::iEEE32();
+	//		//		}
+	//	}
 
-//	/** Return the maximum word size that can be stored in this array */
-//	public int bitCount() {
-//		return 32;
-//
-//		//		Int32 IEEE32Array::bitCount () {
-//		//			/* Return the maximum bits/entry that can be stored in this array */
-//		//
-//		//			return 32;
-//		//		}
-//	}
+	//	/** Return the maximum word size that can be stored in this array */
+	//	public int bitCount() {
+	//		return 32;
+	//
+	//		//		Int32 IEEE32Array::bitCount () {
+	//		//			/* Return the maximum bits/entry that can be stored in this array */
+	//		//
+	//		//			return 32;
+	//		//		}
+	//	}
 
+	/** 
+	 * Fill a consequitive range of elements with the supplied value.
+	 *  
+	 * @param value to store within range
+	 * @param start index of first element in range (default to start)
+	 * @param count number of consequentive elements in range
+	 */
 	public void storeAll(Heaper value, int count, int start) {
 		int n = count() - start;
 		if (count > n) {
@@ -193,21 +202,17 @@ public class IEEE32Array extends PrimFloatArray {
 		//		}
 	}
 
-	public void copyToBuffer(float[] buffer, int size, int count, int start) {
-		int bufSize = buffer.length;
+	public void copyToBuffer(float[] buffer, int count, int start) {
 		int n;
 		if (count >= 0) {
 			n = count;
 		} else {
 			n = count() - start;
 		}
-		if (n > bufSize) {
-			n = bufSize;
+		if (n > buffer.length) {
+			n = buffer.length;
 		}
-		for (int i = 0; i < n; i += 1) {
-			buffer[i] = iEEE32At(start + i);
-		}
-
+		System.arraycopy(storage, start, buffer, 0, n);
 		//		void IEEE32Array::copyToBuffer (void * buffer,
 		//						Int32 size,
 		//						Int32 count /*= -1*/,
@@ -358,34 +363,29 @@ public class IEEE32Array extends PrimFloatArray {
 	}
 
 	protected void printElementOn(int index, PrintWriter oo) {
-		oo.print(iEEE32At (index));
+		oo.print(iEEE32At(index));
 
-//		void IEEE32Array::printElementOn (Int32 index, ostream& oo)
-//		{
-//			oo << this->iEEE32At (index);
-//		}
+		//		void IEEE32Array::printElementOn (Int32 index, ostream& oo)
+		//		{
+		//			oo << this->iEEE32At (index);
+		//		}
 	}
 
 	protected PrimArray makeNew(int size, PrimArray source, int sourceOffset, int count, int destOffset) {
-		return make(size, (PrimFloatArray)source, sourceOffset, count, destOffset);
-		
-//		RPTR(PrimArray) IEEE32Array::makeNew (Int32 size,
-//							  APTR(PrimArray) source,
-//							  Int32 sourceOffset,
-//							  Int32 count,
-//							  Int32 destOffset)
-//		{
-//			return IEEE32Array::make (size, CAST(PrimFloatArray,source),
-//						  sourceOffset, count, destOffset);
-//		}
+		return make(size, (PrimFloatArray) source, sourceOffset, count, destOffset);
+
+		//		RPTR(PrimArray) IEEE32Array::makeNew (Int32 size,
+		//							  APTR(PrimArray) source,
+		//							  Int32 sourceOffset,
+		//							  Int32 count,
+		//							  Int32 destOffset)
+		//		{
+		//			return IEEE32Array::make (size, CAST(PrimFloatArray,source),
+		//						  sourceOffset, count, destOffset);
+		//		}
 	}
 
 	public int count() {
 		return storage.length;
 	}
-
-	public boolean isEqual(Heaper other) {
-		return false;
-	}
-
 }

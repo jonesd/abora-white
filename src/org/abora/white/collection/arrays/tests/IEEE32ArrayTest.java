@@ -1,6 +1,13 @@
-package org.abora.white.collection.basic.tests;
+/*
+ * Abora-White
+ * Part of the Abora hypertext project: http://www.abora.org
+ * Copyright 2003 David G Jones
+ * 
+ * $Id$
+ */
+package org.abora.white.collection.arrays.tests;
 
-import org.abora.white.collection.basic.IEEE32Array;
+import org.abora.white.collection.arrays.IEEE32Array;
 import org.abora.white.x.PrimFloatValue;
 import org.abora.white.x.PrimIEEE32;
 import org.abora.white.x.PrimIEEE64;
@@ -215,5 +222,21 @@ public class IEEE32ArrayTest extends TestCase {
 		}
 	}
 
+	public void testStoreAll() {
+		IEEE32Array array = IEEE32Array.make(1);
+		array.storeAll(PrimIEEE32.make(1.1f));
+		assertTrue(IEEE32Array.make(new float[] {1.1f}).isEqual(array));
+		
+		array = IEEE32Array.make(3);
+		array.storeAll(PrimIEEE32.make(2.2f));
+		assertTrue(IEEE32Array.make(new float[] {2.2f, 2.2f, 2.2f}).isEqual(array));
+	}
+	
+	public void assertEquals(float[] expected, float[] actual) {
+		assertEquals(expected.length, actual.length);
+		for (int i = 0; i < expected.length; i++) {
+			assertTrue(expected[i] == actual[i]);
+		}
+	}
 }
 

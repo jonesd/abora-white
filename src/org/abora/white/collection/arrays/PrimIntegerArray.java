@@ -1,17 +1,14 @@
 /*
- * Abora hypertext system
- * Copyright 2003 David G Jones, david_jones@night.dircon.co.uk
+ * Abora-White
+ * Part of the Abora hypertext project: http://www.abora.org
+ * Copyright 2003 David G Jones
  * 
- * Translated from Udanax-Gold source code: Copyright 1991 XOC, www.udanax.com
+ * Based on the Udanax-Gold source code: http://www.udanax.com
+ * Copyright 1979-1999 Udanax.com. All rights reserved
+ * 
+ * $Id$
  */
-
-package org.abora.white.collection.basic;
-
-import org.abora.gold.java.missing.BooleanVar;
-import org.abora.gold.java.missing.IntegerVar;
-import org.abora.gold.java.missing.smalltalk.Stream;
-import org.abora.gold.x.PrimSpec;
-import org.abora.gold.xpp.basic.Heaper;
+package org.abora.white.collection.arrays;
 
 /**
  * A common superclass for primitive arrays of integer types; this is the point

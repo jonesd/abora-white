@@ -1,11 +1,14 @@
 /*
- * Abora hypertext system
- * Copyright 2003 David G Jones, david_jones@night.dircon.co.uk
+ * Abora-White
+ * Part of the Abora hypertext project: http://www.abora.org
+ * Copyright 2003 David G Jones
  * 
- * Translated from Udanax-Gold source code: Copyright 1991 XOC, www.udanax.com
+ * Based on the Udanax-Gold source code: http://www.udanax.com
+ * Copyright 1979-1999 Udanax.com. All rights reserved
+ * 
+ * $Id$
  */
-
-package org.abora.white.collection.basic;
+package org.abora.white.collection.arrays;
 
 import java.io.PrintWriter;
 
@@ -372,9 +375,7 @@ public abstract class PrimArray extends Heaper {
 	 * Whether the two ranges contain the same values, using the criteria
 	 * defined in contentsEqual
 	 */
-	public boolean elementsEqual(int here, PrimArray other, int there, int n) {
-		throw new UnsupportedOperationException();
-	}
+	public abstract boolean elementsEqual(int here, PrimArray other, int there, int n);
 
 	public boolean elementsEqual(int here, PrimArray other, int there) {
 		return elementsEqual(here, other, there, -1);
@@ -514,4 +515,14 @@ public abstract class PrimArray extends Heaper {
 //	protected void moveTo(int newLoc) {
 //		throw new UnsupportedOperationException();
 //	}
+
+	//TODO made up
+	public boolean isEqual(Heaper other) {
+		if (other instanceof PrimArray) {
+			PrimArray o = (PrimArray) other;
+			return elementsEqual(0, o);
+		} else {
+			return false;
+		}
+	}
 }

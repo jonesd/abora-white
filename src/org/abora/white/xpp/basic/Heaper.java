@@ -1,9 +1,13 @@
 /*
- * Abora White: Abora hypertext system based on Udanax-Gold
- * Copyright 2003 David G Jones, david_jones@night. dircon.co.uk
- * Parts translated from Udanax-Gold source: Copyright 1991 XOC, www.udanax. com
+ * Abora-White
+ * Part of the Abora hypertext project: http://www.abora.org
+ * Copyright 2003 David G Jones
+ * 
+ * Based on the Udanax-Gold source code: http://www.udanax.com
+ * Copyright 1979-1999 Udanax.com. All rights reserved
+ * 
+ * $Id$
  */
-
 package org.abora.white.xpp.basic;
 
 public abstract class Heaper {

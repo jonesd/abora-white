@@ -1,11 +1,15 @@
+/*
+ * Abora-White
+ * Part of the Abora hypertext project: http://www.abora.org
+ * Copyright 2003 David G Jones
+ * 
+ * $Id$
+ */
 package org.abora.white.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-/**
- * @author jonesd
- */
 public class AllTests {
 
 	public static void main(String[] args) {
@@ -15,7 +19,7 @@ public class AllTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for org.abora.white.tests");
 
-		suite.addTest(org.abora.white.collection.basic.tests.AllTests.suite());
+		suite.addTest(org.abora.white.collection.arrays.tests.AllTests.suite());
 
 		//$JUnit-BEGIN$
 		//$JUnit-END$

@@ -8,14 +8,8 @@
  * 
  * $Id$
  */
-package org.abora.white.x;
+package org.abora.white.collection.arrays;
 
-import org.abora.white.xpp.basic.Heaper;
 
-public abstract class PrimValue extends Heaper {
-
-	public PrimValue() {
-		super();
-	}
-
+public class WeakPtrArray extends PtrArray {
 }
