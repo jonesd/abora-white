@@ -109,6 +109,10 @@ public class IEEE32Array extends PrimFloatArray {
 		return make(size, from, 0);
 	}
 
+	public static IEEE32Array make(PrimArray from) {
+		return make(from.count(), from);
+	}
+
 	/** create an IEEE32Array filled with the data at 'buffer' */
 	public static IEEE32Array make(float[] buffer) {
 		return new IEEE32Array(buffer);
@@ -223,7 +227,7 @@ public class IEEE32Array extends PrimFloatArray {
 			for (int i = 0; i < count; i += 1) {
 				float cmp = iEEE32At(i + myStart) - o.iEEE32At(i + otherStart);
 				if (cmp != 0.0) {
-					return ((int) cmp) < 0 ? -1 : 1;
+					return cmp < 0.0f ? -1 : 1;
 				}
 			}
 			return 0;

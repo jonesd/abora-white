@@ -264,6 +264,13 @@ public class Int64ArrayTest extends TestCase {
 		} catch (ClassCastException e) {
 			// expected
 		}
+		
+		// Null value
+		try {tri.storeValue(0, null);
+			fail("null");
+		} catch (NullPointerException e) {
+			// expected
+		}
 	}
 
 	public void testStoreAll() {
@@ -761,6 +768,11 @@ public class Int64ArrayTest extends TestCase {
 		final long result = 4611686018427387904L;
 		assertEquals(Int64Array.make(new long[]{-result, 0, result}), array);
 
+		// compatible array types
+		array = AssertArrays.makeInt64Array12345();
+		array.addElements(0, AssertArrays.makeInt32Array12321(), -1, 0);
+		AssertArrays.assertEquals(Int64Array.make(new long[]{2, 4, 6, 6, 6}), array);
+
 		array = AssertArrays.makeInt64Array12345();
 		try {
 			array.addElements(2, AssertArrays.makeInt64Array12321(), 4, 1);
@@ -818,6 +830,11 @@ public class Int64ArrayTest extends TestCase {
 		array.subtractElements(0, Int64Array.make(new long[] {-large, large, large}));
 		final long result = 4611686018427387904L;
 		assertEquals(Int64Array.make(new long[]{-result, 0, result}), array);
+
+		// compatible array types
+		array = AssertArrays.makeInt64Array12345();
+		array.subtractElements(0, AssertArrays.makeInt8Array12321(), -1, 0);
+		AssertArrays.assertEquals(Int64Array.make(new long[]{0, 0, 0, 2, 4}), array);
 
 		// extend count beyond end of array
 		array = AssertArrays.makeInt64Array12345();

@@ -264,6 +264,13 @@ public class Int16ArrayTest extends TestCase {
 		} catch (ClassCastException e) {
 			// expected
 		}
+		
+		// Null value
+		try {tri.storeValue(0, null);
+			fail("null");
+		} catch (NullPointerException e) {
+			// expected
+		}
 	}
 
 	public void testStoreAll() {
@@ -759,6 +766,11 @@ public class Int16ArrayTest extends TestCase {
 		array.addElements(0, Int16Array.make(new short[] {30000, 30000, -30000}));
 		assertEquals(Int16Array.make(new short[]{-5536, 0, 5536}), array);
 
+		// compatible array types
+		array = AssertArrays.makeInt16Array12345();
+		array.addElements(0, AssertArrays.makeInt32Array12321(), -1, 0);
+		AssertArrays.assertEquals(Int16Array.make(new short[]{2, 4, 6, 6, 6}), array);
+
 		array = AssertArrays.makeInt16Array12345();
 		try {
 			array.addElements(2, AssertArrays.makeInt16Array12321(), 4, 1);
@@ -814,6 +826,11 @@ public class Int16ArrayTest extends TestCase {
 		array = Int16Array.make(new short[] {30000, 30000, -30000});
 		array.subtractElements(0, Int16Array.make(new short[] {-30000, 30000, 30000}));
 		assertEquals(Int16Array.make(new short[]{-5536, 0, 5536}), array);
+
+		// compatible array types
+		array = AssertArrays.makeInt16Array12345();
+		array.subtractElements(0, AssertArrays.makeInt32Array12321(), -1, 0);
+		AssertArrays.assertEquals(Int16Array.make(new short[]{0, 0, 0, 2, 4}), array);
 
 		// extend count beyond end of array
 		array = AssertArrays.makeInt16Array12345();

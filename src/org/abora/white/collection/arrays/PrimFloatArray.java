@@ -10,6 +10,9 @@
  */
 package org.abora.white.collection.arrays;
 
+import java.util.Arrays;
+
+import org.abora.white.value.IEEE64Value;
 import org.abora.white.value.PrimFloatValue;
 import org.abora.white.xpp.basic.Heaper;
 
@@ -21,6 +24,12 @@ import org.abora.white.xpp.basic.Heaper;
  * general floating-point implementations. Subclasses should reimplement operations for
  * performance or where their specific element type has to be reflected in the
  * API.
+ * <p>
+ * You should be aware that the methods defined at this level will often convert
+ * array element values into <code>double</code> primitive type before operating
+ * on the value. Sometimes when converting from float to double values values can
+ * subtely change. This may manifest in operations such as comparison producing
+ * unexpected results.
  */
 public abstract class PrimFloatArray extends PrimArithmeticArray {
 
@@ -96,7 +105,7 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 			for (int i = 0; i < count; i += 1) {
 				double cmp = floatAt(i + start) - o.floatAt(i + otherStart);
 				if (cmp != 0.0) {
-					return ((int) cmp) < 0 ? -1 : 1;
+					return cmp < 0.0 ? -1 : 1;
 				}
 			}
 			return 0;
@@ -183,6 +192,13 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 		return -1;
 	}
 
+
+	//////////////////////////////////////////////
+	// Bulk Storage
+	
+	public void zeroElements(int from, int count) {
+		storeAll(IEEE64Value.make(0.0), count, from);
+	}
 
 	//////////////////////////////////////////////
 	// Arithmetic Manipulations

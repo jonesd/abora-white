@@ -275,6 +275,13 @@ public class UInt32ArrayTest extends TestCase {
 		} catch (ClassCastException e) {
 			// expected
 		}
+		
+		// Null value
+		try {tri.storeValue(0, null);
+			fail("null");
+		} catch (NullPointerException e) {
+			// expected
+		}
 	}
 
 	public void testStoreAll() {
@@ -773,6 +780,11 @@ public class UInt32ArrayTest extends TestCase {
 		//TODO check these values
 		assertEquals(UInt32Array.make(new long[]{1073741824L, large}), array);
 
+		// compatible array types
+		array = AssertArrays.makeUInt32Array12345();
+		array.addElements(0, AssertArrays.makeInt8Array12321(), -1, 0);
+		AssertArrays.assertEquals(UInt32Array.make(new long[]{2, 4, 6, 6, 6}), array);
+
 		array = AssertArrays.makeUInt32Array12345();
 		try {
 			array.addElements(2, AssertArrays.makeUInt32Array12321(), 4, 1);
@@ -826,6 +838,11 @@ public class UInt32ArrayTest extends TestCase {
 		array.subtractElements(0, UInt32Array.make(new long[] {large, large}));
 		//TODO check these values
 		assertEquals(UInt32Array.make(new long[]{1610612736L, 0}), array);
+
+		// compatible array types
+		array = AssertArrays.makeUInt32Array12345();
+		array.subtractElements(0, AssertArrays.makeInt8Array12321(), -1, 0);
+		AssertArrays.assertEquals(UInt32Array.make(new long[]{0, 0, 0, 2, 4}), array);
 
 		// extend count beyond end of array
 		array = AssertArrays.makeUInt32Array12345();

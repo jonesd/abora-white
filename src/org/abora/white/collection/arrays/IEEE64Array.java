@@ -110,6 +110,10 @@ public class IEEE64Array extends PrimFloatArray {
 		return make(size, from, 0);
 	}
 
+	public static IEEE64Array make(PrimArray from) {
+		return make(from.count(), from);
+	}
+
 	/** create an IEEE64Array filled with the data at 'buffer' */
 	public static IEEE64Array make(double[] buffer) {
 		return new IEEE64Array(buffer);
@@ -194,14 +198,6 @@ public class IEEE64Array extends PrimFloatArray {
 		System.arraycopy(storage, start, buffer, 0, n);
 	}
 
-	public void zeroElements(int from, int count) {
-		int n = count;
-		if (n < 0) {
-			n = count();
-		}
-		Arrays.fill(storage, from, from + n, 0.0);
-	}
-
 	protected void copyElements(int to, PrimArray source, int from, int count) {
 		int n = count;
 		if (n == -1) {
@@ -220,7 +216,7 @@ public class IEEE64Array extends PrimFloatArray {
 			for (int i = 0; i < count; i += 1) {
 				double cmp = iEEE64At(i + start) - o.iEEE64At(i + otherStart);
 				if (cmp != 0.0) {
-					return ((int) cmp) < 0 ? -1 : 1;
+					return cmp < 0.0 ? -1 : 1;
 				}
 			}
 			return 0;

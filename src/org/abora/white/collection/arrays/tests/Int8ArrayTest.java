@@ -264,6 +264,13 @@ public class Int8ArrayTest extends TestCase {
 		} catch (ClassCastException e) {
 			// expected
 		}
+		
+		// Null value
+		try {tri.storeValue(0, null);
+			fail("null");
+		} catch (NullPointerException e) {
+			// expected
+		}
 	}
 
 	public void testStoreAll() {
@@ -759,6 +766,11 @@ public class Int8ArrayTest extends TestCase {
 		array.addElements(0, Int8Array.make(new byte[] {100, 100, -100, -100, -100}));
 		assertEquals(Int8Array.make(new byte[]{-56, -56, 0, 56, 56}), array);
 
+		// compatible array types
+		array = AssertArrays.makeInt8Array12345();
+		array.addElements(0, AssertArrays.makeInt32Array12321(), -1, 0);
+		AssertArrays.assertEquals(Int8Array.make(new byte[]{2, 4, 6, 6, 6}), array);
+
 		array = AssertArrays.makeInt8Array12345();
 		try {
 			array.addElements(2, AssertArrays.makeInt8Array12321(), 4, 1);
@@ -814,6 +826,11 @@ public class Int8ArrayTest extends TestCase {
 		array = Int8Array.make(new byte[] {100, 100, 100, -100, -100});
 		array.subtractElements(0, Int8Array.make(new byte[] {-100, -100, 100, 100, 100}));
 		assertEquals(Int8Array.make(new byte[]{-56, -56, 0, 56, 56}), array);
+
+		// compatible array types
+		array = AssertArrays.makeInt8Array12345();
+		array.subtractElements(0, AssertArrays.makeInt32Array12321(), -1, 0);
+		AssertArrays.assertEquals(Int8Array.make(new byte[]{0, 0, 0, 2, 4}), array);
 
 		// extend count beyond end of array
 		array = AssertArrays.makeInt8Array12345();
