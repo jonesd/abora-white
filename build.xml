@@ -16,23 +16,25 @@
    <property name="junit.dir" location="${build}/docs/junit"/>
    <property name="javadoc.dir" location="${build}/docs/api"/>
    <property name="clover.dir" location="${build}/docs/clover"/>
+
+	<property name="clover.home" value="${env.CLOVER_HOME}"/>
    
    
   <target name="init">
     <tstamp/>
     <mkdir dir="${build}"/>
     <mkdir dir="${build}/bin"/>
-    <mkdir dir="${build}/docs"/>    
+    <mkdir dir="${build}/docs"/>
 
-	<!-- TODO make this optional in case you dont have clover installed -->
-	<property name="clover.home" value="${env.CLOVER_HOME}"/>
+	<property name="clover.initstring" location="${build}/clover_coverage.db"/>
+	<property name="clover.excludes" value="**/tests/**"/>
+	
 	<path id="clover.classpath">
 		<pathelement path="${clover.home}/lib/clover.jar"/>
   		<pathelement path="${clover.home}/lib/velocity.jar"/>
 	</path>
-	<property name="clover.initstring" location="${build}/clover_coverage.db"/>
-	<property name="clover.excludes" value="**/tests/**"/>
   </target>
+
 
   <target name="compile" depends="init"
         description="compile the source " >
@@ -125,12 +127,13 @@
 	  <antcall target="clover.report"/>
 	</target>
 
-	<target name="with.clover">
+	<target name="with.clover" if="env.CLOVER_HOME">
+		<echo message="*** Including Clover support ***"/>
 		<property name="build.compiler"
             value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
 	</target>
 	
-	<target name="clover.report" depends="init">
+	<target name="clover.report" depends="init" if="env.CLOVER_HOME">
   <java classname="com.cortexeb.tools.clover.reporters.html.HtmlReporter" fork="true">
    <arg line="--outputdir ${clover.dir} --showSrc --initstring ${clover.initstring} --title '${Name}'"/>
    <classpath refid="clover.classpath"/>
