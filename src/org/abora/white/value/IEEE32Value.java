@@ -8,24 +8,24 @@
  * 
  * $Id$
  */
-package org.abora.white.x;
+package org.abora.white.value;
 
 import org.abora.white.xpp.basic.Heaper;
 
 /**
  * Boxed Java float or IEEE32 value. 
  */
-public class PrimIEEE32 extends PrimFloatValue {
+public class IEEE32Value extends PrimFloatValue {
 
 	private float value;
 
-	protected PrimIEEE32(float value) {
+	protected IEEE32Value(float value) {
 		super();
 		this.value = value;
 	}
 
 	public static Heaper make(float f) {
-		return new PrimIEEE32(f);
+		return new IEEE32Value(f);
 	}
 
 	/**

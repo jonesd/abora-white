@@ -31,19 +31,9 @@ import org.abora.white.xpp.basic.Heaper;
  * have no clients and may disappear.)
  */
 public abstract class PrimArray extends Heaper {
+	//TODO Implement Collection?
 
-	/** the number of elements contained */
-//	private int myCount;
-	//Int32 myCount;  /* the number of elements contained */
-
-	/** in units of PrimArrayHeap allocation */
-//	private int mySize;
-	//Int32 mySize;   /* in units of PrimArrayHeap allocation */
-
-//	private int[] myStorage;
-	//NOCOPY Int32 * myStorage;
-
-	protected static int OurGutsCount = 0;
+//	protected static int OurGutsCount = 0;
 
 	protected PrimArray() {
 		super();
@@ -348,30 +338,6 @@ public abstract class PrimArray extends Heaper {
 	}
 
 	/**
-	 * Copy of a piece of this array into the provided buffer with
-	 * size bytes of space available.  The default is to start at
-	 * the beginning and go to the end.  The elements will be copied
-	 * from this array beginning with start, and taking as many
-	 * of count elements or upto the end of this array as will fit in
-	 * size bytes.  WARNING:  Note that if this array is a PtrArray,
-	 * the pointers copied to buffer will not be considered as references
-	 * for garbage collection.  Therefore the buffer should not be allowed
-	 * to contain the only pointer to an object in a garbage collecting
-	 * environment.
-	 */
-	public void copyToBuffer(int[] buffer, int size, int count, int start) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void copyToBuffer(int[] buffer, int size, int count) {
-		copyToBuffer(buffer, size, count, 0);
-	}
-
-	public void copyToBuffer(int[] buffer, int size) {
-		copyToBuffer(buffer, size, -1);
-	}
-
-	/**
 	 * Whether the two ranges contain the same values, using the criteria
 	 * defined in contentsEqual
 	 */
@@ -416,6 +382,7 @@ public abstract class PrimArray extends Heaper {
 		oo.print("]");
 	}
 
+	//TODO remove this if we dont end up using it
 	protected int rangeCheck(int index) {
 		if (index < 0 || index >= count()) {
 			throw new IndexOutOfBoundsException();
@@ -431,14 +398,6 @@ public abstract class PrimArray extends Heaper {
 		//			return index;
 		//		}
 	}
-
-//	protected int[] storage() {
-//		throw new UnsupportedOperationException();
-//	}
-
-//	private void receivePrimArray(Rcvr rcvr) {
-//		throw new UnsupportedOperationException();
-//	}
 
 	protected void printElementOn(int index, PrintWriter oo) {
 		throw new UnsupportedOperationException();
@@ -520,7 +479,7 @@ public abstract class PrimArray extends Heaper {
 	public boolean isEqual(Heaper other) {
 		if (other instanceof PrimArray) {
 			PrimArray o = (PrimArray) other;
-			return elementsEqual(0, o);
+			return contentsEqual(o);
 		} else {
 			return false;
 		}

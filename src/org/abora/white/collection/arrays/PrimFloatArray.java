@@ -10,7 +10,7 @@
  */
 package org.abora.white.collection.arrays;
 
-import org.abora.white.x.PrimFloatValue;
+import org.abora.white.value.PrimFloatValue;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -45,6 +45,18 @@ public abstract class PrimFloatArray extends PrimDataArray {
 		//		}
 	}
 
+	/**
+	 * Return the index of the nth occurrence of the given value at or
+	 * after (before if nth is negative) the given index, or -1 if
+	 * there is none.
+	 * 
+	 * @param value element that is to be matched
+	 * @param start index to start the search. If positive start from that index,
+	 * 			if negative start from relatie to end of array
+	 * @param nth nth occurrence of the matched value at or after the start if
+	 * 			positive, or at or before if negative. A 0 nth immediately fails.
+	 * @return index of element matched or -1 if there is none
+	 */
 	public int indexOf(Heaper value, int start, int nth) {
 		if (count() == 0 || nth == 0) {
 			return -1;
@@ -117,6 +129,18 @@ public abstract class PrimFloatArray extends PrimDataArray {
 		//		}
 	}
 
+	/**
+	 * Return the index of the nth occurrence of anything but the given value at or
+	 * after (before if nth is negative) the given index, or -1 if
+	 * there is none.
+	 * 
+	 * @param value anything except this element that is to be matched
+	 * @param start index to start the search. If positive start from that index,
+	 * 			if negative start from relatie to end of array
+	 * @param nth nth occurrence of the matched value at or after the start if
+	 * 			positive, or at or before if negative. A 0 nth immediately fails.
+	 * @return index of element matched or -1 if there is none
+	 */
 	public int indexPast(Heaper value, int start, int nth) {
 		if (count() == 0 || nth == 0) {
 			return -1;

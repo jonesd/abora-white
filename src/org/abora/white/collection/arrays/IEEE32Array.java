@@ -12,8 +12,8 @@ package org.abora.white.collection.arrays;
 
 import java.io.PrintWriter;
 
-import org.abora.white.x.PrimFloatValue;
-import org.abora.white.x.PrimIEEE32;
+import org.abora.white.value.PrimFloatValue;
+import org.abora.white.value.IEEE32Value;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -126,7 +126,7 @@ public class IEEE32Array extends PrimFloatArray {
 	}
 
 	public Heaper fetchValue(int index) {
-		return PrimIEEE32.make(iEEE32At(index));
+		return IEEE32Value.make(iEEE32At(index));
 
 		//		RPTR(Heaper) OR(NULL) IEEE32Array::fetchValue (Int32 index) {
 		//			return PrimIEEE32::make(this->iEEE32At(index));
@@ -155,9 +155,10 @@ public class IEEE32Array extends PrimFloatArray {
 	/** 
 	 * Fill a consequitive range of elements with the supplied value.
 	 *  
-	 * @param value to store within range
+	 * @param value to store within range or 0.0 if null
+	 * @param count number of consequentive elements in range or all
+	 * 			elements from start if -1
 	 * @param start index of first element in range (default to start)
-	 * @param count number of consequentive elements in range
 	 */
 	public void storeAll(Heaper value, int count, int start) {
 		int n = count() - start;
@@ -202,6 +203,16 @@ public class IEEE32Array extends PrimFloatArray {
 		//		}
 	}
 
+	/** 
+	 * Copy a consequitive range of elements from the receiver into the
+	 * supplied buffer.
+	 *  
+	 * @param buffer array to fill with receveirs elements
+	 * @param count number of consequentive elements in range or all
+	 * 			elements from start if -1. Silently truncate if count is
+	 * 			larger than available elements in the receiver
+	 * @param start index of first element in range
+	 */
 	public void copyToBuffer(float[] buffer, int count, int start) {
 		int n;
 		if (count >= 0) {

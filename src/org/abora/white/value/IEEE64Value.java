@@ -8,21 +8,21 @@
  * 
  * $Id$
  */
-package org.abora.white.x;
+package org.abora.white.value;
 
 /**
  * Boxed Java double or IEEE64 value. 
  */
-public class PrimIEEE64 extends PrimFloatValue {
+public class IEEE64Value extends PrimFloatValue {
 	private double value;
 	
-	protected PrimIEEE64(double value) {
+	protected IEEE64Value(double value) {
 		super();
 		this.value = value;
 	}
 
-	public static PrimIEEE64 make(double value) {
-		return new PrimIEEE64(value);
+	public static IEEE64Value make(double value) {
+		return new IEEE64Value(value);
 	}
 
 	public float asIEEE32() {

@@ -13,8 +13,8 @@ package org.abora.white.collection.arrays;
 import java.io.PrintStream;
 import java.util.Arrays;
 
-import org.abora.white.x.PrimFloatValue;
-import org.abora.white.x.PrimIEEE64;
+import org.abora.white.value.PrimFloatValue;
+import org.abora.white.value.IEEE64Value;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -65,12 +65,12 @@ public class IEEE64Array extends PrimFloatArray {
 
 	/** Store an actual floating point value */
 	public void storeIEEE64(int index, double value) {
-		storage[rangeCheck(index)] = value;
+		storage[index] = value;
 	}
 
 	/** Get an actual floating point number */
 	public double iEEE64At(int index) {
-		return storage[rangeCheck(index)];
+		return storage[index];
 	}
 
 	public void storeFloat(int index, double value) {
@@ -89,7 +89,7 @@ public class IEEE64Array extends PrimFloatArray {
 	}
 
 	public Heaper fetchValue(int index) {
-		return PrimIEEE64.make(iEEE64At(index));
+		return IEEE64Value.make(iEEE64At(index));
 	}
 
 	//	public PrimSpec spec() {

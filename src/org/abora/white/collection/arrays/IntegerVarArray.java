@@ -12,11 +12,11 @@ package org.abora.white.collection.arrays;
 
 import java.io.PrintStream;
 
-import org.abora.white.x.PrimIntValue;
+import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
 public class IntegerVarArray extends PrimIntegerArray {
-	private PrimIntValue[] storage;
+	private IntegerValue[] storage;
 
 	//	IntegerVarArray (Int32 count, TCSJ);
 
@@ -56,20 +56,20 @@ public class IntegerVarArray extends PrimIntegerArray {
 	}
 
 	/** Store an actual integer value */
-	public void storeIntegerVar(int index, PrimIntValue value) {
+	public void storeIntegerVar(int index, IntegerValue value) {
 		throw new UnsupportedOperationException();
 	}
 
 	/** Get an actual integer value */
-	public PrimIntValue integerVarAt(int index) {
+	public IntegerValue integerVarAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void storeInteger(int index, PrimIntValue value) {
+	public void storeInteger(int index, IntegerValue value) {
 		throw new UnsupportedOperationException();
 	}
 
-	public PrimIntValue integerAt(int index) {
+	public IntegerValue integerAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 

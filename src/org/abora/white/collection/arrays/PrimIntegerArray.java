@@ -10,7 +10,7 @@
  */
 package org.abora.white.collection.arrays;
 
-import org.abora.white.x.PrimIntValue;
+import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -30,19 +30,19 @@ public abstract class PrimIntegerArray extends PrimDataArray {
 	 * If canModify, then returns a newly created array only if the value will
 	 * not fit into this one, otherwise will always return a new array.
 	 */
-	public PrimIntegerArray hold(int index, PrimIntValue value, boolean canModify) {
+	public PrimIntegerArray hold(int index, IntegerValue value, boolean canModify) {
 		throw new UnsupportedOperationException();
 	}
 
-	public PrimIntegerArray hold(int index, PrimIntValue value) {
+	public PrimIntegerArray hold(int index, IntegerValue value) {
 		return hold(index, value, false);
 	}
 
 	/** Store an integer value */
-	public abstract void storeInteger(int index, PrimIntValue value);
+	public abstract void storeInteger(int index, IntegerValue value);
 
 	/** Get an actual integer value */
-	public abstract PrimIntValue integerAt(int index);
+	public abstract IntegerValue integerAt(int index);
 
 	public abstract void storeValue(int index, Heaper value);
 
@@ -76,15 +76,15 @@ public abstract class PrimIntegerArray extends PrimDataArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public int indexPastInteger(PrimIntValue value, int start, int count) {
+	public int indexPastInteger(IntegerValue value, int start, int count) {
 		throw new UnsupportedOperationException();
 	}
 
-	public int indexPastInteger(PrimIntValue value, int start) {
+	public int indexPastInteger(IntegerValue value, int start) {
 		return indexPastInteger(value, start, 1);
 	}
 
-	public int indexPastInteger(PrimIntValue value) {
+	public int indexPastInteger(IntegerValue value) {
 		return indexPastInteger(value, 0);
 	}
 

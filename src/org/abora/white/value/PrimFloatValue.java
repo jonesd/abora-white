@@ -8,7 +8,7 @@
  * 
  * $Id$
  */
-package org.abora.white.x;
+package org.abora.white.value;
 
 import org.abora.white.xpp.basic.Heaper;
 

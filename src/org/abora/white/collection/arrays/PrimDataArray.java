@@ -39,6 +39,17 @@ public abstract class PrimDataArray extends PrimArray {
 		//		}
 	}
 
+	/**
+	 * Overwrite receivers elements within the specified range by the result
+	 * of the arithmetic addition of each receiver element and the
+	 * corresponding other arrays element.
+	 * 
+	 * @param to first index of receiver to be overwritten
+	 * @param other other elements to be added to the receivers elements
+	 * @param count number of elements from the other array to overwire, or -1 for
+	 * 			all of others elements starting at from and after
+	 * @param from first index of the other array to be included from
+	 */
 	public void addElements(int to, PrimDataArray other, int count, int from) {
 		int n = Math.min(other.count() - from, this.count() - to);
 		if (count > n) {

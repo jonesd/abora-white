@@ -12,7 +12,7 @@ package org.abora.white.collection.arrays;
 
 import java.io.PrintStream;
 
-import org.abora.white.x.PrimIntValue;
+import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
 public class Int32Array extends PrimIntArray {
@@ -65,11 +65,11 @@ public class Int32Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	public void storeInteger(int index, PrimIntValue value) {
+	public void storeInteger(int index, IntegerValue value) {
 		throw new UnsupportedOperationException();
 	}
 
-	public PrimIntValue integerAt(int index) {
+	public IntegerValue integerAt(int index) {
 		throw new UnsupportedOperationException();
 	}
 
