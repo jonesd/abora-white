@@ -20,25 +20,31 @@ import org.abora.white.xpp.basic.Heaper;
  * objects.  When used in this way, one can think of the Accumulator as being sort of like a
  * pseudo-constructor which is spread out in time, and whose arguments are identified by the
  * sequence they occur in.  Accumulators are typically used in loops.
+ * <p>
  * A (future) example of an Accumulator which is not like "a pseudo-constructor spread out in
  * time" is a communications stream between two threads (or even coroutines) managed by an
  * Accumulator / Stepper pair.  The producer process produces by putting objects into his
  * Accumulator, and the consuming process consumes by pulling values out of his Stepper.  If
  * you want to stretch the analogy, I suppose you can see the Accumulator of the pair as a
  * pseudo-constructor which constructs the Stepper, but *overlapped* in time.
+ * <p>
  * It is normally considered bad style for two methods/functions to be pointing at the same
  * Acumulator.  As long as Accumulators are used locally and without aliasing (i.e., as if
  * they were pass-by-value Vars), these implementationally side-effecty objects can be
  * understood applicatively.  If a copy of an Accumulator can be passed instead of a pointer
  * to the same one, this is to be prefered.  This same comment applies even more so for
  * Steppers.
+ * <p>
  * Example:  To build a set consisting of some transform of the elements of an existing set
  * (what Smalltalk would naturally do with "collect:"), a natural form for the loop would be:
- * SPTR(Accumulator) acc = setAccumulator();
- * FOR_EACH(Heaper,each,oldSet->stepper(), {
- * acc->step (transform (each));
- * });
- * return CAST(ImmuSet,acc->value());
+ * <code>
+ * 	SPTR(Accumulator) acc = setAccumulator();
+ * 	FOR_EACH(Heaper,each,oldSet->stepper(), {
+ * 		acc->step (transform (each));
+ * 	});
+ * 	return CAST(ImmuSet,acc->value());
+ * </code>
+ * <p>
  * See class Stepper for documentation of FOR_EACH.
  */
 public abstract class Accumulator extends Heaper {
@@ -97,7 +103,24 @@ public abstract class Accumulator extends Heaper {
 	}
 
 	/////////////////////////////////////////////
-	//
+	// Static Factory Methods
+	
+	/**
+	 * An accumulator that returns a PtrArray of the object put into it, in sequence
+	 */
+	public static Accumulator ptrArray() {
+		return new PtrArrayAccumulator();
+		/*
+		udanax-top.st:11621:Accumulator class methodsFor: 'creation'!
+		{Accumulator INLINE} ptrArray
+			"An accumulator that returns a PtrArray of the object put into it, in sequence"
+			
+			^PtrArrayAccumulator create!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Deferred Operations
 
 	/**
 	 * Accumulate a new object into the Accumulator
@@ -135,6 +158,9 @@ public abstract class Accumulator extends Heaper {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Comparing and Hashing
+
 	public int actualHashForEqual() {
 		//TODO review
 		return System.identityHashCode(this);
@@ -150,20 +176,6 @@ public abstract class Accumulator extends Heaper {
 		/*
 		udanax-top.st:11610:Accumulator methodsFor: 'generated:'!
 		isEqual: other ^self == other!
-		*/
-	}
-
-	/**
-	 * An accumulator that returns a PtrArray of the object put into it, in sequence
-	 */
-	public static Accumulator ptrArray() {
-		return new PtrArrayAccumulator();
-		/*
-		udanax-top.st:11621:Accumulator class methodsFor: 'creation'!
-		{Accumulator INLINE} ptrArray
-			"An accumulator that returns a PtrArray of the object put into it, in sequence"
-			
-			^PtrArrayAccumulator create!
 		*/
 	}
 }

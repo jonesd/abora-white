@@ -22,8 +22,14 @@ public class AllTests extends TestCase {
 		//$JUnit-BEGIN$
 		suite.addTest(new TestSuite(ActualHashSetTest.class));
 		suite.addTest(new TestSuite(EmptyImmuSetTest.class));
+		suite.addTest(new TestSuite(HashSetTest.class));
+		suite.addTest(new TestSuite(ImmuSetOnMuTest.class));
 		suite.addTest(new TestSuite(ImmuSetTest.class));
+		suite.addTest(new TestSuite(MuSetTest.class));
+		suite.addTest(new TestSuite(ScruSetTest.class));
+		suite.addTest(new TestSuite(SetAccumulatorTest.class));
 		suite.addTest(new TestSuite(TinyImmuSetTest.class));
+		suite.addTest(new TestSuite(UnionRecruiterTest.class));
 		//$JUnit-END$
 		return suite;
 	}

@@ -16,6 +16,10 @@ import org.abora.white.rcvr.Xmtr;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
+/**
+ * Implementation of ImmuSet by delegating to an internal MuSet which actually
+ * holds the members of the set.
+ */
 public class ImmuSetOnMu extends ImmuSet {
 	protected MuSet setInternal;
 	/*
@@ -41,6 +45,53 @@ public class ImmuSetOnMu extends ImmuSet {
 	(ImmuSetOnMu getOrMakeCxxClassDescription)
 		attributes: ((Set new) add: #CONCRETE; add: #NOT.A.TYPE; add: #COPY; yourself)!
 	*/
+
+	/////////////////////////////////////////////
+	// Constructors
+
+	/**
+	 * this set should be a copy for my own use
+	 */
+	protected ImmuSetOnMu(MuSet fromSet) {
+		/* the pseudo constructor enforces this */
+		super();
+		setInternal = fromSet;
+		/*
+		udanax-top.st:45689:ImmuSetOnMu methodsFor: 'protected: create'!
+		create.MuSet: fromSet {MuSet}
+			"this set should be a copy for my own use"
+			"the pseudo constructor enforces this"
+			super create.
+			setInternal _ fromSet!
+		*/
+	}
+
+	protected ImmuSetOnMu(Rcvr receiver) {
+		super(receiver);
+		setInternal = (MuSet) receiver.receiveHeaper();
+		/*
+		udanax-top.st:45701:ImmuSetOnMu methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			setInternal _ receiver receiveHeaper.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+	
+	public static ImmuSet make(MuSet aSet) {
+		//TODO aSet should really be a copy for normal users
+		return new ImmuSetOnMu(aSet);
+		/*
+		udanax-top.st:45718:ImmuSetOnMu class methodsFor: 'creation'!
+		{ImmuSet} make: aSet {MuSet}
+			^ self create.MuSet: aSet!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Accessing
 
 	public boolean hasMember(Heaper someone) {
 		return setInternal.hasMember(someone);
@@ -69,6 +120,9 @@ public class ImmuSetOnMu extends ImmuSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Enumerating
+
 	public IntegerValue count() {
 		return setInternal.count();
 		/*
@@ -95,6 +149,9 @@ public class ImmuSetOnMu extends ImmuSet {
 			^ setInternal theOne!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Operations
 
 	public ImmuSet intersect(ScruSet another) {
 		if (another.isEmpty()) {
@@ -164,6 +221,9 @@ public class ImmuSetOnMu extends ImmuSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Adding-Removing
+
 	public ImmuSet with(Heaper anElement) {
 		MuSet tmp = asMuSet();
 		tmp.store(anElement);
@@ -179,7 +239,7 @@ public class ImmuSetOnMu extends ImmuSet {
 	}
 
 	public ImmuSet without(Heaper anElement) {
-		MuSet tmp = (MuSet) (setInternal.copy());
+		MuSet tmp = (MuSet) setInternal.copy();
 		tmp.wipe(anElement);
 		return ImmuSet.from(tmp);
 		/*
@@ -193,6 +253,9 @@ public class ImmuSetOnMu extends ImmuSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Conversion
+
 	public MuSet asMuSet() {
 		return (MuSet) setInternal.copy();
 		/*
@@ -202,22 +265,8 @@ public class ImmuSetOnMu extends ImmuSet {
 		*/
 	}
 
-	/**
-	 * this set should be a copy for my own use
-	 */
-	public ImmuSetOnMu(MuSet fromSet) {
-		/* the pseudo constructor enforces this */
-		super();
-		setInternal = fromSet;
-		/*
-		udanax-top.st:45689:ImmuSetOnMu methodsFor: 'protected: create'!
-		create.MuSet: fromSet {MuSet}
-			"this set should be a copy for my own use"
-			"the pseudo constructor enforces this"
-			super create.
-			setInternal _ fromSet!
-		*/
-	}
+	/////////////////////////////////////////////
+	// Create
 
 	public void destruct() {
 		setInternal.destroy();
@@ -230,17 +279,6 @@ public class ImmuSetOnMu extends ImmuSet {
 		*/
 	}
 
-	public ImmuSetOnMu(Rcvr receiver) {
-		super(receiver);
-		setInternal = (MuSet) receiver.receiveHeaper();
-		/*
-		udanax-top.st:45701:ImmuSetOnMu methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			setInternal _ receiver receiveHeaper.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		xmtr.sendHeaper(setInternal);
@@ -249,15 +287,6 @@ public class ImmuSetOnMu extends ImmuSet {
 		{void} sendSelfTo: xmtr {Xmtr}
 			super sendSelfTo: xmtr.
 			xmtr sendHeaper: setInternal.!
-		*/
-	}
-
-	public static ImmuSet make(MuSet aSet) {
-		return new ImmuSetOnMu(aSet);
-		/*
-		udanax-top.st:45718:ImmuSetOnMu class methodsFor: 'creation'!
-		{ImmuSet} make: aSet {MuSet}
-			^ self create.MuSet: aSet!
 		*/
 	}
 }

@@ -24,7 +24,69 @@ import org.abora.white.tabtool.LPPrimeSizeProvider;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
+
+/**
+ * The ActualHashSet class is an implementation of a MuTable set that can contain arbitrary
+ * Heapers.  It uses the hashForEqual member function to get a hash value for the items
+ * contained in the set.  The set establishes the equality of objects in the set through the
+ * isEqual: function.
+ * <p>
+ * The implemention of ActualHashSet is straightforward.  There are primitive tables used to store
+ * pointers to the stored items (myHashEntries), and their corresponding hash values
+ * (myHashValues).  The ActualHashSet also maintain a current tally of the number of items in the
+ * set
+ * <p>.
+ * definition: preferred location - the location calculated from item hashForEqual mod
+ * tableSize.
+ * <p>
+ * The search routine first calculates the preferred location.  This is used as the first
+ * location in the myHashEntries table to test for the presence of the item, and the search
+ * proceeds forward (in a linear probe) from there.  If there is no object at that position,
+ * the routine assumes the item is not in the table.  If there is an item there, the first
+ * test is to check if the item's hash matches the hash myHashValues at that position.  If
+ * the match is successful, a full isEqual: test is performed.  If the isEqual: test
+ * succeeds, the item is present in the set.  If either test fails, the entry at the desired
+ * location is tested to see if it is closer to its own preferred location than the item (a
+ * test which necessarily fails the first time).  If it is closer, the item is not in the
+ * set.  (This extra test is what distinguishes an ordered hash set from an ordinary hash
+ * set.  It often detects the absense of an item well before an empty slot is encountered,
+ * and the advantage becomes pronounced as the set fills up.  Ordered hash sets with linear
+ * probe beat ordinary hash sets with secondary clustering on misses (the big time eater),
+ * yet they preserve linear probe's easy deletion.)
+ * <p>
+ * On insertion to the set, the hash and probe sequence is essentially the same as the
+ * search.  The main exception is that on a hash collision, the item bumps down any item that
+ * is no farther than its own preferred position.
+ * <p>
+ * An example is perhaps in order:
+ * <p>
+ * the set contains items a, b, and c in table locations 3, 4, and 5.  Assume that a has
+ * location 2 as its preferred location, while b and c both have location 4 as their
+ * preferred location.  Now, if we attempt to add an item d to the table, and item d were to
+ * have a preferred location of 3.  Since 3 is already occupied by something that is already
+ * far from its preferred location, we probe for a another location.  At location 4, item d
+ * is displaced by one from its preferred location.  Since b is in it's preferred location
+ * (4) d replaces it, and we move item b down.  Item c is in location 5 because it had
+ * already been bumped from location 4 when b was inserted previously.  B again ties with c,
+ * so it pushes it out of location 5, replacing it there.  Item c will end up in location 6.
+ * This probe function minimizes the individual displacement of hash misses, while keeping
+ * the most items in their preferred locations.
+ * <p>
+ * Note that, though the choice of which item to bump is obvious when the distances from home
+ * are different, when they are equal we could have given preference to either the new or the
+ * old item.  We chose to put the new item closer to its preferred location, on the
+ * assumption that things entered recently are more likely to be looked up than things
+ * entered long ago.
+ * <p>
+ * This algorithm was derived from a short discussion with Michael McClary (probably
+ * completely missing his intended design - all mistakes are mine -- heh).
+ * (Unfortunately, I wasn't clear in the discussion.  Since hugh was unavailable when I
+ * discovered this, I've taken the opportunity to practice with Smalltalk and corrected both
+ * the explanation and the code rather than sending him a clarification. -- michael)
+ */
 public class ActualHashSet extends HashSet {
+	//TODO for the moment these are ABS(hashForEqual) values, as the algorithm
+	// doesn't work with negative numbers
 	protected Int32Array myHashValues;
 	protected SharedPtrArray myHashEntries;
 	protected int myTally;
@@ -87,11 +149,7 @@ public class ActualHashSet extends HashSet {
 	// Constructors
 
 	protected ActualHashSet(int newTally, SharedPtrArray entries) {
-		super();
-		myTally = newTally;
-		myHashValues = Int32Array.make(entries.count());
-		myHashEntries = entries;
-		myHashEntries.shareMore();
+		this(newTally, Int32Array.make(entries.count()), entries);
 		//		/* >>> smalltalkOnly */
 		//		NewSetCount = NewSetCount + 1;
 		//		/* <<< smalltalkOnly */
@@ -187,11 +245,13 @@ public class ActualHashSet extends HashSet {
 	// Testing
 
 	public int contentsHash() {
-		int hashResult;
-		hashResult = 0;
-		for (int idx = 0; idx < myHashEntries.count(); idx++) {
-			if (myHashEntries.fetch(idx) != null) {
-				hashResult = hashResult + (myHashValues.int32At(idx));
+		int hashResult = 0;
+		int myHashEntriesCount = myHashEntries.count();
+		for (int index = 0; index < myHashEntriesCount; index++) {
+			if (myHashEntries.fetch(index) != null) {
+				hashResult ^= myHashEntries.fetch(index).hashForEqual();
+//TODO prefer following, but currenty hashValues are ABS
+//				hashResult += myHashValues.int32At(index);
 			}
 		}
 		return hashResult;
@@ -224,7 +284,7 @@ public class ActualHashSet extends HashSet {
 		//		/* >>> smalltalkOnly */
 		//		ActualHashSet.countTest(myTally);
 		//		/* <<< smalltalkOnly */
-		return (hashFind(someone)) >= 0;
+		return hashFind(someone) >= 0;
 		/*
 		udanax-top.st:46418:ActualHashSet methodsFor: 'accessing'!
 		{BooleanVar} hasMember: someone {Heaper}
@@ -257,6 +317,7 @@ public class ActualHashSet extends HashSet {
 	public void destruct() {
 		myHashEntries.shareLess();
 		super.destruct();
+		//TODO should we null external references?
 		/*
 		udanax-top.st:46448:ActualHashSet methodsFor: 'protected: creation'!
 		{void} destruct
@@ -354,7 +415,6 @@ public class ActualHashSet extends HashSet {
 	 */
 	public void wipeAll(ScruSet other) {
 		/* Maintainance note: this duplicates some code in wipe: for efficiency */
-		int loc;
 		if (myTally == 0) {
 			return;
 		}
@@ -363,7 +423,8 @@ public class ActualHashSet extends HashSet {
 		try {
 			Heaper elem;
 			while ((elem = (Heaper) stepper.fetch()) != null) {
-				if ((loc = hashFind(elem)) >= 0) {
+				int loc = hashFind(elem);
+				if (loc >= 0) {
 					if (!haveWritten) {
 						aboutToWrite();
 						haveWritten = true;
@@ -426,12 +487,12 @@ public class ActualHashSet extends HashSet {
 	}
 
 	public void remove(Heaper anElement) {
-		int loc;
 		//		/* >>> smalltalkOnly */
 		//		ActualHashSet.countDelete(myTally);
 		//		/* <<< smalltalkOnly */
 		aboutToWrite();
-		if ((loc = hashFind(anElement)) >= 0) {
+		int loc = hashFind(anElement);
+		if (loc >= 0) {
 			hashRemove(loc);
 			myTally = myTally - 1;
 		} else {
@@ -476,11 +537,11 @@ public class ActualHashSet extends HashSet {
 	}
 
 	public void wipe(Heaper anElement) {
-		int loc;
 		if (myTally == 0) {
 			return;
 		}
-		if ((loc = hashFind(anElement)) >= 0) {
+		int loc = hashFind(anElement);
+		if (loc >= 0) {
 			//			/* >>> smalltalkOnly */
 			//			ActualHashSet.countDelete(myTally);
 			//			/* <<< smalltalkOnly */
@@ -507,7 +568,7 @@ public class ActualHashSet extends HashSet {
 	/**
 	 * If my contents are shared, and I'm about to change them, make a copy of them.
 	 */
-	public void aboutToWrite() {
+	protected void aboutToWrite() {
 		if (myHashEntries.shareCount() > 1) {
 			actualAboutToWrite();
 		}
@@ -520,7 +581,7 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
-	public void actualAboutToWrite() {
+	protected void actualAboutToWrite() {
 		Int32Array newValues = (Int32Array) myHashValues.copy();
 		SharedPtrArray newEntries = (SharedPtrArray) myHashEntries.copy();
 		myHashEntries.shareLess();
@@ -540,8 +601,7 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
-	public void checkSize(int byAmount) {
-		Heaper he;
+	protected void checkSize(int byAmount) {
 		/* Leave a third of free space. */
 		if (((myTally + byAmount) * 5) >> 2 < myHashEntries.count()) {
 			aboutToWrite();
@@ -551,7 +611,8 @@ public class ActualHashSet extends HashSet {
 		Int32Array newValues = Int32Array.make(newSize);
 		SharedPtrArray newEntries = (SharedPtrArray) SharedPtrArray.make(newSize);
 		for (int from = 0; from < myHashValues.count(); from++) {
-			if ((he = myHashEntries.fetch(from)) != null) {
+			Heaper he = myHashEntries.fetch(from); 
+			if (he != null) {
 				hashStore(he, newValues, newEntries);
 			}
 		}
@@ -559,7 +620,9 @@ public class ActualHashSet extends HashSet {
 			myHashEntries.shareLess();
 		} else {
 			myHashValues.destroy();
+			myHashValues = null;
 			myHashEntries.destroy();
+			myHashEntries = null;
 		}
 		myHashValues = newValues;
 		myHashEntries = newEntries;
@@ -589,15 +652,14 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
-	public int distanceFromHome(int loc, int home, int modulus) {
-		int dist;
+	protected int distanceFromHome(int loc, int home, int modulus) {
 		/* >>> smalltalkOnly */
 		//TODOreturn (loc - home) % modulus;
 		/* <<< smalltalkOnly */
 		/* alternate coding if modulus doesn't handle negatives the same as smalltalk 
 				(positive remainder only) */
 
-		dist = (loc - home);
+		int dist = (loc - home);
 		if (dist < 0) {
 			dist = dist + modulus;
 		}
@@ -631,7 +693,7 @@ public class ActualHashSet extends HashSet {
 		Heaper currentEntry;
 		int currentHome;
 		int tSize = myHashValues.count();
-		int targetValue = item.hashForEqual();
+		int targetValue = Math.abs(item.hashForEqual());
 		int targetHome = current = targetValue % tSize;
 		while ((currentEntry = myHashEntries.fetch(current)) != null) {
 			int currentValue = myHashValues.int32At(current);
@@ -646,7 +708,7 @@ public class ActualHashSet extends HashSet {
 				return -1;
 			}
 			/* Would have seen it by now. */
-			current = current + 1 % tSize;
+			current = (current + 1) % tSize;
 			if (current == targetHome) {
 				return -1;
 			}
@@ -701,7 +763,7 @@ public class ActualHashSet extends HashSet {
 		Heaper nextEntry;
 		int current = from;
 		int tSize = myHashValues.count();
-		while ((nextEntry = myHashEntries.fetch((next = current + 1 % tSize))) != null
+		while ((nextEntry = myHashEntries.fetch((next = (current + 1) % tSize))) != null
 			&& (((nextValue = myHashValues.int32At(next)) % tSize) != next)) {
 			myHashEntries.store(current, nextEntry);
 			myHashValues.storeInt32(current, nextValue);
@@ -740,19 +802,15 @@ public class ActualHashSet extends HashSet {
 	 * Store the currently 'new' item.
 	 */
 	private void hashStore(Heaper item, Int32Array values, PtrArray entries) {
-		int tSize;
 		int current;
 		int itemValue;
-		int movingValue;
-		Heaper movingEntry;
-		int movingEntrysHome;
 		int sittingValue;
 		Heaper sittingEntry;
 		int sittingEntrysHome;
-		tSize = values.count();
-		movingEntry = item;
-		movingValue = itemValue = movingEntry.hashForEqual();
-		movingEntrysHome = current = movingValue % tSize;
+		int tSize = values.count();
+		Heaper movingEntry = item;
+		int movingValue = itemValue = Math.abs(movingEntry.hashForEqual());
+		int movingEntrysHome = current = movingValue % tSize;
 		while ((sittingEntry = entries.fetch(current)) != null) {
 			sittingValue = values.int32At(current);
 			sittingEntrysHome = sittingValue % tSize;
@@ -766,17 +824,17 @@ public class ActualHashSet extends HashSet {
 				movingEntry = sittingEntry;
 				movingValue = sittingValue;
 				movingEntrysHome = sittingEntrysHome;
-				/* If we just picked up the same thing we were originally trying to add,
-									 we were trying to insert a duplicate.  We may have reordered the
-									 collision set, or we may have just swapped the item with itself, but
-									 either way we're done.  (Perhaps we should return an indication that
-									 the duplicate was found????) */
+				// If we just picked up the same thing we were originally trying to add,
+				// we were trying to insert a duplicate.  We may have reordered the
+				// collision set, or we may have just swapped the item with itself, but
+				// either way we're done.  (Perhaps we should return an indication that
+				// the duplicate was found????)
 				if ((movingValue == itemValue) && (movingEntry.isEqual(item))) {
 					return;
 				}
 				/* item already in set, return. */;
 			}
-			current = current + 1 % tSize;
+			current = (current + 1) % tSize;
 		}
 		entries.store(current, movingEntry);
 		/* Empty slot found.  Drop the new entry into it. */
@@ -832,7 +890,7 @@ public class ActualHashSet extends HashSet {
 		*/
 	}
 
-	public int entryTableSize() {
+	protected int entryTableSize() {
 		return myHashEntries.count();
 		/*
 		udanax-top.st:46693:ActualHashSet methodsFor: 'private: testing access'!
@@ -848,16 +906,16 @@ public class ActualHashSet extends HashSet {
 	 * This method is for regression testing.
 	 */
 	protected void printInternals(PrintWriter oo) {
-		int tValue;
 		int tSize = myHashValues.count();
 		oo.print("tally == ");
 		oo.println(myTally);
 		for (int idx = 0; idx < myHashEntries.count(); idx++) {
 			oo.print(idx);
 			oo.print(":	(");
-			oo.print(((tValue = myHashValues.int32At(idx)) % tSize));
+			int tValue = myHashValues.int32At(idx); 
+			oo.print(tValue % tSize);
 			oo.print(", ");
-			oo.print((distanceFromHome(idx, tValue, tSize)));
+			oo.print(distanceFromHome(idx, tValue, tSize));
 			oo.print(") ");
 			oo.print(Integer.toHexString(tValue));
 			//			/* >>> smalltalkOnly */
@@ -902,8 +960,7 @@ public class ActualHashSet extends HashSet {
 	 * Make myHashEntries large enough that we won't grow.
 	 */
 	public void receiveHashSet(Rcvr rcvr) {
-		int count;
-		count = LPPrimeSizeProvider.make().uInt32PrimeAfter((myTally * 2));
+		int count = LPPrimeSizeProvider.make().uInt32PrimeAfter(myTally * 2);
 		myHashEntries = (SharedPtrArray) SharedPtrArray.make(count);
 		myHashEntries.shareMore();
 		myHashValues = Int32Array.make(count);

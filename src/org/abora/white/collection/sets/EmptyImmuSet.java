@@ -181,6 +181,9 @@ public class EmptyImmuSet extends ImmuSet {
 		*/
 	}
 
+	/////////////////////////////////////////////
+	// Conversion
+
 	public MuSet asMuSet() {
 		return MuSet.make();
 		/*
@@ -189,6 +192,9 @@ public class EmptyImmuSet extends ImmuSet {
 			^ MuSet make!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Creation
 
 	/**
 	 * Don't destroy our single instance

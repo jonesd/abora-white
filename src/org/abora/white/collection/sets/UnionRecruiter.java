@@ -52,8 +52,52 @@ public class UnionRecruiter extends Accumulator {
 		attributes: ((Set new) add: #CONCRETE; add: #COPY; yourself)!
 	*/
 
+	/////////////////////////////////////////////
+	// Constructors
+
+	protected UnionRecruiter() {
+		super();
+		muSet = MuSet.make();
+		/*
+		udanax-top.st:12493:UnionRecruiter methodsFor: 'protected: creation'!
+		create
+			super create.
+			muSet _ MuSet make!
+		*/
+	}
+
+	protected UnionRecruiter(Rcvr receiver) {
+		super(receiver);
+		muSet = (MuSet) receiver.receiveHeaper();
+		/*
+		udanax-top.st:12507:UnionRecruiter methodsFor: 'generated:'!
+		create.Rcvr: receiver {Rcvr}
+			super create.Rcvr: receiver.
+			muSet _ receiver receiveHeaper.!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Static Factory Methods
+
+	/**
+	 * Make a new UnionRecruiter which hasn't yet accumulated anything
+	 */
+	public static UnionRecruiter make() {
+		return new UnionRecruiter();
+		/*
+		udanax-top.st:12524:UnionRecruiter class methodsFor: 'pseudo constructors'!
+		{UnionRecruiter} make
+			"Make a new UnionRecruiter which hasn't yet accumulated anything"
+			^UnionRecruiter create!
+		*/
+	}
+	
+	/////////////////////////////////////////////
+	// Accessing
+
 	public void step(Heaper someObj) {
-		muSet.storeAll(((ScruSet) someObj));
+		muSet.storeAll((ScruSet) someObj);
 		/*
 		udanax-top.st:12485:UnionRecruiter methodsFor: 'accessing'!
 		{void} step: someObj {Heaper}
@@ -70,16 +114,8 @@ public class UnionRecruiter extends Accumulator {
 		*/
 	}
 
-	protected UnionRecruiter() {
-		super();
-		muSet = MuSet.make();
-		/*
-		udanax-top.st:12493:UnionRecruiter methodsFor: 'protected: creation'!
-		create
-			super create.
-			muSet _ MuSet make!
-		*/
-	}
+	/////////////////////////////////////////////
+	// Creation
 
 	public Accumulator copy() {
 		Accumulator result = UnionRecruiter.make();
@@ -95,17 +131,6 @@ public class UnionRecruiter extends Accumulator {
 		*/
 	}
 
-	protected UnionRecruiter(Rcvr receiver) {
-		super(receiver);
-		muSet = (MuSet) receiver.receiveHeaper();
-		/*
-		udanax-top.st:12507:UnionRecruiter methodsFor: 'generated:'!
-		create.Rcvr: receiver {Rcvr}
-			super create.Rcvr: receiver.
-			muSet _ receiver receiveHeaper.!
-		*/
-	}
-
 	public void sendSelfTo(Xmtr xmtr) {
 		super.sendSelfTo(xmtr);
 		xmtr.sendHeaper(muSet);
@@ -114,19 +139,6 @@ public class UnionRecruiter extends Accumulator {
 		{void} sendSelfTo: xmtr {Xmtr}
 			super sendSelfTo: xmtr.
 			xmtr sendHeaper: muSet.!
-		*/
-	}
-
-	/**
-	 * Make a new UnionRecruiter which hasn't yet accumulated anything
-	 */
-	public static UnionRecruiter make() {
-		return new UnionRecruiter();
-		/*
-		udanax-top.st:12524:UnionRecruiter class methodsFor: 'pseudo constructors'!
-		{UnionRecruiter} make
-			"Make a new UnionRecruiter which hasn't yet accumulated anything"
-			^UnionRecruiter create!
 		*/
 	}
 }

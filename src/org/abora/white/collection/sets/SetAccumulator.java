@@ -17,7 +17,7 @@ import org.abora.white.xpp.basic.Heaper;
 
 /**
  * A SetAccumulator accumulates a bunch of objects and then makes an ImmuSet containing all
- * the accumulated objects.  Several people have observed that a SetAccumulator doesn''t buy
+ * the accumulated objects.  Several people have observed that a SetAccumulator doesn't buy
  * you much because instead you could just store into a MuSet.  While this is true (and is in
  * fact how SetAccumulator is trivially implemented), my feeling is that if what a loop is
  * doing is enumerating a bunch of elements from which a Set is to be formed, using a
@@ -54,25 +54,10 @@ public class SetAccumulator extends Accumulator {
 		attributes: ((Set new) add: #CONCRETE; add: #COPY; yourself)!
 	*/
 
-	public void step(Heaper someObj) {
-		muSet.store(someObj);
-		/*
-		udanax-top.st:12325:SetAccumulator methodsFor: 'accessing'!
-		{void} step: someObj {Heaper}
-			muSet store: someObj!
-		*/
-	}
-
-	public Heaper value() {
-		return muSet.asImmuSet();
-		/*
-		udanax-top.st:12328:SetAccumulator methodsFor: 'accessing'!
-		{Heaper} value
-			^ muSet asImmuSet!
-		*/
-	}
-
-	public SetAccumulator() {
+	/////////////////////////////////////////////
+	// Constructors
+	
+	protected SetAccumulator() {
 		super();
 		muSet = MuSet.make();
 		/*
@@ -83,7 +68,7 @@ public class SetAccumulator extends Accumulator {
 		*/
 	}
 
-	public SetAccumulator(ScruSet initialSet) {
+	protected SetAccumulator(ScruSet initialSet) {
 		super();
 		muSet = initialSet.asMuSet();
 		/*
@@ -94,25 +79,7 @@ public class SetAccumulator extends Accumulator {
 		*/
 	}
 
-	public Accumulator copy() {
-		return new SetAccumulator(muSet.asMuSet());
-		/*
-		udanax-top.st:12343:SetAccumulator methodsFor: 'creation'!
-		{Accumulator} copy
-			^ SetAccumulator create: muSet asMuSet!
-		*/
-	}
-
-//	public ImmuSet get() {
-//		passe();
-//		/*
-//		udanax-top.st:12348:SetAccumulator methodsFor: 'smalltalk: passe'!
-//		{ImmuSet} get
-//			self passe!
-//		*/
-//	}
-
-	public SetAccumulator(Rcvr receiver) {
+	protected SetAccumulator(Rcvr receiver) {
 		super(receiver);
 		muSet = (MuSet) receiver.receiveHeaper();
 		/*
@@ -123,16 +90,8 @@ public class SetAccumulator extends Accumulator {
 		*/
 	}
 
-	public void sendSelfTo(Xmtr xmtr) {
-		super.sendSelfTo(xmtr);
-		xmtr.sendHeaper(muSet);
-		/*
-		udanax-top.st:12357:SetAccumulator methodsFor: 'generated:'!
-		{void} sendSelfTo: xmtr {Xmtr}
-			super sendSelfTo: xmtr.
-			xmtr sendHeaper: muSet.!
-		*/
-	}
+	/////////////////////////////////////////////
+	// Static Factory Methods
 
 	/**
 	 * Make a SetAccumulator which starts out with no elements accumulated
@@ -160,6 +119,59 @@ public class SetAccumulator extends Accumulator {
 			"Make a new SetAccumulator in which all the current elements of initialSet are already accumulated.
 			Future changes to initialSet have no effect on the accumulator."
 			^SetAccumulator create: initialSet!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Accessing
+
+	public void step(Heaper someObj) {
+		muSet.store(someObj);
+		/*
+		udanax-top.st:12325:SetAccumulator methodsFor: 'accessing'!
+		{void} step: someObj {Heaper}
+			muSet store: someObj!
+		*/
+	}
+
+	public Heaper value() {
+		return muSet.asImmuSet();
+		/*
+		udanax-top.st:12328:SetAccumulator methodsFor: 'accessing'!
+		{Heaper} value
+			^ muSet asImmuSet!
+		*/
+	}
+
+	/////////////////////////////////////////////
+	// Creation
+
+	public Accumulator copy() {
+		return new SetAccumulator(muSet.asMuSet());
+		/*
+		udanax-top.st:12343:SetAccumulator methodsFor: 'creation'!
+		{Accumulator} copy
+			^ SetAccumulator create: muSet asMuSet!
+		*/
+	}
+
+//	public ImmuSet get() {
+//		passe();
+//		/*
+//		udanax-top.st:12348:SetAccumulator methodsFor: 'smalltalk: passe'!
+//		{ImmuSet} get
+//			self passe!
+//		*/
+//	}
+
+	public void sendSelfTo(Xmtr xmtr) {
+		super.sendSelfTo(xmtr);
+		xmtr.sendHeaper(muSet);
+		/*
+		udanax-top.st:12357:SetAccumulator methodsFor: 'generated:'!
+		{void} sendSelfTo: xmtr {Xmtr}
+			super sendSelfTo: xmtr.
+			xmtr sendHeaper: muSet.!
 		*/
 	}
 }

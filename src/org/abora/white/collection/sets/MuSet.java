@@ -12,7 +12,6 @@ package org.abora.white.collection.sets;
 
 import org.abora.white.collection.steppers.Stepper;
 import org.abora.white.rcvr.Rcvr;
-import org.abora.white.spaces.basic.XnRegion;
 import org.abora.white.value.IntegerValue;
 import org.abora.white.xpp.basic.Heaper;
 
@@ -152,11 +151,13 @@ public abstract class MuSet extends ScruSet {
 	 * Turn myself into the intersection of my current self and other.
 	 */
 	public void restrictTo(ScruSet other) {
-		MuSet tmp;
-		tmp = (MuSet) copy();
-		tmp.wipeAll(other);
-		wipeAll(tmp);
-		tmp.destroy();
+		MuSet tmp = (MuSet) copy();
+		try {
+			tmp.wipeAll(other);
+			wipeAll(tmp);
+		} finally {
+			tmp.destroy();
+		}
 		/*
 		udanax-top.st:45846:MuSet methodsFor: 'operations'!
 		{void} restrictTo: other {ScruSet} 
@@ -290,7 +291,7 @@ public abstract class MuSet extends ScruSet {
 			return ImmuSet.make();
 		}
 		if (count().isEqual(IntegerValue.one())) {
-			return ImmuSet.make().with((theOne()));
+			return ImmuSet.make().with(theOne());
 		}
 		return ImmuSet.make(this);
 		/*
@@ -403,13 +404,13 @@ public abstract class MuSet extends ScruSet {
 	//		*/
 	//	}
 
-	public static void problems() {
-		throw new UnsupportedOperationException();
-		//return signals((ALREADY_IN_SET);
-		/*
-		udanax-top.st:45982:MuSet class methodsFor: 'exceptions: exceptions'!
-		problems.AlreadyInSet
-			^self signals: #(AlreadyInSet)!
-		*/
-	}
+//	public static void problems() {
+//		throw new UnsupportedOperationException();
+//		//return signals((ALREADY_IN_SET);
+//		/*
+//		udanax-top.st:45982:MuSet class methodsFor: 'exceptions: exceptions'!
+//		problems.AlreadyInSet
+//			^self signals: #(AlreadyInSet)!
+//		*/
+//	}
 }

@@ -79,7 +79,7 @@ public abstract class ImmuSet extends ScruSet {
 	 * The difference between this and ImmuSet make.MuSet: is that this doesn't make a copy
 	 * of the MuSet when making an ImmuSetOnMu.
 	 */
-	public static ImmuSet from(MuSet set) {
+	protected static ImmuSet from(MuSet set) {
 		if (set.isEmpty()) {
 			return EmptySet;
 		}
@@ -156,6 +156,9 @@ public abstract class ImmuSet extends ScruSet {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Operations
+
 	/**
 	 * Regular set intersection.  Return an ImmuSet containing only those objects which are
 	 * members of
@@ -192,6 +195,9 @@ public abstract class ImmuSet extends ScruSet {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Adding-Removing
+
 	/**
 	 * 'set->with (anElement)' means the same as 'set->unionWith (immuSet (anElement))'.
 	 * It returns an ImmuSet with all my members and having anElement as a member.
@@ -223,6 +229,9 @@ public abstract class ImmuSet extends ScruSet {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Creation
+
 	/**
 	 * don't need to actually make a copy, as this is immutable
 	 */
@@ -235,6 +244,9 @@ public abstract class ImmuSet extends ScruSet {
 			^self!
 		*/
 	}
+
+	/////////////////////////////////////////////
+	// Conversion
 
 	public ImmuSet asImmuSet() {
 		return this;
@@ -252,6 +264,9 @@ public abstract class ImmuSet extends ScruSet {
 		self subclassResponsibility!
 	*/
 
+	/////////////////////////////////////////////
+	// Enumerating
+
 	public abstract IntegerValue count();
 	/*
 	udanax-top.st:45436:ImmuSet methodsFor: 'enumerating'!
@@ -265,6 +280,9 @@ public abstract class ImmuSet extends ScruSet {
 	{Stepper} stepper
 		self subclassResponsibility!
 	*/
+
+	/////////////////////////////////////////////
+	// Testing
 
 	public int actualHashForEqual() {
 		return contentsHash();

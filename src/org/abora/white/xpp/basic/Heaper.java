@@ -102,12 +102,12 @@ public abstract class Heaper {
 
 	public void destroy() {
 		//TODO probably dont need - just here to satisfy senders
-		throw new UnsupportedOperationException();
+		//TODO should this be stopped from being called more than once
+		destruct();
 	}
 
 	public void destruct() {
 		//TODO is this significant? - just here to satisfy senders
-		throw new UnsupportedOperationException();
 	}
 
 	public void sendSelfTo(Xmtr xmtr) {

@@ -160,7 +160,7 @@ public abstract class ScruSet extends Heaper {
 		try {
 			Heaper each;
 			while ((each = (Heaper) stepper.fetch()) != null) {
-				result = result ^ each.hashForEqual();
+				result ^= each.hashForEqual();
 				stepper.step();
 			}
 		} finally {
@@ -194,10 +194,15 @@ public abstract class ScruSet extends Heaper {
 	*/
 
 	/**
-	 * tell whether they have any points in common
+	 * Return true if <code>this</code> set and the <code>other</code>
+	 * set have any elements in common.
+	 * <p>
+	 * Subclasses may want to override for efficiency.
+	 * 
+	 * @param other other set to test for an intersection with
+	 * @return true if there are any elements in common 
 	 */
 	public boolean intersects(ScruSet other) {
-		/* subclasses can override for efficiency */
 		if (other.isEmpty()) {
 			return false;
 		}
@@ -232,7 +237,11 @@ public abstract class ScruSet extends Heaper {
 	}
 
 	/**
-	 * Whether it currently has any elements
+	 * Return true if <code>this</code> set does not currently have
+	 * any elements.
+	 * 
+	 * @return true if <code>this</code> set does not currently have any
+	 * 	elements.
 	 */
 	public abstract boolean isEmpty();
 	/*
@@ -397,7 +406,7 @@ public abstract class ScruSet extends Heaper {
 	 * For example, if we have the set '{a, b, c}' and we print it with
 	 * 'p->printOnWithSyntax(oo,
 	 */
-	public void printOnWithSyntax(PrintWriter oo, String open, String sep, String close, boolean fullPrint) {
+	public void printOnWithSyntax(PrintWriter oo, String openMarker, String separator, String closeMarker, boolean fullPrint) {
 		/* << */
 		/* ,  */
 		/* ;  */
@@ -405,7 +414,7 @@ public abstract class ScruSet extends Heaper {
 		/* >> */
 		/* );', we get '<<a; b; c>>'.  This is a convenient little hack
 			for printing with all sorts of separators and brackets. */
-		//oo .print() open;
+		oo .print(openMarker);
 		if (isEmpty()) {
 			oo.print("nullSet");
 		} else {
@@ -416,7 +425,7 @@ public abstract class ScruSet extends Heaper {
 				oo.print(dSet.fetch());
 				dSet.step();
 				if (dSet.hasValue()) {
-					oo.print(sep);
+					oo.print(separator);
 				}
 				if (printMore && ((elemCount += 1) > 200)) {
 					printMore = false;
@@ -426,7 +435,7 @@ public abstract class ScruSet extends Heaper {
 				oo.print("etc...");
 			}
 		}
-		//oo .print() close;
+		oo .print(closeMarker);
 		/*
 		udanax-top.st:45279:ScruSet methodsFor: 'printing'!
 		{void} printOnWithSyntax: oo {ostream reference} 
@@ -583,16 +592,13 @@ public abstract class ScruSet extends Heaper {
 	//*/
 	//}
 
-	/////////////////////////////////////////////
-	// Exceptions
-
-	public static void problems() {
-		throw new UnsupportedOperationException();
-		//TODO return signals((NOT_IN_SET);
-		/*
-		udanax-top.st:45369:ScruSet class methodsFor: 'exceptions: exceptions'!
-		problems.NotInSet
-			^self signals: #(NotInSet)!
-		*/
-	}
+//	public static void problems() {
+//		throw new UnsupportedOperationException();
+//		//TODO return signals((NOT_IN_SET);
+//		/*
+//		udanax-top.st:45369:ScruSet class methodsFor: 'exceptions: exceptions'!
+//		problems.NotInSet
+//			^self signals: #(NotInSet)!
+//		*/
+//	}
 }
