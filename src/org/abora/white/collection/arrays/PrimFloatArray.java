@@ -63,6 +63,11 @@ public abstract class PrimFloatArray extends PrimArithmeticArray {
 	 */
 	public abstract double floatAt(int index);
 
+	/**
+	 * Return the maximum bits/entry that can be stored in this array
+	 */
+	public abstract int bitCount();
+
 
 	//////////////////////////////////////////////
 	// Comparing and Hashing

@@ -10,7 +10,6 @@
  */
 package org.abora.white.value;
 
-import org.abora.white.xpp.basic.Heaper;
 
 /**
  * Boxed Java float or IEEE32 value. 
@@ -24,7 +23,7 @@ public class IEEE32Value extends PrimFloatValue {
 		this.value = value;
 	}
 
-	public static Heaper make(float f) {
+	public static IEEE32Value make(float f) {
 		return new IEEE32Value(f);
 	}
 

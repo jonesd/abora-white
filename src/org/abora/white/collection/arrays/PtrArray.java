@@ -12,6 +12,7 @@ package org.abora.white.collection.arrays;
 
 import java.io.PrintStream;
 
+import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class PtrArray extends PrimArray {
@@ -87,9 +88,9 @@ public class PtrArray extends PrimArray {
 		throw new UnsupportedOperationException();
 	}
 
-	//	public PrimSpec spec() {
-	//		throw new UnsupportedOperationException();
-	//	}
+	public PrimSpec spec() {
+		return PrimSpec.pointer();
+	}
 
 	public boolean contentsEQ(PtrArray other) {
 		throw new UnsupportedOperationException();
@@ -182,15 +183,15 @@ public class PtrArray extends PrimArray {
 		throw new UnsupportedOperationException();
 	}
 
-//	/** for bulk methods that need checking and for migration */
-//	public void unsafeStore(int index, Heaper ptr) {
-//		throw new UnsupportedOperationException();
-//	}
-//
-//	/** for bulk methods that need checking and for migration */
-//	public Heaper "*" unsafeFetch(int index) {
-//		throw new UnsupportedOperationException();
-//	}
+	//	/** for bulk methods that need checking and for migration */
+	//	public void unsafeStore(int index, Heaper ptr) {
+	//		throw new UnsupportedOperationException();
+	//	}
+	//
+	//	/** for bulk methods that need checking and for migration */
+	//	public Heaper "*" unsafeFetch(int index) {
+	//		throw new UnsupportedOperationException();
+	//	}
 
 	public void migrate(int[] destination, boolean destinationIsOld) {
 		throw new UnsupportedOperationException();

@@ -13,6 +13,7 @@ package org.abora.white.collection.arrays;
 import java.io.PrintStream;
 
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class UInt8Array extends PrimIntArray {
@@ -90,13 +91,16 @@ public class UInt8Array extends PrimIntArray {
 		throw new UnsupportedOperationException();
 	}
 
-	//	public PrimSpec spec() {
-	//		throw new UnsupportedOperationException();
-	//	}
-	//
-	//	public int bitCount() {
-	//		throw new UnsupportedOperationException();
-	//	}
+	public PrimSpec spec() {
+		return PrimSpec.uInt8();
+	}
+
+	public int bitCount() {
+		/* Return the maximum bits/entry that can be stored in this array.
+		   The number will be negative for signed arrays. */
+
+		return 8;
+	}
 
 	public void storeMany(int to, PrimArray other, int count, int from) {
 		throw new UnsupportedOperationException();

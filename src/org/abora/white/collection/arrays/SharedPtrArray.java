@@ -10,6 +10,8 @@
  */
 package org.abora.white.collection.arrays;
 
+import org.abora.white.value.PrimSpec;
+
 public class SharedPtrArray extends PtrArray {
 
 	private int myShareCount;
@@ -51,9 +53,9 @@ public class SharedPtrArray extends PtrArray {
 		throw new UnsupportedOperationException();
 	}
 
-//	public PrimSpec spec() {
-//		throw new UnsupportedOperationException();
-//	}
+	public PrimSpec spec() {
+		return PrimSpec.sharedPointer();
+	}
 
 	public int shareCount() {
 		throw new UnsupportedOperationException();

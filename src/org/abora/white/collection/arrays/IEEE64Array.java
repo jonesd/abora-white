@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.IEEE64Value;
+import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -24,7 +25,6 @@ import org.abora.white.xpp.basic.Heaper;
  */
 public class IEEE64Array extends PrimFloatArray {
 	private double[] storage;
-
 
 	//////////////////////////////////////////////
 	// Constructors
@@ -42,7 +42,6 @@ public class IEEE64Array extends PrimFloatArray {
 		super();
 		storage = new double[count];
 	}
-
 
 	//////////////////////////////////////////////
 	// Static Factory Methods
@@ -91,7 +90,6 @@ public class IEEE64Array extends PrimFloatArray {
 		throw new UnsupportedOperationException();
 	}
 
-
 	//////////////////////////////////////////////
 	// accessing
 
@@ -128,15 +126,14 @@ public class IEEE64Array extends PrimFloatArray {
 		return storage.length;
 	}
 
-	//	public PrimSpec spec() {
-	//		throw new UnsupportedOperationException();
-	//	}
+	public PrimSpec spec() {
+		return PrimSpec.iEEE64();
+	}
 
-	//	/** Return the maximum word size that can be stored in this array */
-	//	public int bitCount() {
-	//		throw new UnsupportedOperationException();
-	//	}
-
+	/** Return the maximum word size that can be stored in this array */
+	public int bitCount() {
+		return 64;
+	}
 
 	//////////////////////////////////////////////
 	// Bulk Storing
@@ -262,7 +259,6 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
-
 	//////////////////////////////////////////////
 	// Comparing and Hashing
 
@@ -330,7 +326,6 @@ public class IEEE64Array extends PrimFloatArray {
 		//		}
 	}
 
-
 	//////////////////////////////////////////////
 	// Arithmetic Manipulations
 
@@ -392,7 +387,6 @@ public class IEEE64Array extends PrimFloatArray {
 		//			} END_CHOOSE;
 		//		}
 	}
-
 
 	//////////////////////////////////////////////
 	// Printing

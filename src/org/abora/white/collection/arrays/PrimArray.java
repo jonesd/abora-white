@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 
 import org.abora.white.exception.CopyOutOfBoundsException;
 import org.abora.white.exception.NotInTableException;
+import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -55,11 +56,11 @@ public abstract class PrimArray extends Heaper {
 	 */
 	public abstract int count();
 
-	//	/** 
-	//	 * A description of the kinds of things which can be stored 
-	//	 * in  this array
-	//	 */
-	//	public abstract PrimSpec spec();
+	/** 
+	 * A description of the kinds of things which can be stored 
+	 * in  this array
+	 */
+	public abstract PrimSpec spec();
 
 	//////////////////////////////////////////////
 	// Accessing
@@ -353,7 +354,6 @@ public abstract class PrimArray extends Heaper {
 		}
 	}
 
-
 	//////////////////////////////////////////////
 	// Searching/Finding
 
@@ -550,7 +550,6 @@ public abstract class PrimArray extends Heaper {
 		return indexOfElements(other, -1);
 	}
 
-
 	//////////////////////////////////////////////
 	// Printing
 
@@ -582,7 +581,6 @@ public abstract class PrimArray extends Heaper {
 			oo.print("null");
 		}
 	}
-
 
 	//////////////////////////////////////////////
 	// Helper methods

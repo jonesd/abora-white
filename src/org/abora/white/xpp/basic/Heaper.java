@@ -15,10 +15,18 @@ import java.io.PrintWriter;
 
 public abstract class Heaper {
 
+
+	//////////////////////////////////////////////
+	// Constructors
+	
 	public Heaper() {
 		super();
 	}
 
+
+	//////////////////////////////////////////////
+	// Comparison and Hashing
+	
 	/**
 	 * Return true if the two objects are equal.
 	 */

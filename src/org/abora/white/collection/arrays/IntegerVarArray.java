@@ -13,6 +13,7 @@ package org.abora.white.collection.arrays;
 import java.io.PrintStream;
 
 import org.abora.white.value.IntegerValue;
+import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 public class IntegerVarArray extends PrimIntegerArray {
@@ -81,9 +82,9 @@ public class IntegerVarArray extends PrimIntegerArray {
 		throw new UnsupportedOperationException();
 	}
 
-	//	public PrimSpec spec() {
-	//		throw new UnsupportedOperationException();
-	//	}
+	public PrimSpec spec() {
+		return PrimSpec.integerVar();
+	}
 
 	public void copyToBuffer(int[] buffer, int size, int count, int start) {
 		throw new UnsupportedOperationException();

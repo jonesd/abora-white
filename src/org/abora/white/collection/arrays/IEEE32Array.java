@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 
 import org.abora.white.value.PrimFloatValue;
 import org.abora.white.value.IEEE32Value;
+import org.abora.white.value.PrimSpec;
 import org.abora.white.xpp.basic.Heaper;
 
 /**
@@ -23,7 +24,6 @@ import org.abora.white.xpp.basic.Heaper;
  */
 public class IEEE32Array extends PrimFloatArray {
 	private final float[] storage;
-
 
 	//////////////////////////////////////////////
 	// Constructors
@@ -79,10 +79,9 @@ public class IEEE32Array extends PrimFloatArray {
 		return make(size, (PrimFloatArray) source, sourceOffset, count, destOffset);
 	}
 
-
 	//////////////////////////////////////////////
 	// Static Factory Methods
-	
+
 	/** 
 	 * Return a new IEEE32Array of the specified size suitable for
 	 * holding IEEE32 values, initially filled with zeros.
@@ -109,12 +108,11 @@ public class IEEE32Array extends PrimFloatArray {
 	public static IEEE32Array make(int size, PrimArray from) {
 		return make(size, from, 0);
 	}
-	
+
 	/** create an IEEE32Array filled with the data at 'buffer' */
 	public static IEEE32Array make(float[] buffer) {
 		return new IEEE32Array(buffer);
 	}
-
 
 	//////////////////////////////////////////////
 	// accessing
@@ -157,25 +155,22 @@ public class IEEE32Array extends PrimFloatArray {
 		return storage.length;
 	}
 
-	//	public PrimSpec spec() {
-	//		return PrimSpec.iEEE32();
-	//
-	//		//		RPTR(PrimSpec) IEEE32Array::spec (){
-	//		//			return PrimSpec::iEEE32();
-	//		//		}
-	//	}
+	public PrimSpec spec() {
+		return PrimSpec.iEEE32();
+		//		RPTR(PrimSpec) IEEE32Array::spec (){
+		//			return PrimSpec::iEEE32();
+		//		}
+	}
 
-	//	/** Return the maximum word size that can be stored in this array */
-	//	public int bitCount() {
-	//		return 32;
-	//
-	//		//		Int32 IEEE32Array::bitCount () {
-	//		//			/* Return the maximum bits/entry that can be stored in this array */
-	//		//
-	//		//			return 32;
-	//		//		}
-	//	}
-
+	/** Return the maximum word size that can be stored in this array */
+	public int bitCount() {
+		return 32;
+		//		Int32 IEEE32Array::bitCount () {
+		//			/* Return the maximum bits/entry that can be stored in this array */
+		//
+		//			return 32;
+		//		}
+	}
 
 	//////////////////////////////////////////////
 	// Bulk Storing
@@ -222,7 +217,6 @@ public class IEEE32Array extends PrimFloatArray {
 		System.arraycopy(storage, start, buffer, 0, n);
 	}
 
-
 	//////////////////////////////////////////////
 	// Comparing and Hashing
 
@@ -254,7 +248,6 @@ public class IEEE32Array extends PrimFloatArray {
 		return 0;
 	}
 
-
 	//////////////////////////////////////////////
 	// Arithmetic Manipulations
 
@@ -280,10 +273,9 @@ public class IEEE32Array extends PrimFloatArray {
 		}
 	}
 
-
 	//////////////////////////////////////////////
 	// Printing
-	
+
 	protected void printElementOn(int index, PrintWriter oo) {
 		oo.print(iEEE32At(index));
 	}
