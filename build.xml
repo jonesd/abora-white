@@ -12,14 +12,13 @@
 	<property name="build" location="build"/>
 	<property name="dist"  location="dist"/>
 	<property name="lib.dir" location="lib"/>
+	<property name="ant.home" location="${env.ANT_HOME}"/>
     
 	<property name="junit.dir" location="${build}/docs/junit"/>
 	<property name="javadoc.dir" location="${build}/docs/api"/>
 	<property name="clover.dir" location="${build}/docs/clover"/>
 	<property name="clover.history.dir" location="${build}/docs/clover-historical"/>
 	<property name="clover.includesource" value="true"/>
-
-	<property name="clover.home" value="${env.CLOVER_HOME}"/>
    
    
   <target name="init">
@@ -79,8 +78,8 @@
 		</batchtest>
 		<classpath>
   			<pathelement path="${build}/bin"/>
+  			<pathelement path="${ant.home}/lib/clover.jar"/>
   		</classpath>
-	<classpath refid="clover.classpath"/>
 	</junit>
 </target>
   
@@ -141,7 +140,8 @@
 <!--** Clover Code Coverage Support ******************************-->
 <!--**************************************************************-->
 
-<target name="with.clover" if="env.CLOVER_HOME">
+<target name="with.clover">
+<!--<target name="with.clover" if="env.CLOVER_HOME">-->
 	<echo message="*** Including Clover support ***"/>
 	<taskdef resource="clovertasks"/>
 	
@@ -150,23 +150,25 @@
 			<exclude name="**/tests/**"/>
 	 	</files>
 	</clover-setup>
-	<property name="build.compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+<!--	<property name="build.compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>-->
 </target>
 	
-<target name="clover.report" depends="with.clover, init" if="env.CLOVER_HOME">
+<target name="clover.report" depends="with.clover, init">
+<!--<target name="clover.report" depends="with.clover, init" if="env.CLOVER_HOME">-->
 	<clover-report>
-		<Current title="${Name}" outfile="${clover.dir}">
+		<current title="${Name}" outfile="${clover.dir}">
 			<format type="html" srcLevel="${clover.includesource}"/> 
-		</Current>
-		<Historical title="${Name}" outfile="${clover.history.dir}" historyDir="${basedir}/clover-historical">
+		</current>
+		<historical title="${Name}" outfile="${clover.history.dir}" historyDir="${basedir}/.clover_historical">
 			<format type="html"/>
-		</Historical>
+		</historical>
 	</clover-report>
 </target>
 
-<target name="clover.historypoint" depends="with.clover, init" if="env.CLOVER_HOME">
-	<mkdir dir="${basedir}/clover-historical"/>
-	<clover-historypoint historyDir="${basedir}/clover-historical"/>
+<target name="clover.historypoint" depends="with.clover, init">
+<!--<target name="clover.historypoint" depends="with.clover, init" if="env.CLOVER_HOME">-->
+	<mkdir dir="${basedir}/.clover_historical"/>
+	<clover-historypoint historyDir="${basedir}/.clover_historical"/>
 </target>
 
 <target name="just.clover" depends="with.clover, clean, compile, test, clover.report"/>
