@@ -29,7 +29,7 @@
 
 	<groupId>info.dgjones.abora</groupId>
 	<artifactId>abora-white</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Abora White</name>
