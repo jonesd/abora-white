@@ -22,9 +22,6 @@
  */
 package info.dgjones.abora.white.spaces.basic;
 
-import java.io.PrintWriter;
-import java.util.Iterator;
-
 import info.dgjones.abora.white.collection.sets.ImmuSet;
 import info.dgjones.abora.white.collection.sets.MuSet;
 import info.dgjones.abora.white.collection.steppers.Stepper;
@@ -33,6 +30,8 @@ import info.dgjones.abora.white.rcvr.Rcvr;
 import info.dgjones.abora.white.rcvr.Xmtr;
 import info.dgjones.abora.white.spaces.EmptyMapping;
 import info.dgjones.abora.white.xpp.basic.Heaper;
+
+import java.io.PrintWriter;
 
 public class SimpleMapping extends Mapping {
 	protected XnRegion myRegion;

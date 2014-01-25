@@ -161,6 +161,8 @@ public class AboraRuntimeException extends RuntimeException {
 	public static final String WRONG_COORD_SPACE = "WrongCoordSpace";
 	public static final String ZERO_SEQUENCE = "ZeroSequence";
 
+	private static final long serialVersionUID = 1L;
+	
 	public AboraRuntimeException() {
 		super();
 	}

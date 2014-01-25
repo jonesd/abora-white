@@ -22,13 +22,12 @@
  */
 package info.dgjones.abora.white.value;
 
-import java.io.PrintWriter;
-import java.math.BigInteger;
-
 import info.dgjones.abora.white.hash.FHash;
-import info.dgjones.abora.white.spaces.basic.Position;
 import info.dgjones.abora.white.spaces.integers.IntegerPos;
 import info.dgjones.abora.white.xpp.basic.Heaper;
+
+import java.io.PrintWriter;
+import java.math.BigInteger;
 
 public class IntegerValue extends PrimIntValue implements Comparable {
 	//TODO This is surely a performance disaster. Couldnt we just use int/long?

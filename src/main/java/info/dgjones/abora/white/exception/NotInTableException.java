@@ -24,6 +24,8 @@ package info.dgjones.abora.white.exception;
 
 public class NotInTableException extends AboraRuntimeException {
 
+	private static final long serialVersionUID = 1L;
+	
 	public NotInTableException() {
 		super();
 	}
