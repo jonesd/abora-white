@@ -28,7 +28,7 @@
 
 	<groupId>info.dgjones.abora</groupId>
 	<artifactId>abora-white</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Abora White</name>
@@ -58,7 +58,7 @@
 		<url>https://github.com/jonesd/abora-white</url>
 		<connection>scm:git:git://github.com/jonesd/abora-white.git</connection>
 		<developerConnection>scm:git:git@github.com:jonesd/abora-white.git</developerConnection>
-	  <tag>abora-white-0.1</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<developers>
