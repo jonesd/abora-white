@@ -3,6 +3,16 @@
 Abora-White is an implementation of the Abora server written in Java
 and based on the Udanax-Gold source.
 
+[![Build Status](https://travis-ci.org/jonesd/abora-white.png?branch=master)](https://travis-ci.org/jonesd/abora-white)
+
+This project is from 2003 and there has been little work on it since then other
+than to migrate it to GitHub.
+
+David Jones david@dgjones.info 
+
+
+## Project Summary
+
 The process of writing Abora-White is to start from a clean project
 then iteratively:
 
@@ -35,6 +45,10 @@ the final outcome I have chosen for Abora-White.
 > Dean Tribble kindly emailed in
 > a few comments on the contents of this page. I have included
 > them below in the marked lines. Thanks Dean.
+
+**Note:** This analysis of the capabilities of Java is from 2003 and
+so is well behind the current state of Java and its support for Generics
+and other language features.
 
 ### BooleanVar
 
