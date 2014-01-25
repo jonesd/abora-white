@@ -15,11 +15,21 @@ then iteratively:
 ## Building and Testing
 
 Currently there is not much to look at, but you can build and run
-tests on the code if you have Maven installed.
+tests on the code if you have Java + Maven installed.
 
     mvn clean install
 
 
-Copyright 2003, 2014 David G Jones
-mailto:david@dgjones.info
+## Contact
+
+david@dgjones.info
+
 https://github.com/jonesd/abora-white
+
+## Copyright and licence
+
+Abora White is Copyright 2003, 2014 David G Jones
+
+Licensed under MIT X-11.
+
+Substantial portions of the code are from the Udanax Gold project and are Copyright 1979-1999 Udanax.com and licensed under MIT-X11. 
