@@ -19,11 +19,9 @@ Building and Testing
 --------------------
 
 Currently there is not much to look at, but you can build and run
-tests on the code if you have Ant installed.
+tests on the code if you have Maven installed.
 
-> ant
-
-> ant test
+> mavn clean install
 
 
 Copyright 2003 David G Jones
