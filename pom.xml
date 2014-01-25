@@ -37,6 +37,10 @@
 
 	<inceptionYear>2003</inceptionYear>
 
+	<properties>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
 	<licenses>
 		<license>
 			<name>MIT License</name>
