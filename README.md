@@ -5,7 +5,7 @@ and based on the Udanax-Gold source.
 
 [![Build Status](https://travis-ci.org/jonesd/abora-white.png?branch=master)](https://travis-ci.org/jonesd/abora-white)
 
-This project is from 2003 and there has been little work on it since then other
+**Note:** This project is from 2003 and there has been little work on it since then other
 than to migrate it to GitHub.
 
 David Jones david@dgjones.info 
