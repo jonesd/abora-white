@@ -26,7 +26,7 @@
  * Part of the Abora hypertext project: http://www.abora.org
  * Copyright 2003 David G Jones
  * 
- * $Id$
+ * 
  */
 package info.dgjones.abora.white.collection.tables;
 
